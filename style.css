@@ -7,6 +7,7 @@ body { background: #000; color: #fff; overflow: hidden; height: 100vh; }
 .mt-10 { margin-top: 15px; }
 .gold-txt { color: var(--gold); font-weight: bold; }
 
+/* شاشة الترحيب والهيدر */
 #screen-welcome { display: flex; justify-content: center; align-items: center; height: 100vh; }
 .glass-hero { padding: 50px; border-radius: 20px; text-align: center; backdrop-filter: blur(10px); border: 1px solid var(--gold); }
 .main-title { font-family: 'Cinzel', serif; font-size: 5rem; color: var(--gold); letter-spacing: 10px; }
@@ -16,20 +17,27 @@ body { background: #000; color: #fff; overflow: hidden; height: 100vh; }
 .nav-content { display: flex; justify-content: space-between; align-items: center; height: 100%; padding: 0 20px; border-radius: 10px; backdrop-filter: blur(15px); background: var(--glass-bg); border: 1px solid var(--glass-border); }
 .timer-txt { color: #ff3e3e; font-weight: 800; font-size: 1.5rem; }
 .action-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px; }
+
+/* اللوبي والبوابات - تم تعديلها لتكون أزرار حقيقية */
 .lobby-wrapper { padding: 100px 50px 50px; height: 100vh; overflow-y: auto; }
 .grid-30 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; max-width: 1100px; margin: auto; }
-.gate-card { background: var(--glass-bg); height: 120px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s; }
+.gate-card { 
+    background: var(--glass-bg); height: 120px; border-radius: 10px; display: flex; flex-direction: column; 
+    justify-content: center; align-items: center; border: 1px solid var(--glass-border); cursor: pointer; 
+    transition: 0.3s; color: #fff; font-size: 1rem; appearance: none; -webkit-appearance: none;
+}
 .gate-card:hover { border-color: var(--gold); transform: translateY(-5px); background: rgba(212, 175, 55, 0.1); }
 .gate-card.solved { border-color: #00ff88; opacity: 0.4; }
 
+/* نافذة الألغاز والمدخلات */
 .puzzle-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
 .puzzle-card { width: 700px; padding: 40px; border-radius: 20px; text-align: center; backdrop-filter: blur(20px); border: 1px solid var(--gold); background: rgba(0,0,0,0.6); transition: 0.1s; }
 .puzzle-controls input { background: #000; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 5px; width: 60%; margin-bottom: 20px; outline: none; text-align: center;}
-.action-input { background: #000; border: 1px solid var(--gold); color: #fff; padding: 12px; border-radius: 5px; width: 80%; outline: none; text-align: center;}
+.action-input { background: #000; border: 1px solid var(--gold); color: #fff; padding: 12px; border-radius: 5px; outline: none; text-align: center;}
 .btn-decode { background: var(--gold); color: #000; padding: 12px 25px; border: none; font-weight: 800; cursor: pointer; border-radius: 5px; }
 .btn-cancel { background: #333; color: #fff; padding: 10px 20px; border: 1px solid #666; cursor: pointer; border-radius: 5px; }
 
-/* الألعاب التفاعلية */
+/* تنسيقات الألعاب التفاعلية */
 .wires-container { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
 .wire { height: 15px; width: 100%; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.5); transition: 0.2s; }
 .wire.cut { opacity: 0.2; transform: scaleX(0.5); pointer-events: none; }
@@ -59,6 +67,7 @@ body { background: #000; color: #fff; overflow: hidden; height: 100vh; }
 .server-level { position: absolute; left: 0; top: 0; height: 100%; background: #ff3e3e; transition: width 0.1s linear, background 0.2s; }
 .server-level.stable { background: #00ff88; }
 
+/* النوافذ المنبثقة والإشعارات */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 500; }
 .modal-box { padding: 30px; width: 400px; border-radius: 20px; text-align: center; background: #111; border: 1px solid var(--gold); }
 .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
@@ -66,11 +75,12 @@ body { background: #000; color: #fff; overflow: hidden; height: 100vh; }
 .close-btn { margin-top: 20px; background: var(--gold); border: none; padding: 5px 20px; border-radius: 5px; cursor: pointer; font-weight: 800; color: #000;}
 #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
 .toast { background: #222; border-right: 4px solid var(--gold); padding: 10px 20px; border-radius: 5px; margin-top: 10px; animation: slideIn 0.3s forwards; }
+
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes glitchShake { 0% { transform: translate(0); } 20% { transform: translate(-10px, 5px); } 40% { transform: translate(-10px, -5px); } 60% { transform: translate(10px, 5px); } 80% { transform: translate(10px, -5px); } 100% { transform: translate(0); } }
 .error-glitch { animation: glitchShake 0.3s ease-in-out; border-color: #ff3e3e !important; box-shadow: 0 0 30px rgba(255, 62, 62, 0.6) !important; }
 
-/* --- تصميم شاشة الطرد المرعبة GET OUT --- */
+/* تصميم شاشة الطرد المرعبة GET OUT */
 #get-out-screen {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: #000; color: #ff0000; z-index: 9999;
@@ -78,10 +88,7 @@ body { background: #000; color: #fff; overflow: hidden; height: 100vh; }
     overflow: hidden; font-family: 'Cinzel', monospace; font-weight: 900;
     text-transform: uppercase; text-align: center;
 }
-.get-out-text {
-    margin: 5px 15px;
-    animation: flashRed 0.1s infinite alternate;
-}
+.get-out-text { margin: 5px 15px; animation: flashRed 0.1s infinite alternate; }
 @keyframes flashRed {
     from { color: #ff0000; text-shadow: 0 0 5px #ff0000; }
     to { color: #8b0000; text-shadow: 0 0 20px #8b0000; }
