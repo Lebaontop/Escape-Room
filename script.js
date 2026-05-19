@@ -7,22 +7,20 @@ class MajesticEscape {
         this.isPaused = false;
         this.solvedGates = new Set();
         
-        // عداد الأخطاء في اللغز الكتابي
+        // متغير لحفظ البوابة المطلوبة قبل تحديد الوقت
+        this.pendingGateId = null; 
+
         this.textFailCount = 0;
-        
-        // متغيرات الألعاب التفاعلية
         this.wireSeq = [];
         this.flippedCards = [];
         this.matchedPairs = 0;
         this.userArrows = [];
         this.switchStates = [];
         this.userNodes = [];
-        
         this.timingPulseId = null;
         this.timingPos = 0;
         this.timingDir = 1;
         this.timingSuccesses = 0;
-
         this.serverLoop = null;
         this.serverPower = 0;
         this.serverStableTime = 0;
@@ -55,36 +53,21 @@ class MajesticEscape {
 
     buildPuzzles() {
         const riddles = [
-            {q:"شيء كلما زاد، قلّت رؤيتك له. ما هو؟", a:"الظلام"},
-            {q:"ابن الماء، وإذا وضعته في الماء مات. فما هو؟", a:"الثلج"},
-            {q:"شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", a:"السر"},
-            {q:"شيء يرتفع ولا ينزل أبدًا؟", a:"العمر"},
-            {q:"يتحدث بلا فم ويسمع بلا أذنين؟", a:"الصدى"},
-            {q:"مليء بالثقوب ولكنه يحتفظ بالماء؟", a:"الاسفنج"},
-            {q:"دائمًا أمامك ولكن لا يمكنك رؤيته؟", a:"المستقبل"},
-            {q:"لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a:"الوعد"},
-            {q:"إذا نطقت باسمه كسرته؟", a:"الصمت"},
-            {q:"شيء يجب كسره قبل استخدامه؟", a:"البيضة"},
-            {q:"كلما جففت شيئًا، أصبحت أكثر بللًا؟", a:"المنشفة"},
-            {q:"فيها مدن بلا منازل، وغابات بلا أشجار؟", a:"الخريطة"},
-            {q:"لها عقارب ولكن لا تلدغ؟", a:"الساعة"},
-            {q:"يمشي بلا أرجل ويبكي بلا أعين؟", a:"السحاب"},
-            {q:"أخضر من الخارج، أحمر من الداخل؟", a:"البطيخ"},
-            {q:"له رأس ولا عين له؟", a:"المسمار"},
-            {q:"يبكي دمعًا أسود ليضيء العقول؟", a:"القلم"},
-            {q:"يكبر في الصباح ويختفي في الظهيرة؟", a:"الظل"},
-            {q:"دائمًا تشير للشمال ولكنها لا تتحرك؟", a:"البوصلة"},
-            {q:"تسمعها ولكن لا تراها ولا تلمسها؟", a:"الريح"},
-            {q:"تأكل كل شيء وتخاف من الماء؟", a:"النار"},
-            {q:"كلما أخذت منه كبر؟", a:"الحفرة"},
-            {q:"يقرصك ولا تراه؟", a:"الجوع"},
-            {q:"يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a:"الاسم"},
-            {q:"كلما أخذت منه أكثر، تركت أكثر وراءك؟", a:"الخطوة"},
-            {q:"يسقط ولا يتأذى أبدًا؟", a:"المطر"},
-            {q:"كلمة من 4 حروف، إذا أكلت نصفها تموت؟", a:"سمسم"},
-            {q:"مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", a:"العلا"},
-            {q:"تحترق وتبكي لتضيء للآخرين؟", a:"الشمعة"},
-            {q:"المعدن النقي الذي يرمز لنسخة SOLAR؟", a:"الذهب"}
+            {q:"شيء كلما زاد، قلّت رؤيتك له. ما هو؟", a:"الظلام"}, {q:"ابن الماء، وإذا وضعته في الماء مات. فما هو؟", a:"الثلج"},
+            {q:"شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", a:"السر"}, {q:"شيء يرتفع ولا ينزل أبدًا؟", a:"العمر"},
+            {q:"يتحدث بلا فم ويسمع بلا أذنين؟", a:"الصدى"}, {q:"مليء بالثقوب ولكنه يحتفظ بالماء؟", a:"الاسفنج"},
+            {q:"دائمًا أمامك ولكن لا يمكنك رؤيته؟", a:"المستقبل"}, {q:"لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a:"الوعد"},
+            {q:"إذا نطقت باسمه كسرته؟", a:"الصمت"}, {q:"شيء يجب كسره قبل استخدامه؟", a:"البيضة"},
+            {q:"كلما جففت شيئًا، أصبحت أكثر بللًا؟", a:"المنشفة"}, {q:"فيها مدن بلا منازل، وغابات بلا أشجار؟", a:"الخريطة"},
+            {q:"لها عقارب ولكن لا تلدغ؟", a:"الساعة"}, {q:"يمشي بلا أرجل ويبكي بلا أعين؟", a:"السحاب"},
+            {q:"أخضر من الخارج، أحمر من الداخل؟", a:"البطيخ"}, {q:"له رأس ولا عين له؟", a:"المسمار"},
+            {q:"يبكي دمعًا أسود ليضيء العقول؟", a:"القلم"}, {q:"يكبر في الصباح ويختفي في الظهيرة؟", a:"الظل"},
+            {q:"دائمًا تشير للشمال ولكنها لا تتحرك؟", a:"البوصلة"}, {q:"تسمعها ولكن لا تراها ولا تلمسها؟", a:"الريح"},
+            {q:"تأكل كل شيء وتخاف من الماء؟", a:"النار"}, {q:"كلما أخذت منه كبر؟", a:"الحفرة"},
+            {q:"يقرصك ولا تراه؟", a:"الجوع"}, {q:"يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a:"الاسم"},
+            {q:"كلما أخذت منه أكثر، تركت أكثر وراءك؟", a:"الخطوة"}, {q:"يسقط ولا يتأذى أبدًا؟", a:"المطر"},
+            {q:"كلمة من 4 حروف، إذا أكلت نصفها تموت؟", a:"سمسم"}, {q:"مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", a:"العلا"},
+            {q:"تحترق وتبكي لتضيء للآخرين؟", a:"الشمعة"}, {q:"المعدن النقي الذي يرمز لنسخة SOLAR؟", a:"الذهب"}
         ];
 
         const games = ["WIRE", "SLIDER", "MEMORY", "SAFE", "SWITCHES", "ARROWS", "TIMING", "NODES", "CIPHER", "SERVER"];
@@ -105,8 +88,7 @@ class MajesticEscape {
             
             if(type === "WIRE") {
                 let targetColors = Array.from({length: level}, ()=>colors[Math.floor(Math.random()*colors.length)]);
-                p.target = targetColors;
-                p.gameHint = targetColors.map(c => colorNames[c]).join(" ➔ ");
+                p.target = targetColors; p.gameHint = targetColors.map(c => colorNames[c]).join(" ➔ ");
             }
             if(type === "SLIDER") p.target = [25*Math.floor(Math.random()*5), 25*Math.floor(Math.random()*5), 25*Math.floor(Math.random()*5)];
             if(type === "MEMORY") p.target = level + 1; 
@@ -146,16 +128,37 @@ class MajesticEscape {
         }
     }
 
+    // --- النافذة الجديدة لاختيار الوقت ---
     handleGateClick(id) {
         if(this.solvedGates.has(id)) return this.notify("مخترق مسبقاً!", "error");
-        let m = prompt("الوقت بالدقائق:", "5"); if(!m) return;
         
-        this.activeGate = this.puzzles.find(x => x.id === id);
-        this.timeLeft = parseInt(m) * 60;
-        this.textFailCount = 0; // تصفير عداد الأخطاء للباب الجديد
-        
-        this.setupPuzzleUI(); this.startTimer(); this.switchScreen('puzzle');
+        // فتح نافذة الوقت الأنيقة بدال المتصفح
+        this.pendingGateId = id;
+        document.getElementById('gate-time-input').value = 5; // وقت افتراضي
+        document.getElementById('time-selector-modal').classList.remove('hidden');
     }
+
+    closeTimeModal() {
+        document.getElementById('time-selector-modal').classList.add('hidden');
+        this.pendingGateId = null;
+    }
+
+    startGateWithTime() {
+        let m = document.getElementById('gate-time-input').value;
+        if(!m || m <= 0) return this.notify("الرجاء إدخال وقت صحيح!", "error");
+
+        // إغلاق النافذة وبدء اللعبة
+        this.closeTimeModal();
+
+        this.activeGate = this.puzzles.find(x => x.id === this.pendingGateId);
+        this.timeLeft = parseInt(m) * 60;
+        this.textFailCount = 0; 
+        
+        this.setupPuzzleUI(); 
+        this.startTimer(); 
+        this.switchScreen('puzzle');
+    }
+    // ------------------------------------
 
     setupPuzzleUI() {
         const p = this.activeGate;
@@ -185,7 +188,6 @@ class MajesticEscape {
         if(p.interactiveType === "SERVER") this.setupServerGame();
     }
 
-    /* --- الألعاب التفاعلية الـ 10 --- */
     setupWireGame() {
         const c = document.getElementById('wire-container'); c.innerHTML = ''; this.wireSeq = [];
         document.getElementById('wire-hint').innerText = `التسلسل السري: ${this.activeGate.gameHint}`;
@@ -378,7 +380,6 @@ class MajesticEscape {
     }
     pumpServer() { this.serverPower = Math.min(100, this.serverPower + 15); }
 
-    /* --- وظائف مشتركة وانتقال للمرحلة الثانية --- */
     winMiniGame() {
         this.playSound('success'); this.notify("✅ تم تجاوز الجدار الناري!");
         document.getElementById('interactive-stage').classList.add('hidden');
@@ -390,52 +391,30 @@ class MajesticEscape {
         this.playSound('error'); this.triggerVisualGlitch(); this.notify(msg, "error"); this.timeLeft -= 15;
     }
 
-    /* --- دالة الطرد المرعبة GET OUT --- */
     triggerGetOut() {
-        clearInterval(this.timer);
-        cancelAnimationFrame(this.timingPulseId);
-        clearInterval(this.serverLoop);
-        
-        const screen = document.getElementById('get-out-screen');
-        screen.innerHTML = '';
-        
-        // توليد 80 كلمة GET OUT بأحجام مختلفة لإعطاء طابع الاختراق الفيروسي
+        clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop);
+        const screen = document.getElementById('get-out-screen'); screen.innerHTML = '';
         for(let i=0; i<80; i++) {
-            let span = document.createElement('span');
-            span.className = 'get-out-text';
-            span.innerText = 'GET OUT! , NEXT';
-            let size = Math.random() * 2 + 1.5; 
-            span.style.fontSize = size + 'rem';
-            screen.appendChild(span);
+            let span = document.createElement('span'); span.className = 'get-out-text'; span.innerText = 'GET OUT! , NEXT';
+            span.style.fontSize = (Math.random() * 2 + 1.5) + 'rem'; screen.appendChild(span);
         }
         screen.classList.remove('hidden');
-        
-        // تشغيل صوت الإيرور بشكل مزعج ومتكرر
-        this.playSound('error');
-        setTimeout(() => this.playSound('error'), 300);
-        setTimeout(() => this.playSound('error'), 600);
-
-        // إعادته للوبي بعد 4 ثواني
+        this.playSound('error'); setTimeout(() => this.playSound('error'), 300); setTimeout(() => this.playSound('error'), 600);
         setTimeout(() => {
-            screen.classList.add('hidden');
-            this.switchScreen('lobby');
+            screen.classList.add('hidden'); this.switchScreen('lobby');
             this.notify("تم طردك من النظام بسبب تكرار المحاولات الخاطئة!", "error");
         }, 4000);
     }
 
-    /* --- التحقق من اللغز الكتابي وعداد الطرد --- */
     checkResult() {
         if (document.getElementById('user-input').value.trim() === this.activeGate.answer) {
             clearInterval(this.timer); this.playSound('success'); this.coins+=15;
             this.solvedGates.add(this.activeGate.id); this.notify("✅ تم الاختراق الشامل!");
             this.updateStats(); this.renderLobby(); this.switchScreen('lobby');
         } else {
-            this.textFailCount++; // زيادة عداد الأخطاء
-            if (this.textFailCount >= 3) {
-                this.triggerGetOut(); // طرد اللاعب إذا أخطأ 3 مرات
-            } else {
-                this.failMiniGame(`إجابة اللغز خاطئة! تبقّى لك ${3 - this.textFailCount} محاولات قبل الطرد.`);
-            }
+            this.textFailCount++; 
+            if (this.textFailCount >= 3) { this.triggerGetOut(); } 
+            else { this.failMiniGame(`إجابة اللغز خاطئة! تبقّى لك ${3 - this.textFailCount} محاولات قبل الطرد.`); }
         }
     }
 
@@ -445,9 +424,10 @@ class MajesticEscape {
             if (!this.isPaused && this.timeLeft > 0) {
                 this.timeLeft--; this.updateTimerUI();
                 if (this.timeLeft <= 10 && this.timeLeft > 0) this.playSound('tick');
-            } else if (this.timeLeft <= 0) this.onFail();
+            } else if (this.timeLeft <= 0) { this.onFail(); }
         }, 1000);
     }
+    
     updateTimerUI() {
         let m = Math.floor(Math.max(0, this.timeLeft)/60).toString().padStart(2,'0');
         let s = (Math.max(0, this.timeLeft)%60).toString().padStart(2,'0');
@@ -456,10 +436,9 @@ class MajesticEscape {
 
     onFail() { 
         clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop); 
-        this.playSound('error'); alert("فشل الاختراق!"); this.switchScreen('lobby'); 
+        this.playSound('error'); alert("انتهى الوقت! فشل الاختراق!"); this.switchScreen('lobby'); 
     }
 
-    /* --- الإدارة --- */
     toggleAdmin() { document.getElementById('panel-admin').classList.toggle('hidden'); }
     adminUpdateCoins(v) { this.coins+=v; this.updateStats(); }
     adminUpdateTime(v) { this.timeLeft+=v; this.updateTimerUI(); }
@@ -473,7 +452,7 @@ class MajesticEscape {
         this.updateStats(); this.closeMarket();
     }
     returnToLobby(force = false) { 
-        if(force || confirm("انسحاب؟")) { 
+        if(force || confirm("هل أنت متأكد من الانسحاب؟ (ستفقد تقدمك في هذا القطاع)")) { 
             clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop); 
             this.switchScreen('lobby'); 
         } 
