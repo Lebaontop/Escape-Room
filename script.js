@@ -137,15 +137,13 @@ class MajesticEscape {
 
     startLobby() { this.switchScreen('lobby'); }
 
-    // --- الحل الجذري لمشكلة النقر على البوابات ---
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
         for(let i=1; i<=30; i++) {
-            let btn = document.createElement('button'); // زر حقيقي
+            let btn = document.createElement('button'); 
             btn.className = `gate-card ${this.solvedGates.has(i) ? 'solved':''}`;
             btn.innerHTML = `<small>SECTOR</small><h3>${i}</h3>`;
             
-            // ربط النقر بالـ Event Listener
             btn.addEventListener('click', () => { 
                 this.handleGateClick(i); 
             });
@@ -167,19 +165,25 @@ class MajesticEscape {
         this.pendingGateId = null;
     }
 
+    // --- تم حل المشكلة هنا ---
     startGateWithTime() {
         let m = document.getElementById('gate-time-input').value;
         if(!m || m <= 0) return this.notify("الرجاء إدخال وقت صحيح!", "error");
 
-        this.closeTimeModal();
+        // لازم نحفظ البوابة المطلوبة (قبل) ما نغلق النافذة ونمسح الـ ID
         this.activeGate = this.puzzles.find(x => x.id === this.pendingGateId);
+        
+        // الآن نقدر نغلق النافذة بأمان
+        this.closeTimeModal();
+        
         this.timeLeft = parseInt(m) * 60;
         this.textFailCount = 0; 
         
         this.setupPuzzleUI(); 
         this.startTimer(); 
-        this.switchScreen('puzzle');
+        this.switchScreen('puzzle'); // الحين بتشتغل وتنقلنا بنجاح!
     }
+    // -------------------------
 
     setupPuzzleUI() {
         const p = this.activeGate;
@@ -209,7 +213,7 @@ class MajesticEscape {
         if(p.interactiveType === "SERVER") this.setupServerGame();
     }
 
-    /* --- الألعاب التفاعلية الـ 10 --- */
+    /* --- الألعاب التفاعلية הـ 10 --- */
     setupWireGame() {
         const c = document.getElementById('wire-container'); c.innerHTML = ''; this.wireSeq = [];
         document.getElementById('wire-hint').innerText = `التسلسل السري: ${this.activeGate.gameHint}`;
