@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Room - SOLAR</title>
+    <title>Escape Room - SOLAR GOLDEN EDITION</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Almarai:wght@300;700;800&display=swap" rel="stylesheet">
 </head>
@@ -12,6 +12,10 @@
     <div class="main-bg"></div>
     <div class="vignette"></div>
 
+    <!-- تراكب التعتيم لمقالب المشرف -->
+    <div id="blackout-overlay" class="hidden"></div>
+
+    <!-- شاشة البداية -->
     <section id="screen-welcome" class="screen active">
         <div class="glass-hero">
             <h1 class="main-title">SOLAR ESCAPE</h1>
@@ -20,6 +24,7 @@
         </div>
     </section>
 
+    <!-- شريط المهام العلوي -->
     <header id="main-nav" class="hidden">
         <div class="nav-content glass-effect">
             <div class="stat-box">
@@ -31,11 +36,52 @@
                 <div id="timer-display" class="value timer-txt">00:00</div>
             </div>
             <div class="nav-actions">
-                <button type="button" class="action-btn" onclick="game.toggleAdmin()">⚙️ الإدارة</button>
-                <button type="button" class="action-btn market-btn" onclick="game.openMarket()">🛒 السوق</button>
+                <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ قمرة القيادة</button>
             </div>
         </div>
     </header>
+
+    <!-- لوحة التحكم الجانبية للمشرف (بدون مراقبة، أكشن فقط) -->
+    <div id="admin-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>قمرة قيادة المشرف ⚙️</h3>
+            <button type="button" class="close-sidebar-btn" onclick="game.toggleAdminSidebar(false)">×</button>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4>💥 إجراءات حاسمة</h4>
+            <button type="button" class="btn-admin-action btn-danger" onclick="game.adminInstantDetonate()">🚨 تفجير النظام فوري (طرد)</button>
+            <button type="button" class="btn-admin-action btn-warning" id="btn-freeze" onclick="game.adminToggleFreeze()">⏱️ تجميد الوقت: إيقاف</button>
+            <button type="button" class="btn-admin-action btn-success" onclick="game.adminSkipToText()">⚡ تخطي اللعبة التفاعلية</button>
+            <button type="button" class="btn-admin-action btn-prime-style" onclick="game.adminInstantSolveGate()">✅ اختراق القطاع فوراً</button>
+        </div>
+
+        <!-- مقالب المشرف الجديدة (Trolls) -->
+        <div class="sidebar-section">
+            <h4>😈 أزرار الرعب (Troll)</h4>
+            <button type="button" class="btn-admin-action" style="background:#4a0000; color:#ffcccc;" onclick="game.adminTrollGlitch()">🦠 تشويش مرعب (3 ثواني)</button>
+            <button type="button" class="btn-admin-action" style="background:#111; color:#fff;" onclick="game.adminTrollBlackout()">🕶️ إطفاء الشاشة (5 ثواني)</button>
+        </div>
+
+        <div class="sidebar-section">
+            <h4>تعديل المعايير</h4>
+            <div class="admin-input-group">
+                <label>تعديل العملات:</label>
+                <div class="row">
+                    <button type="button" onclick="game.adminModifyCoins(10)">+10</button>
+                    <button type="button" onclick="game.adminModifyCoins(-10)">-10</button>
+                    <button type="button" class="btn-clear" onclick="game.adminZeroCoins()">تصفير</button>
+                </div>
+            </div>
+            <div class="admin-input-group" style="margin-top:15px;">
+                <label>تعديل الوقت:</label>
+                <div class="row">
+                    <button type="button" onclick="game.adminModifyTime(60)">+دقيقة</button>
+                    <button type="button" onclick="game.adminModifyTime(-60)">-دقيقة</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <section id="screen-lobby" class="screen hidden">
         <div class="lobby-wrapper">
@@ -43,102 +89,52 @@
         </div>
     </section>
 
+    <!-- شاشة اللغز الداخلية -->
     <section id="screen-puzzle" class="screen hidden">
         <div class="puzzle-container">
             <div class="puzzle-card glass-effect" id="main-puzzle-card">
-                <h2 id="puzzle-title" class="gold-txt">البوابة #01</h2>
                 
-                <div class="puzzle-body">
-                    <!-- الألعاب التفاعلية (تم التأكد من كل العناصر) -->
-                    <div id="interactive-stage">
-                        
-                        <div id="game-wire" class="mini-game hidden">
-                            <p>⚠️ الجدار الناري: اقطع الأسلاك بالترتيب.</p>
-                            <p id="wire-hint" class="gold-txt mt-10"></p>
-                            <div class="wires-container" id="wire-container"></div>
-                        </div>
+                <!-- أزرار داخل البوابة (السوق والروليت) -->
+                <div class="puzzle-header-actions">
+                    <button type="button" class="action-btn market-btn" onclick="game.openMarket()">🛒 المتجر السري</button>
+                    <button type="button" class="btn-roulette" id="roulette-btn" onclick="game.russianRoulette()">🔴 مخاطرة النظام</button>
+                </div>
 
-                        <div id="game-slider" class="mini-game hidden">
-                            <p>🎛️ وازن طاقة النظام للمرور.</p>
-                            <p id="slider-hint" class="gold-txt mt-10"></p>
-                            <div class="slider-group">
-                                <label>الضغط</label><input type="range" id="sl1" min="0" max="100" step="25" value="0">
-                                <label>الحرارة</label><input type="range" id="sl2" min="0" max="100" step="25" value="0">
-                                <label>الطاقة</label><input type="range" id="sl3" min="0" max="100" step="25" value="0">
-                                <button type="button" class="btn-decode mt-10" onclick="game.checkSliders()">مزامنة</button>
-                            </div>
-                        </div>
-
-                        <div id="game-memory" class="mini-game hidden">
-                            <p>🃏 طابق الرموز الأمنية لفتح المسار.</p>
-                            <div class="memory-grid" id="memory-cards"></div>
-                        </div>
-
-                        <div id="game-safe" class="mini-game hidden">
-                            <p>🔢 اخترق الخزنة (أخضر=صحيح، أصفر=مكان خطأ، أحمر=غير موجود).</p>
-                            <div id="safe-history" class="safe-history"></div>
-                            <div class="safe-inputs" id="safe-inputs"></div>
-                            <button type="button" class="btn-decode mt-10" onclick="game.checkSafe()">فحص الشفرة</button>
-                        </div>
-
-                        <div id="game-switches" class="mini-game hidden">
-                            <p>🔌 اجعل جميع المحولات باللون الأخضر (ON).</p>
-                            <div class="switches-container" id="switches-grid"></div>
-                        </div>
-
-                        <div id="game-arrows" class="mini-game hidden">
-                            <p>🧭 أدخل مسار الاختراق.</p>
-                            <p id="arrow-hint" class="gold-txt mt-10"></p>
-                            <div class="d-pad">
-                                <button type="button" class="arrow-btn" onclick="game.addArrow('UP')">⬆️</button>
-                                <div>
-                                    <button type="button" class="arrow-btn" onclick="game.addArrow('LEFT')">⬅️</button>
-                                    <button type="button" class="arrow-btn" onclick="game.addArrow('RIGHT')">➡️</button>
-                                </div>
-                                <button type="button" class="arrow-btn" onclick="game.addArrow('DOWN')">⬇️</button>
-                            </div>
-                            <div id="arrow-display" class="mt-10" style="letter-spacing:5px;"></div>
-                            <button type="button" class="btn-decode mt-10" onclick="game.checkArrows()">تأكيد المسار</button>
-                            <button type="button" class="btn-cancel mt-10" onclick="game.setupArrowsGame()">مسح</button>
-                        </div>
-
-                        <div id="game-timing" class="mini-game hidden">
-                            <p>⏱️ التقط النبضة في المنطقة الخضراء.</p>
-                            <p id="timing-status" class="gold-txt mt-10">التقاطات ناجحة: 0</p>
-                            <div class="timing-bar mt-10">
-                                <div class="timing-zone" id="timing-zone"></div>
-                                <div class="timing-cursor" id="timing-cursor"></div>
-                            </div>
-                            <button type="button" class="btn-decode mt-10" onclick="game.catchPulse()">التقاط الآن</button>
-                        </div>
-
-                        <div id="game-nodes" class="mini-game hidden">
-                            <p>🔗 أدخل النمط السري.</p>
-                            <p id="nodes-hint" class="gold-txt mt-10"></p>
-                            <div class="nodes-grid" id="nodes-container"></div>
-                            <button type="button" class="btn-cancel mt-10" onclick="game.setupNodesGame()">مسح النمط</button>
-                        </div>
-
-                        <div id="game-cipher" class="mini-game hidden">
-                            <p>🔠 فك التشفير للإزاحة.</p>
-                            <p id="cipher-hint" class="gold-txt mt-10"></p>
-                            <h2 id="cipher-text" style="letter-spacing:10px; margin:20px 0;"></h2>
-                            <input type="text" id="cipher-input" class="action-input" placeholder="أدخل الكلمة الأصلية (إنجليزي)">
-                            <button type="button" class="btn-decode mt-10" onclick="game.checkCipher()">تحقق</button>
-                        </div>
-
-                        <div id="game-server" class="mini-game hidden">
-                            <p>⚡ حافظ على استقرار طاقة الخادم في المنطقة الخضراء (40% - 60%) لمدة 3 ثوانٍ.</p>
-                            <h3 id="server-timer" class="gold-txt mt-10">0.0 ثانية</h3>
-                            <div class="server-bar-container mt-10">
-                                <div class="server-safe-zone"></div>
-                                <div class="server-level" id="server-level"></div>
-                            </div>
-                            <button type="button" class="btn-decode mt-10" style="width:100%; font-size:1.5rem;" onclick="game.pumpServer()">ضخ طاقة ⚡</button>
-                        </div>
-
+                <h2 id="puzzle-title" class="gold-txt" style="margin-top: 15px;">البوابة #01</h2>
+                
+                <div class="puzzle-body" id="puzzle-body-container">
+                    
+                    <!-- تراكب البوابة المظلمة -->
+                    <div id="dark-gate-overlay" class="hidden">
+                        <div class="box-icon">🕶️</div>
+                        <h3 class="gold-txt">القطاع مُعتم بالكامل!</h3>
+                        <p>لا يمكنك رؤية التشفير. قم بشراء "نظارة الرؤية الليلية" من المتجر.</p>
                     </div>
 
+                    <!-- صندوق الحظ -->
+                    <div id="luck-box-zone" class="luck-zone hidden">
+                        <div class="luck-card">
+                            <div class="box-icon">📦</div>
+                            <h3 class="gold-txt">عثرت على صندوق SOLAR!</h3>
+                            <button type="button" class="btn-decode mt-10" onclick="game.openLuckBox()">فتح الصندوق 🗝️</button>
+                        </div>
+                    </div>
+
+                    <!-- الألعاب التفاعلية الـ 10 -->
+                    <div id="interactive-stage">
+                        <div id="game-wire" class="mini-game hidden"><p>⚠️ الجدار الناري: اقطع الأسلاك بالترتيب.</p><p id="wire-hint" class="gold-txt mt-10"></p><div class="wires-container" id="wire-container"></div></div>
+                        <div id="game-slider" class="mini-game hidden"><p>🎛️ وازن طاقة النظام.</p><div class="slider-group"><label>الضغط</label><input type="range" id="sl1" min="0" max="100" step="25" value="0"><label>الحرارة</label><input type="range" id="sl2" min="0" max="100" step="25" value="0"><label>الطاقة</label><input type="range" id="sl3" min="0" max="100" step="25" value="0"><button type="button" class="btn-decode mt-10" onclick="game.checkSliders()">مزامنة</button></div></div>
+                        <div id="game-memory" class="mini-game hidden"><p>🃏 طابق الرموز.</p><div class="memory-grid" id="memory-cards"></div></div>
+                        <div id="game-safe" class="mini-game hidden"><p>🔢 اخترق الخزنة.</p><div id="safe-history" class="safe-history"></div><div class="safe-inputs" id="safe-inputs"></div><button type="button" class="btn-decode mt-10" onclick="game.checkSafe()">فحص</button></div>
+                        <div id="game-switches" class="mini-game hidden"><p>🔌 اجعلها خضراء.</p><div class="switches-container" id="switches-grid"></div></div>
+                        <div id="game-arrows" class="mini-game hidden"><p>🧭 المسار السري.</p><p id="arrow-hint" class="gold-txt mt-10"></p><div class="d-pad"><button type="button" class="arrow-btn" onclick="game.addArrow('UP')">⬆️</button><div><button type="button" class="arrow-btn" onclick="game.addArrow('LEFT')">⬅️</button><button type="button" class="arrow-btn" onclick="game.addArrow('RIGHT')">➡️</button></div><button type="button" class="arrow-btn" onclick="game.addArrow('DOWN')">⬇️</button></div><div id="arrow-display" class="mt-10" style="letter-spacing:5px;"></div><button type="button" class="btn-decode mt-10" onclick="game.checkArrows()">تأكيد</button><button type="button" class="btn-cancel mt-10" onclick="game.setupArrowsGame()">مسح</button></div>
+                        <div id="game-timing" class="mini-game hidden"><p>⏱️ التقط النبضة.</p><p id="timing-status" class="gold-txt mt-10"></p><div class="timing-bar mt-10"><div class="timing-zone" id="timing-zone"></div><div class="timing-cursor" id="timing-cursor"></div></div><button type="button" class="btn-decode mt-10" onclick="game.catchPulse()">التقاط</button></div>
+                        <div id="game-nodes" class="mini-game hidden"><p>🔗 النمط السري.</p><p id="nodes-hint" class="gold-txt mt-10"></p><div class="nodes-grid" id="nodes-container"></div><button type="button" class="btn-cancel mt-10" onclick="game.setupNodesGame()">مسح</button></div>
+                        <div id="game-cipher" class="mini-game hidden"><p>🔠 فك التشفير للإزاحة.</p><p id="cipher-hint" class="gold-txt mt-10"></p><h2 id="cipher-text" style="letter-spacing:10px; margin:20px 0;"></h2><input type="text" id="cipher-input" class="action-input" placeholder="الكلمة الأصلية"><button type="button" class="btn-decode mt-10" onclick="game.checkCipher()">تحقق</button></div>
+                        <div id="game-server" class="mini-game hidden"><p>⚡ حافظ على استقرار الخادم 3 ثوانٍ.</p><h3 id="server-timer" class="gold-txt mt-10">0.0 ثانية</h3><div class="server-bar-container mt-10"><div class="server-safe-zone"></div><div class="server-level" id="server-level"></div></div><button type="button" class="btn-decode mt-10" style="width:100%;" onclick="game.pumpServer()">ضخ طاقة ⚡</button></div>
+                    </div>
+
+                    <!-- اللغز الكتابي -->
                     <div id="text-stage" class="hidden">
                         <p id="puzzle-desc"></p>
                     </div>
@@ -158,11 +154,9 @@
     <!-- شاشة الطرد -->
     <div id="get-out-screen" class="hidden"></div>
 
-    <!-- نافذة الوقت -->
     <div id="time-selector-modal" class="modal-overlay hidden">
         <div class="modal-box glass-effect admin-border">
             <h3 class="gold-txt" style="margin-bottom: 15px;">حدد وقت الاختراق ⏱️</h3>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #ccc;">أدخل الوقت بالدقائق للقطاع المحدد:</p>
             <input type="number" id="gate-time-input" class="action-input" value="5" min="1" max="60" style="margin-bottom: 20px; width: 80%;">
             <br>
             <button type="button" class="btn-decode" style="width: 80%; margin-bottom: 10px;" onclick="game.startGateWithTime()">بدء الاختراق 💥</button>
@@ -170,29 +164,45 @@
         </div>
     </div>
 
-    <!-- لوحة الإدارة -->
-    <div id="panel-admin" class="modal-overlay hidden">
-        <div class="modal-box glass-effect admin-border">
-            <h3>لوحة الإدارة</h3>
-            <div class="admin-grid">
-                <button type="button" onclick="game.adminUpdateCoins(10)">+10 عملات</button>
-                <button type="button" onclick="game.adminUpdateCoins(-10)">-10 عملات</button>
-                <button type="button" onclick="game.adminUpdateTime(30)">+30 ثانية</button>
-                <button type="button" onclick="game.adminUpdateTime(-30)">-30 ثانية</button>
-            </div>
-            <button type="button" class="close-btn" onclick="game.toggleAdmin()">إغلاق</button>
-        </div>
-    </div>
-
-    <!-- السوق السري -->
+    <!-- المتجر السري (السوق المطور + السوق السوداء) -->
     <div id="panel-market" class="modal-overlay hidden">
-        <div class="modal-box glass-effect market-border">
-            <h3>سوق المساعدات</h3>
+        <div class="modal-box glass-effect market-border" style="width: 500px;">
+            <h3 class="gold-txt" style="margin-bottom: 5px;">🛒 المتجر السري</h3>
+            <p id="inflation-warning" class="hidden" style="color:#ff3e3e; font-weight:bold; font-size:0.9rem; margin-bottom:15px;">⚠️ حالة طوارئ: الأسعار تضاعفت!</p>
+            
             <div class="market-list">
-                <div class="m-item">💡 تلميح (30 كوينز) <button type="button" onclick="game.buy('hint')">شراء</button></div>
-                <div class="m-item">⏳ وقت (60 كوينز) <button type="button" onclick="game.buy('time')">شراء</button></div>
+                <!-- الدفع بالعملات -->
+                <div class="m-item" id="item-nv" style="display:none; border-color:#00ff88;">
+                    <div class="m-info">🕶️ <b style="color:#00ff88;">نظارة رؤية ليلية</b><br><small>تزيل ظلام القطاع لتتمكن من القراءة</small></div>
+                    <button type="button" onclick="game.buy('night_vision')"><span id="price-nv">50</span> 🪙</button>
+                </div>
+                <div class="m-item">
+                    <div class="m-info">💡 <b>تلميح اللغز المباشر</b></div>
+                    <button type="button" onclick="game.buy('hint')"><span id="price-hint">30</span> 🪙</button>
+                </div>
+                <div class="m-item">
+                    <div class="m-info">🛡️ <b>بروتوكول الحماية (Anti-Fail)</b></div>
+                    <button type="button" id="btn-buy-shield" onclick="game.buy('shield')"><span id="price-shield">40</span> 🪙</button>
+                </div>
+                <div class="m-item">
+                    <div class="m-info">⚡ <b>نبضة EMP (تخطي تفاعلي)</b></div>
+                    <button type="button" onclick="game.buy('emp')"><span id="price-emp">50</span> 🪙</button>
+                </div>
+
+                <hr style="border-color:#333; margin: 10px 0;">
+                
+                <!-- السوق السوداء -->
+                <h4 style="color:#ff3e3e; text-align:center; margin-bottom:5px;">⏳ السوق السوداء (الدفع بالوقت)</h4>
+                <div class="m-item" style="border-color:#500;">
+                    <div class="m-info">💀 <b>تلميح أسود</b><br><small>تأخذ التلميح وتضحي بـ 3 دقائق</small></div>
+                    <button type="button" style="background:#800; color:#fff;" onclick="game.buyBlackMarket('hint')">-3 دق</button>
+                </div>
+                <div class="m-item" style="border-color:#500;">
+                    <div class="m-info">💀 <b>تخطي اللعبة (EMP أسود)</b><br><small>تتخطى التحدي وتضحي بـ 3 دقائق</small></div>
+                    <button type="button" style="background:#800; color:#fff;" onclick="game.buyBlackMarket('emp')">-3 دق</button>
+                </div>
             </div>
-            <button type="button" class="close-btn" onclick="game.closeMarket()">رجوع</button>
+            <button type="button" class="close-btn mt-10" style="width: 100%;" onclick="game.closeMarket()">إغلاق</button>
         </div>
     </div>
 
