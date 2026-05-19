@@ -10,7 +10,6 @@ class MajesticEscape {
 
         this.textFailCount = 0; 
         
-        // متغيرات الألعاب التفاعلية
         this.wireSeq = [];
         this.flippedCards = [];
         this.matchedPairs = 0;
@@ -140,7 +139,7 @@ class MajesticEscape {
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
         for(let i=1; i<=30; i++) {
-            let btn = document.createElement('button'); 
+            let btn = document.createElement('button'); // زر حقيقي
             btn.className = `gate-card ${this.solvedGates.has(i) ? 'solved':''}`;
             btn.innerHTML = `<small>SECTOR</small><h3>${i}</h3>`;
             
@@ -165,15 +164,12 @@ class MajesticEscape {
         this.pendingGateId = null;
     }
 
-    // --- تم حل المشكلة هنا ---
     startGateWithTime() {
         let m = document.getElementById('gate-time-input').value;
         if(!m || m <= 0) return this.notify("الرجاء إدخال وقت صحيح!", "error");
 
-        // لازم نحفظ البوابة المطلوبة (قبل) ما نغلق النافذة ونمسح الـ ID
         this.activeGate = this.puzzles.find(x => x.id === this.pendingGateId);
         
-        // الآن نقدر نغلق النافذة بأمان
         this.closeTimeModal();
         
         this.timeLeft = parseInt(m) * 60;
@@ -181,9 +177,8 @@ class MajesticEscape {
         
         this.setupPuzzleUI(); 
         this.startTimer(); 
-        this.switchScreen('puzzle'); // الحين بتشتغل وتنقلنا بنجاح!
+        this.switchScreen('puzzle');
     }
-    // -------------------------
 
     setupPuzzleUI() {
         const p = this.activeGate;
@@ -213,7 +208,6 @@ class MajesticEscape {
         if(p.interactiveType === "SERVER") this.setupServerGame();
     }
 
-    /* --- الألعاب التفاعلية הـ 10 --- */
     setupWireGame() {
         const c = document.getElementById('wire-container'); c.innerHTML = ''; this.wireSeq = [];
         document.getElementById('wire-hint').innerText = `التسلسل السري: ${this.activeGate.gameHint}`;
