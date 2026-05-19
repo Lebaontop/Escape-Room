@@ -6,21 +6,23 @@ class MajesticEscape {
         this.timeLeft = 0;
         this.isPaused = false;
         this.solvedGates = new Set();
-        
-        // متغير لحفظ البوابة المطلوبة قبل تحديد الوقت
         this.pendingGateId = null; 
 
-        this.textFailCount = 0;
+        this.textFailCount = 0; 
+        
+        // متغيرات الألعاب التفاعلية
         this.wireSeq = [];
         this.flippedCards = [];
         this.matchedPairs = 0;
         this.userArrows = [];
         this.switchStates = [];
         this.userNodes = [];
+        
         this.timingPulseId = null;
         this.timingPos = 0;
         this.timingDir = 1;
         this.timingSuccesses = 0;
+
         this.serverLoop = null;
         this.serverPower = 0;
         this.serverStableTime = 0;
@@ -38,11 +40,14 @@ class MajesticEscape {
     }
 
     init() { this.renderLobby(); this.updateStats(); }
+
     playSound(t) { if(this.sounds[t]) { this.sounds[t].currentTime=0; this.sounds[t].play().catch(e=>{}); } }
+
     triggerVisualGlitch() {
         const c = document.getElementById('main-puzzle-card');
         c.classList.add('error-glitch'); setTimeout(()=>c.classList.remove('error-glitch'), 300);
     }
+
     setupClickSounds() {
         document.addEventListener('click', (e) => {
             if(e.target.tagName==='BUTTON' || e.target.classList.contains('wire') || e.target.classList.contains('gate-card') || e.target.classList.contains('mem-card') || e.target.classList.contains('switch-btn') || e.target.classList.contains('node-btn')){
@@ -53,21 +58,36 @@ class MajesticEscape {
 
     buildPuzzles() {
         const riddles = [
-            {q:"شيء كلما زاد، قلّت رؤيتك له. ما هو؟", a:"الظلام"}, {q:"ابن الماء، وإذا وضعته في الماء مات. فما هو؟", a:"الثلج"},
-            {q:"شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", a:"السر"}, {q:"شيء يرتفع ولا ينزل أبدًا؟", a:"العمر"},
-            {q:"يتحدث بلا فم ويسمع بلا أذنين؟", a:"الصدى"}, {q:"مليء بالثقوب ولكنه يحتفظ بالماء؟", a:"الاسفنج"},
-            {q:"دائمًا أمامك ولكن لا يمكنك رؤيته؟", a:"المستقبل"}, {q:"لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a:"الوعد"},
-            {q:"إذا نطقت باسمه كسرته؟", a:"الصمت"}, {q:"شيء يجب كسره قبل استخدامه؟", a:"البيضة"},
-            {q:"كلما جففت شيئًا، أصبحت أكثر بللًا؟", a:"المنشفة"}, {q:"فيها مدن بلا منازل، وغابات بلا أشجار؟", a:"الخريطة"},
-            {q:"لها عقارب ولكن لا تلدغ؟", a:"الساعة"}, {q:"يمشي بلا أرجل ويبكي بلا أعين؟", a:"السحاب"},
-            {q:"أخضر من الخارج، أحمر من الداخل؟", a:"البطيخ"}, {q:"له رأس ولا عين له؟", a:"المسمار"},
-            {q:"يبكي دمعًا أسود ليضيء العقول؟", a:"القلم"}, {q:"يكبر في الصباح ويختفي في الظهيرة؟", a:"الظل"},
-            {q:"دائمًا تشير للشمال ولكنها لا تتحرك؟", a:"البوصلة"}, {q:"تسمعها ولكن لا تراها ولا تلمسها؟", a:"الريح"},
-            {q:"تأكل كل شيء وتخاف من الماء؟", a:"النار"}, {q:"كلما أخذت منه كبر؟", a:"الحفرة"},
-            {q:"يقرصك ولا تراه؟", a:"الجوع"}, {q:"يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a:"الاسم"},
-            {q:"كلما أخذت منه أكثر، تركت أكثر وراءك؟", a:"الخطوة"}, {q:"يسقط ولا يتأذى أبدًا؟", a:"المطر"},
-            {q:"كلمة من 4 حروف، إذا أكلت نصفها تموت؟", a:"سمسم"}, {q:"مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", a:"العلا"},
-            {q:"تحترق وتبكي لتضيء للآخرين؟", a:"الشمعة"}, {q:"المعدن النقي الذي يرمز لنسخة SOLAR؟", a:"الذهب"}
+            {q:"شيء كلما زاد، قلّت رؤيتك له. ما هو؟", a:"الظلام"},
+            {q:"ابن الماء، وإذا وضعته في الماء مات. فما هو؟", a:"الثلج"},
+            {q:"شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", a:"السر"},
+            {q:"شيء يرتفع ولا ينزل أبدًا؟", a:"العمر"},
+            {q:"يتحدث بلا فم ويسمع بلا أذنين؟", a:"الصدى"},
+            {q:"مليء بالثقوب ولكنه يحتفظ بالماء؟", a:"الاسفنج"},
+            {q:"دائمًا أمامك ولكن لا يمكنك رؤيته؟", a:"المستقبل"},
+            {q:"لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a:"الوعد"},
+            {q:"إذا نطقت باسمه كسرته؟", a:"الصمت"},
+            {q:"شيء يجب كسره قبل استخدامه؟", a:"البيضة"},
+            {q:"كلما جففت شيئًا، أصبحت أكثر بللًا؟", a:"المنشفة"},
+            {q:"فيها مدن بلا منازل، وغابات بلا أشجار؟", a:"الخريطة"},
+            {q:"لها عقارب ولكن لا تلدغ؟", a:"الساعة"},
+            {q:"يمشي بلا أرجل ويبكي بلا أعين؟", a:"السحاب"},
+            {q:"أخضر من الخارج، أحمر من الداخل؟", a:"البطيخ"},
+            {q:"له رأس ولا عين له؟", a:"المسمار"},
+            {q:"يبكي دمعًا أسود ليضيء العقول؟", a:"القلم"},
+            {q:"يكبر في الصباح ويختفي في الظهيرة؟", a:"الظل"},
+            {q:"دائمًا تشير للشمال ولكنها لا تتحرك؟", a:"البوصلة"},
+            {q:"تسمعها ولكن لا تراها ولا تلمسها؟", a:"الريح"},
+            {q:"تأكل كل شيء وتخاف من الماء؟", a:"النار"},
+            {q:"كلما أخذت منه كبر؟", a:"الحفرة"},
+            {q:"يقرصك ولا تراه؟", a:"الجوع"},
+            {q:"يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a:"الاسم"},
+            {q:"كلما أخذت منه أكثر، تركت أكثر وراءك؟", a:"الخطوة"},
+            {q:"يسقط ولا يتأذى أبدًا؟", a:"المطر"},
+            {q:"كلمة من 4 حروف، إذا أكلت نصفها تموت؟", a:"سمسم"},
+            {q:"مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", a:"العلا"},
+            {q:"تحترق وتبكي لتضيء للآخرين؟", a:"الشمعة"},
+            {q:"المعدن النقي الذي يرمز لنسخة SOLAR؟", a:"الذهب"}
         ];
 
         const games = ["WIRE", "SLIDER", "MEMORY", "SAFE", "SWITCHES", "ARROWS", "TIMING", "NODES", "CIPHER", "SERVER"];
@@ -117,24 +137,28 @@ class MajesticEscape {
 
     startLobby() { this.switchScreen('lobby'); }
 
+    // --- الحل الجذري لمشكلة النقر على البوابات ---
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
         for(let i=1; i<=30; i++) {
-            let div = document.createElement('div');
-            div.className = `gate-card ${this.solvedGates.has(i) ? 'solved':''}`;
-            div.innerHTML = `<small>SECTOR</small><h3>${i}</h3>`;
-            div.onclick = () => this.handleGateClick(i);
-            c.appendChild(div);
+            let btn = document.createElement('button'); // زر حقيقي
+            btn.className = `gate-card ${this.solvedGates.has(i) ? 'solved':''}`;
+            btn.innerHTML = `<small>SECTOR</small><h3>${i}</h3>`;
+            
+            // ربط النقر بالـ Event Listener
+            btn.addEventListener('click', () => { 
+                this.handleGateClick(i); 
+            });
+            
+            c.appendChild(btn);
         }
     }
 
-    // --- النافذة الجديدة لاختيار الوقت ---
     handleGateClick(id) {
         if(this.solvedGates.has(id)) return this.notify("مخترق مسبقاً!", "error");
         
-        // فتح نافذة الوقت الأنيقة بدال المتصفح
         this.pendingGateId = id;
-        document.getElementById('gate-time-input').value = 5; // وقت افتراضي
+        document.getElementById('gate-time-input').value = 5; 
         document.getElementById('time-selector-modal').classList.remove('hidden');
     }
 
@@ -147,9 +171,7 @@ class MajesticEscape {
         let m = document.getElementById('gate-time-input').value;
         if(!m || m <= 0) return this.notify("الرجاء إدخال وقت صحيح!", "error");
 
-        // إغلاق النافذة وبدء اللعبة
         this.closeTimeModal();
-
         this.activeGate = this.puzzles.find(x => x.id === this.pendingGateId);
         this.timeLeft = parseInt(m) * 60;
         this.textFailCount = 0; 
@@ -158,7 +180,6 @@ class MajesticEscape {
         this.startTimer(); 
         this.switchScreen('puzzle');
     }
-    // ------------------------------------
 
     setupPuzzleUI() {
         const p = this.activeGate;
@@ -188,6 +209,7 @@ class MajesticEscape {
         if(p.interactiveType === "SERVER") this.setupServerGame();
     }
 
+    /* --- الألعاب التفاعلية الـ 10 --- */
     setupWireGame() {
         const c = document.getElementById('wire-container'); c.innerHTML = ''; this.wireSeq = [];
         document.getElementById('wire-hint').innerText = `التسلسل السري: ${this.activeGate.gameHint}`;
@@ -392,16 +414,30 @@ class MajesticEscape {
     }
 
     triggerGetOut() {
-        clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop);
-        const screen = document.getElementById('get-out-screen'); screen.innerHTML = '';
+        clearInterval(this.timer);
+        cancelAnimationFrame(this.timingPulseId);
+        clearInterval(this.serverLoop);
+        
+        const screen = document.getElementById('get-out-screen');
+        screen.innerHTML = '';
+        
         for(let i=0; i<80; i++) {
-            let span = document.createElement('span'); span.className = 'get-out-text'; span.innerText = 'GET OUT! , NEXT';
-            span.style.fontSize = (Math.random() * 2 + 1.5) + 'rem'; screen.appendChild(span);
+            let span = document.createElement('span');
+            span.className = 'get-out-text';
+            span.innerText = 'GET OUT! , NEXT';
+            let size = Math.random() * 2 + 1.5; 
+            span.style.fontSize = size + 'rem';
+            screen.appendChild(span);
         }
         screen.classList.remove('hidden');
-        this.playSound('error'); setTimeout(() => this.playSound('error'), 300); setTimeout(() => this.playSound('error'), 600);
+        
+        this.playSound('error');
+        setTimeout(() => this.playSound('error'), 300);
+        setTimeout(() => this.playSound('error'), 600);
+
         setTimeout(() => {
-            screen.classList.add('hidden'); this.switchScreen('lobby');
+            screen.classList.add('hidden');
+            this.switchScreen('lobby');
             this.notify("تم طردك من النظام بسبب تكرار المحاولات الخاطئة!", "error");
         }, 4000);
     }
@@ -413,8 +449,11 @@ class MajesticEscape {
             this.updateStats(); this.renderLobby(); this.switchScreen('lobby');
         } else {
             this.textFailCount++; 
-            if (this.textFailCount >= 3) { this.triggerGetOut(); } 
-            else { this.failMiniGame(`إجابة اللغز خاطئة! تبقّى لك ${3 - this.textFailCount} محاولات قبل الطرد.`); }
+            if (this.textFailCount >= 3) {
+                this.triggerGetOut(); 
+            } else {
+                this.failMiniGame(`إجابة اللغز خاطئة! تبقّى لك ${3 - this.textFailCount} محاولات قبل الطرد.`);
+            }
         }
     }
 
@@ -424,7 +463,9 @@ class MajesticEscape {
             if (!this.isPaused && this.timeLeft > 0) {
                 this.timeLeft--; this.updateTimerUI();
                 if (this.timeLeft <= 10 && this.timeLeft > 0) this.playSound('tick');
-            } else if (this.timeLeft <= 0) { this.onFail(); }
+            } else if (this.timeLeft <= 0) {
+                this.onFail();
+            }
         }, 1000);
     }
     
@@ -452,7 +493,7 @@ class MajesticEscape {
         this.updateStats(); this.closeMarket();
     }
     returnToLobby(force = false) { 
-        if(force || confirm("هل أنت متأكد من الانسحاب؟ (ستفقد تقدمك في هذا القطاع)")) { 
+        if(force || confirm("هل أنت متأكد من الانسحاب؟ (ستفقد تقدمك)")) { 
             clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop); 
             this.switchScreen('lobby'); 
         } 
