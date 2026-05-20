@@ -15,10 +15,10 @@ body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height
 
 .news-ticker-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background: #111214; border-top: 2px solid var(--solar-orange); display: flex; align-items: center; z-index: 50; overflow: hidden;}
 .ticker-label { background: var(--solar-orange); color: #fff; font-family: 'Rajdhani', sans-serif; font-weight: 700; padding: 0 20px; height: 100%; display: flex; align-items: center; z-index: 2; position: relative; letter-spacing: 1px; }
-.ticker-text { flex-grow: 1; white-space: nowrap; overflow: hidden; position: relative;}
-.ticker-track { display: inline-block; white-space: nowrap; animation: ticker 25s linear infinite; padding-left: 100%; }
-.ticker-track span { padding-right: 50px; color: #949ba4; font-size: 1rem; font-family: 'Rajdhani', sans-serif; }
-@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.ticker-text { flex-grow: 1; white-space: nowrap; overflow: hidden; position: relative; }
+.ticker-track { display: inline-block; white-space: nowrap; animation: ticker 25s linear infinite; }
+.ticker-track span { padding-right: 50px; color: #949ba4; font-size: 1.1rem; }
+@keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
 #screen-welcome { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
 .stream-hero { padding: 60px; border-radius: 12px; text-align: center; background: rgba(43, 45, 49, 0.85); border: 1px solid #3f4147; backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.8); position: relative; }
@@ -68,21 +68,18 @@ body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height
 .puzzle-header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #3f4147; }
 .track-title { font-size: 1.1rem; color: #fff; margin-bottom: 15px; background: var(--discord-dark); padding: 10px 15px; border-radius: 4px; font-weight: bold; border-right: 4px solid var(--solar-orange); }
 
-/* تنسيقات الألعاب التفاعلية المنوعة */
+/* محركات الألعاب التفاعلية */
 #interactive-stage { margin: 20px 0; display: flex; justify-content: center; align-items: center; min-height: 200px; }
 
-/* 1. الأسلاك (8 أسلاك) */
 .wires-engine { display: flex; flex-direction: column; gap: 12px; width: 80%; }
 .wire-item { height: 25px; width: 100%; border-radius: 4px; cursor: pointer; border: 2px solid #111; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: 0.2s; position: relative;}
 .wire-item::after { content: '⚡'; position: absolute; left: 10px; top: 2px; font-size: 0.8rem; color: rgba(255,255,255,0.5);}
 .wire-item.cut { opacity: 0.15; transform: scaleX(0.9); pointer-events: none; }
 
-/* 2. الصمامات/البكرات (4 بكرات دوارة) */
-.valves-engine { display: flex; gap: 30px; justify-content: center; }
-.valve-item { width: 80px; height: 80px; border-radius: 50%; background: #313338; border: 6px solid #1f2023; cursor: pointer; transition: transform 0.3s; position: relative; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--solar-orange); box-shadow: 0 5px 10px rgba(0,0,0,0.4);}
+.valves-engine { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+.valve-item { width: 75px; height: 75px; border-radius: 50%; background: #313338; border: 6px solid #1f2023; cursor: pointer; transition: transform 0.3s; position: relative; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--solar-orange); box-shadow: 0 5px 10px rgba(0,0,0,0.4);}
 .valve-item::before { content: ''; position: absolute; top: -10px; width: 12px; height: 25px; background: var(--solar-yellow); border-radius: 4px;}
 
-/* 3. المؤشرات/Sliders (3 أو 4 أشرطة) */
 .sliders-engine { display: flex; flex-direction: column; gap: 20px; width: 80%; }
 .slider-row { display: flex; align-items: center; gap: 15px; }
 .slider-row span { font-family: monospace; font-size: 1.2rem; color: var(--solar-orange); width: 40px;}
@@ -90,30 +87,27 @@ body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height
 .slider-input::-webkit-slider-thumb { appearance: none; width: 25px; height: 25px; background: var(--discord-blurple); cursor: pointer; border-radius: 50%; }
 .btn-submit-sliders { margin-top: 15px; background: var(--discord-green); color: #000; padding: 10px 20px; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
 
-/* 4. الذاكرة/البطاقات (16 بطاقة) */
-.memory-engine { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; }
-.mem-card { height: 70px; background: #313338; border: 2px solid #1f2023; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: transparent; transition: 0.2s; }
+.memory-engine { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; justify-content: center;}
+.mem-card { width: 70px; height: 70px; background: #313338; border: 2px solid #1f2023; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: transparent; transition: 0.2s; }
 .mem-card.flipped { background: var(--discord-blurple); color: #fff; transform: scale(1.05); }
 .mem-card.matched { background: var(--discord-green); color: #000; pointer-events: none; opacity: 0.8; }
 
-/* 5. رموز الكيبورد (9 أزرار) */
-.keypad-engine { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 60%; }
-.keypad-btn { height: 70px; background: #1e1f22; border: 2px solid #3f4147; border-radius: 8px; color: var(--solar-yellow); font-size: 2rem; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 #111; }
+.keypad-engine { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;}
+.keypad-btn { width: 80px; height: 80px; background: #1e1f22; border: 2px solid #3f4147; border-radius: 8px; color: var(--solar-yellow); font-size: 2rem; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 #111; display: flex; justify-content: center; align-items: center;}
 .keypad-btn:active { transform: translateY(4px); box-shadow: none; }
 .keypad-btn.pressed { background: var(--solar-orange); color: #fff; border-color: #fff; }
 
-/* 6. المحولات / القواطع (10 أو 12 محول) */
-.switches-engine { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 90%; }
-.switch-box { background: #313338; padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; border: 2px solid #1f2023; }
+.switches-engine { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;}
+.switch-box { background: #313338; padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; border: 2px solid #1f2023; width: 80px;}
 .switch-box.on { background: var(--discord-green); border-color: #3ba55c; }
 .switch-box .indicator { width: 20px; height: 20px; background: #ED4245; border-radius: 50%; margin: 0 auto 10px; }
 .switch-box.on .indicator { background: #fff; box-shadow: 0 0 10px #fff; }
 
-/* المرحلة الثانية (الكتابي) */
+/* المرحلة الثانية (الكتابية) */
 .bot-message { background: var(--discord-dark); border-radius: 6px; padding: 15px; margin-top: 20px; border: 1px solid #1f2023; text-align: right;}
 .bot-header { font-family: 'Rajdhani', sans-serif; font-weight: bold; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; justify-content: flex-start; flex-direction: row-reverse;}
 .bot-tag { background: var(--discord-red); color: #fff; font-size: 0.65rem; padding: 2px 4px; border-radius: 3px; }
-#puzzle-desc { font-size: 1.1rem; line-height: 1.6; color: #dbdee1; font-weight: bold;}
+#puzzle-desc { font-size: 1.2rem; line-height: 1.6; color: #dbdee1; font-weight: bold;}
 
 .puzzle-controls { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
 .puzzle-controls input { background: #1e1f22; border: 1px solid #3f4147; color: #fff; padding: 12px 15px; border-radius: 4px; width: 75%; outline: none; font-size: 1.1rem; transition: 0.2s; }
