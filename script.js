@@ -7,22 +7,20 @@ class MajesticEscape {
         this.isPaused = false;
         this.isTimerFrozen = false; 
         this.hasShield = false;      
-        this.hasNightVision = false; // نظارة البوابات المظلمة
         this.solvedGates = new Set();
         this.pendingGateId = null; 
-        this.textFailCount = 0; 
-        this.rouletteUsed = false; // عشان يستخدمون الروليت مرة وحدة للباب
         
-        this.wireSeq = []; this.flippedCards = []; this.matchedPairs = 0;
-        this.userArrows = []; this.switchStates = []; this.userNodes = [];
-        this.timingPulseId = null; this.timingPos = 0; this.timingDir = 1; this.timingSuccesses = 0;
-        this.serverLoop = null; this.serverPower = 0; this.serverStableTime = 0;
+        // متغيرات الألعاب الأساسية
+        this.wireSeq = []; this.switchStates = []; this.userNodes = [];
+        this.safeInputs = []; this.safeTarget = [];
+        
+        // متغيرات محرك Grid-12
+        this.gridState = { selections: [], step: 0, sequence: [], pairs: [] };
 
         this.sounds = {
             beep: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'),
             error: new Audio('https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3'),
-            success: new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'),
-            tick: new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3')
+            success: new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3')
         };
 
         this.puzzles = this.buildPuzzles();
@@ -31,22 +29,11 @@ class MajesticEscape {
     }
 
     init() { this.renderLobby(); this.updateStats(); }
-
     playSound(t) { if(this.sounds[t]) { this.sounds[t].currentTime=0; this.sounds[t].play().catch(e=>{}); } }
+    triggerVisualGlitch() { const c = document.getElementById('main-puzzle-card'); if(c) { c.classList.add('error-glitch'); setTimeout(()=>c.classList.remove('error-glitch'), 400); } }
+    setupClickSounds() { document.addEventListener('click', (e) => { if(e.target.tagName==='BUTTON' || e.target.classList.contains('wire') || e.target.classList.contains('grid12-btn')){ this.playSound('beep'); } }); }
 
-    triggerVisualGlitch() {
-        const c = document.getElementById('main-puzzle-card');
-        if(c) { c.classList.add('error-glitch'); setTimeout(()=>c.classList.remove('error-glitch'), 400); }
-    }
-
-    setupClickSounds() {
-        document.addEventListener('click', (e) => {
-            if(e.target.tagName==='BUTTON' || e.target.classList.contains('wire') || e.target.classList.contains('gate-card') || e.target.classList.contains('mem-card') || e.target.classList.contains('switch-btn') || e.target.classList.contains('node-btn')){
-                this.playSound('beep');
-            }
-        });
-    }
-
+    // بناء 30 لغز و30 لعبة تفاعلية بـ 12 خيار
     buildPuzzles() {
         const riddles = [
             {q:"شيء كلما زاد، قلّت رؤيتك له. ما هو؟", a:"الظلام"}, {q:"ابن الماء، وإذا وضعته في الماء مات. فما هو؟", a:"الثلج"},
@@ -54,7 +41,7 @@ class MajesticEscape {
             {q:"يتحدث بلا فم ويسمع بلا أذنين؟", a:"الصدى"}, {q:"مليء بالثقوب ولكنه يحتفظ بالماء؟", a:"الاسفنج"},
             {q:"دائمًا أمامك ولكن لا يمكنك رؤيته؟", a:"المستقبل"}, {q:"لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a:"الوعد"},
             {q:"إذا نطقت باسمه كسرته؟", a:"الصمت"}, {q:"شيء يجب كسره قبل استخدامه؟", a:"البيضة"},
-            {q:"كلما جففت شيئًا، أصبحت أكثر بللًا؟", a:"المنشفة"}, {q:"فيها مدن بلا منازل، وغابات بلا أشجار? ", a:"الخريطة"},
+            {q:"كلما جففت شيئًا، أصبحت أكثر بللًا؟", a:"المنشفة"}, {q:"فيها مدن بلا منازل، وغابات بلا أشجار؟", a:"الخريطة"},
             {q:"لها عقارب ولكن لا تلدغ؟", a:"الساعة"}, {q:"يمشي بلا أرجل ويبكي بلا أعين؟", a:"السحاب"},
             {q:"أخضر من الخارج، أحمر من الداخل؟", a:"البطيخ"}, {q:"له رأس ولا عين له؟", a:"المسمار"},
             {q:"يبكي دمعًا أسود ليضيء العقول؟", a:"القلم"}, {q:"يكبر في الصباح ويختفي في الظهيرة؟", a:"الظل"},
@@ -66,30 +53,47 @@ class MajesticEscape {
             {q:"تحترق وتبكي لتضيء للآخرين؟", a:"الشمعة"}, {q:"المعدن النقي الذي يرمز لنسخة SOLAR؟", a:"الذهب"}
         ];
 
-        const games = ["WIRE", "SLIDER", "MEMORY", "SAFE", "SWITCHES", "ARROWS", "TIMING", "NODES", "CIPHER", "SERVER"];
-        const colors = ["red", "blue", "yellow", "green", "purple"];
-        const colorNames = {"red":"أحمر", "blue":"أزرق", "yellow":"أصفر", "green":"أخضر", "purple":"بنفسجي"};
-        const dirs = ["UP", "DOWN", "LEFT", "RIGHT"];
-        const dirNames = {"UP":"فوق", "DOWN":"تحت", "LEFT":"يسار", "RIGHT":"يمين"};
+        // 30 لعبة بمتطلبات 12 خيار ومتوسطة الصعوبة
+        const games = [
+            { type: 'WIRE', hint: "الأحمر ثم الأزرق ثم الأصفر ثم الأخضر" }, // 1
+            { type: 'SAFE', hint: "الشفرة: 1984" }, // 2
+            { type: 'SWITCHES', hint: "فعلها جميعاً للون الأخضر بالتناوب" }, // 3
+            { type: 'NODES', hint: "وصل الزوايا الأربع بالترتيب (1, 4, 9, 12)" }, // 4
+            { type: 'GRID12', mode: 'QUIZ', desc: "رسائل شات: استخرج الكلمة الصحيحة", opts: ["LOL", "AFK", "BRB", "SOLAR", "GG", "WP", "NOOB", "PRO", "HACK", "PING", "LAG", "BAN"], ans: ["SOLAR"], hint: "كلمة ترتبط باسم اللعبة" }, // 5
+            { type: 'GRID12', mode: 'QUIZ', desc: "الرابط العجيب: سيارة 911، شمس، كنز", opts: ["سرعة", "حرارة", "مال", "أصفر", "ذهبي", "أحمر", "نار", "SOLAR", "قوة", "محرك", "نور", "فضاء"], ans: ["SOLAR"], hint: "النسخة الحالية" }, // 6
+            { type: 'GRID12', mode: 'MULTI', target: 3, desc: "أوجد الاختلاف: حدد الـ 3 مربعات المصابة", opts: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"], ans: ["3", "7", "11"], hint: "عمود كامل فيه خلل" }, // 7
+            { type: 'GRID12', mode: 'SEQ', desc: "سلسلة القصة: رتب الـ 4 أحداث (ولادة، طفولة، شباب، شيب)", opts: ["عصا", "زواج", "مدرسة", "مهد", "جامعة", "سيارة", "عمل", "مستشفى", "تقاعد", "طفولة", "شباب", "شيب"], ans: ["مهد", "طفولة", "شباب", "شيب"], hint: "من البداية للنهاية" }, // 8
+            { type: 'GRID12', mode: 'QUIZ', desc: "تردد الراديو: اختر التردد الصحيح لإشارة الاستغاثة", opts: ["88.1", "90.5", "92.3", "95.5", "98.0", "100.1", "101.5", "103.3", "105.7", "107.9", "110.0", "112.5"], ans: ["101.5"], hint: "يبدأ بـ 101" }, // 9
+            { type: 'GRID12', mode: 'PAIRS', desc: "الذاكرة البصرية: طابق الـ 6 أزواج", opts: ["💻","💻","📡","📡","🔋","🔋","🔑","🔑","⚙️","⚙️","🛡️","🛡️"], hint: "احفظ الأماكن بدقة" }, // 10
+            { type: 'GRID12', mode: 'MULTI', target: 3, desc: "ميزان الكتلة: اختر 3 أوزان مجموعها 500g", opts: ["50", "100", "150", "200", "250", "300", "350", "400", "450", "500", "550", "600"], ans: ["100", "150", "250"], hint: "100 + 150 + ..." }, // 11
+            { type: 'GRID12', mode: 'QUIZ', desc: "تناقض الألوان (Stroop): الكلمة 'أحمر' مكتوبة بلون أزرق، ماذا تختار؟", opts: ["أحمر", "أخضر", "أصفر", "أزرق", "أسود", "أبيض", "برتقالي", "بنفسجي", "وردي", "بني", "رمادي", "سماوي"], ans: ["أزرق"], hint: "اختر لون الخط لا الكلمة" }, // 12
+            { type: 'GRID12', mode: 'QUIZ', desc: "متوالية رقمية: 2، 4، 8، ... ، 32", opts: ["10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30", "34"], ans: ["16"], hint: "الضرب في 2" }, // 13
+            { type: 'GRID12', mode: 'MULTI', target: 4, desc: "البحث عن كلمة: حدد حروف كلمة GOLD", opts: ["G", "A", "B", "O", "X", "L", "Y", "Z", "D", "M", "N", "P"], ans: ["G", "O", "L", "D"], hint: "أربعة حروف" }, // 14
+            { type: 'GRID12', mode: 'QUIZ', desc: "فك الشفرة الثنائية: 1010 يساوي كم؟", opts: ["2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "24"], ans: ["10"], hint: "نظام العد الثنائي (8+2)" }, // 15
+            { type: 'GRID12', mode: 'PAIRS', desc: "الأيقونات المتضادة: طابق كل شيء بعكسه (نار/ثلج، شمس/قمر...)", opts: ["🔥","❄️","☀️","🌙","⬆️","⬇️","😊","😢","🔓","🔒","🟢","🔴"], hint: "النار مع الثلج" }, // 16
+            { type: 'WIRE', hint: "الأزرق ثم الأصفر ثم البنفسجي ثم الأسود" }, // 17
+            { type: 'SAFE', hint: "الشفرة: 2026" }, // 18
+            { type: 'SWITCHES', hint: "الزوايا أولاً" }, // 19
+            { type: 'NODES', hint: "نمط حرف Z (1,2,3,4, 7,6, 9,10,11,12)" }, // 20
+            { type: 'GRID12', mode: 'QUIZ', desc: "من أكون؟ ذكي، صامت، يمتلك مفاتيح العالم", opts: ["كتاب", "قلم", "كمبيوتر", "هاتف", "خزنة", "هكر", "سيرفر", "باب", "شمس", "قمر", "نجم", "بحر"], ans: ["كمبيوتر"], hint: "آلة" }, // 21
+            { type: 'GRID12', mode: 'MULTI', target: 3, desc: "تحدي الصور: اختر 3 أشياء لا تنتمي للتقنية", opts: ["ماوس", "شاشة", "تفاحة", "كيبورد", "رام", "شجرة", "سيرفر", "هاردسك", "قطة", "معالج", "راوتر", "كيبل"], ans: ["تفاحة", "شجرة", "قطة"], hint: "أشياء طبيعية" }, // 22
+            { type: 'GRID12', mode: 'SEQ', desc: "خريطة النجوم: وصل الكوكبة بالترتيب الصحيح (حسب الحجم)", opts: ["⭐1", "⭐2", "⭐3", "⭐4", "⭐5", "⭐6", "⭐7", "⭐8", "⭐9", "⭐10", "⭐11", "⭐12"], ans: ["⭐1", "⭐2", "⭐3"], hint: "من 1 إلى 3" }, // 23
+            { type: 'GRID12', mode: 'QUIZ', desc: "الساعة التكتيكية: أي ساعة تشير لـ 3:15؟", opts: ["12:00", "1:05", "2:10", "3:15", "4:20", "5:25", "6:30", "7:35", "8:40", "9:45", "10:50", "11:55"], ans: ["3:15"], hint: "الزاوية 90 درجة" }, // 24
+            { type: 'GRID12', mode: 'MULTI', target: 5, desc: "الخلايا المصابة: نقي الفايروسات الخمسة (V)", opts: ["V", "O", "O", "V", "O", "O", "V", "O", "O", "V", "V", "O"], ans: ["V"], hint: "اضغط على كل V" }, // 25
+            { type: 'GRID12', mode: 'QUIZ', desc: "المفتاح الغامض: اختر المفتاح المطابق للقفل الذهبي", opts: ["🔑1", "🔑2", "🔑3", "🔑4", "🔑5", "🔑6", "🔑7", "🔑8", "🔑9", "🔑10", "🔑11", "🔑12"], ans: ["🔑7"], hint: "رقم الحظ" }, // 26
+            { type: 'GRID12', mode: 'SEQ', desc: "لوحة تحكم السيرفر: اضغط الأزرار تصاعدياً من 10 إلى 40", opts: ["10", "40", "20", "30", "15", "25", "35", "45", "5", "50", "55", "60"], ans: ["10", "20", "30", "40"], hint: "10 ثم 20..." }, // 27
+            { type: 'GRID12', mode: 'PAIRS', desc: "فك التشفير البصري: طابق الرموز المتشابهة", opts: ["α","α","β","β","γ","γ","δ","δ","ε","ε","ζ","ζ"], hint: "أحرف يونانية" }, // 28
+            { type: 'GRID12', mode: 'QUIZ', desc: "صورة كبيرة: استخرج الكلمة المخفية في الزاوية اليمنى", opts: ["نور", "ظل", "سر", "لغز", "مفتاح", "باب", "زمن", "وقت", "نهاية", "بداية", "حل", "هرب"], ans: ["سر"], hint: "مكونة من حرفين" }, // 29
+            { type: 'GRID12', mode: 'QUIZ', desc: "تحدي الزعيم: ما هو أثمن معدن في هذا النظام؟", opts: ["حديد", "نحاس", "فضة", "ألماس", "بلاتين", "برونز", "الذهب", "قصدير", "زنك", "رصاص", "تيتانيوم", "زئبق"], ans: ["الذهب"], hint: "Golden Edition" } // 30
+        ];
 
         return Array.from({ length: 30 }, (_, i) => {
-            let type = games[i % 10];
-            let level = 3 + Math.floor(i / 10);
-            let p = {
-                id: i + 1, interactiveType: type, level: level,
-                title: `⚠️ القطاع #${i + 1}`, desc: riddles[i].q,
-                answer: riddles[i].a, hint: `التلميح: الكلمة تبدأ بحرف [ ${riddles[i].a.charAt(0)} ]`
+            let p = games[i];
+            return {
+                id: i + 1, type: p.type, mode: p.mode, target: p.target, opts: p.opts, ans: p.ans, desc: p.desc,
+                title: `⚠️ القطاع #${i + 1}`, textDesc: riddles[i].q, textAns: riddles[i].a,
+                gameHint: p.hint, textHint: `الكلمة تبدأ بحرف [ ${riddles[i].a.charAt(0)} ]`
             };
-            if(type === "WIRE") { p.target = Array.from({length: level}, ()=>colors[Math.floor(Math.random()*colors.length)]); p.gameHint = p.target.map(c => colorNames[c]).join(" ➔ "); }
-            if(type === "SLIDER") p.target = [25*Math.floor(Math.random()*5), 25*Math.floor(Math.random()*5), 25*Math.floor(Math.random()*5)];
-            if(type === "MEMORY") p.target = level + 1; 
-            if(type === "SAFE") p.target = Array.from({length: level + 1}, ()=>Math.floor(Math.random()*10)); 
-            if(type === "SWITCHES") p.target = level + 2; 
-            if(type === "ARROWS") { let arr = Array.from({length: level + 1}, ()=>dirs[Math.floor(Math.random()*4)]); p.target = arr; p.gameHint = arr.map(d => dirNames[d]).join(" ، "); }
-            if(type === "TIMING") p.target = level - 1; 
-            if(type === "NODES") p.target = Array.from({length: level + 1}, ()=>Math.floor(Math.random()*9)+1); 
-            if(type === "CIPHER") { let words = ["SOLAR", "SYSTEM", "HACKER", "GOLDEN", "ESCAPE"]; p.baseWord = words[i % 5]; p.shift = level; p.target = p.baseWord.split('').map(c => String.fromCharCode((c.charCodeAt(0) - 65 + p.shift) % 26 + 65)).join(''); }
-            return p;
         });
     }
 
@@ -104,10 +108,13 @@ class MajesticEscape {
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
         for(let i=1; i<=30; i++) {
-            let btn = document.createElement('button');
-            btn.className = `gate-card ${this.solvedGates.has(i) ? 'solved':''}`;
-            btn.innerHTML = `<small>SECTOR</small><h3>${i}</h3>`;
-            btn.addEventListener('click', () => { this.handleGateClick(i); });
+            let btn = document.createElement('button'); 
+            let isLocked = i !== 1 && !this.solvedGates.has(i - 1); // نظام القفل المتسلسل
+            btn.className = `gate-card ${this.solvedGates.has(i) ? 'solved':''} ${isLocked ? 'locked':''}`;
+            btn.innerHTML = isLocked ? `🔒<br><h3>${i}</h3>` : `<small>SECTOR</small><h3>${i}</h3>`;
+            btn.disabled = isLocked;
+            
+            btn.addEventListener('click', () => { if(!isLocked) this.handleGateClick(i); });
             c.appendChild(btn);
         }
     }
@@ -119,23 +126,17 @@ class MajesticEscape {
         document.getElementById('time-selector-modal').classList.remove('hidden');
     }
 
-    closeTimeModal() {
-        document.getElementById('time-selector-modal').classList.add('hidden');
-        this.pendingGateId = null;
-    }
+    closeTimeModal() { document.getElementById('time-selector-modal').classList.add('hidden'); this.pendingGateId = null; }
 
     startGateWithTime() {
         let m = document.getElementById('gate-time-input').value;
-        if(!m || m <= 0) return this.notify("الرجاء إدخال وقت صحيح!", "error");
+        if(!m || m <= 0) return this.notify("وقت غير صحيح!", "error");
 
         this.activeGate = this.puzzles.find(x => x.id === this.pendingGateId);
         this.closeTimeModal();
-        
         this.timeLeft = parseInt(m) * 60;
         this.textFailCount = 0; 
-        this.hasNightVision = false;
-        this.rouletteUsed = false;
-        document.getElementById('roulette-btn').style.display = 'inline-block';
+        this.hasShield = false;
         
         this.setupPuzzleUI(); 
         this.startTimer(); 
@@ -145,112 +146,185 @@ class MajesticEscape {
     setupPuzzleUI() {
         const p = this.activeGate;
         document.getElementById('puzzle-title').innerText = p.title;
-        document.getElementById('puzzle-desc').innerText = p.desc;
+        document.getElementById('puzzle-desc').innerText = p.textDesc;
         document.getElementById('user-input').value = '';
 
         document.getElementById('text-stage').classList.add('hidden');
         document.getElementById('input-area').classList.add('hidden');
-        
-        // نظام البوابات المظلمة (بوابة 15 و 30)
-        let isDarkGate = (p.id === 15 || p.id === 30);
-        document.getElementById('dark-gate-overlay').classList.toggle('hidden', !isDarkGate);
-
-        // نظام صندوق الحظ (Luck Box) لكل 5 بوابات
-        if (p.id % 5 === 0) {
-            document.getElementById('luck-box-zone').classList.remove('hidden');
-            document.getElementById('interactive-stage').classList.add('hidden');
-        } else {
-            document.getElementById('luck-box-zone').classList.add('hidden');
-            document.getElementById('interactive-stage').classList.remove('hidden');
-            this.launchInteractiveGame();
-        }
-    }
-
-    launchInteractiveGame() {
-        const p = this.activeGate;
-        document.querySelectorAll('.mini-game').forEach(el => el.classList.add('hidden'));
-        document.getElementById(`game-${p.interactiveType.toLowerCase()}`).classList.remove('hidden');
-        cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop);
-
-        if(p.interactiveType === "WIRE") this.setupWireGame();
-        if(p.interactiveType === "SLIDER") this.setupSliderGame();
-        if(p.interactiveType === "MEMORY") this.setupMemoryGame();
-        if(p.interactiveType === "SAFE") this.setupSafeGame();
-        if(p.interactiveType === "SWITCHES") this.setupSwitchesGame();
-        if(p.interactiveType === "ARROWS") this.setupArrowsGame();
-        if(p.interactiveType === "TIMING") this.setupTimingGame();
-        if(p.interactiveType === "NODES") this.setupNodesGame();
-        if(p.interactiveType === "CIPHER") this.setupCipherGame();
-        if(p.interactiveType === "SERVER") this.setupServerGame();
-    }
-
-    openLuckBox() {
-        document.getElementById('luck-box-zone').classList.add('hidden');
         document.getElementById('interactive-stage').classList.remove('hidden');
-        this.launchInteractiveGame();
 
-        let rewards = [
-            { txt: "🎁 ثغرة ذهبية! تم إضافة +40 عملة رصيد.", type: "coin", val: 40 },
-            { txt: "🚨 فخ نظام! تم خصم -20 عملة.", type: "coin", val: -20 },
-            { txt: "⚡ طاقة موجبة! زادت مؤقت البوابة +60 ثانية.", type: "time", val: 60 },
-            { txt: "💥 فايروس امتصاص! سحب 45 ثانية من وقتك!", type: "time", val: -45 }
-        ];
-
-        let result = rewards[Math.floor(Math.random() * rewards.length)];
-        if (result.type === "coin") { this.coins = Math.max(0, this.coins + result.val); this.updateStats(); } 
-        else if (result.type === "time") { this.timeLeft = Math.max(5, this.timeLeft + result.val); this.updateTimerUI(); }
-        alert(result.txt);
+        document.querySelectorAll('.mini-game').forEach(el => el.classList.add('hidden'));
+        
+        if(p.type === "WIRE") this.setupWireGame();
+        else if(p.type === "SAFE") this.setupSafeGame();
+        else if(p.type === "SWITCHES") this.setupSwitchesGame();
+        else if(p.type === "NODES") this.setupNodesGame();
+        else if(p.type === "GRID12") this.setupGrid12Game();
     }
 
-    // --- 🔴 الروليت الروسي (مخاطرة النظام) ---
-    russianRoulette() {
-        if(this.rouletteUsed) return;
-        if(!confirm("⚠️ تحذير: مخاطرة النظام! \nنسبة 50% فوز مباشر واختراق الباب. \nنسبة 50% خسارة كل رصيدك ونصف وقتك الحالي! \nهل أنت متأكد؟")) return;
-        
-        this.rouletteUsed = true;
-        document.getElementById('roulette-btn').style.display = 'none';
+    /* --- الألعاب المخصصة الثابتة (12 خيار) --- */
+    setupWireGame() {
+        document.getElementById('game-wire').classList.remove('hidden');
+        const c = document.getElementById('wire-container'); c.innerHTML = ''; this.wireSeq = [];
+        let colors = ["red", "blue", "yellow", "green", "purple", "orange", "cyan", "pink", "brown", "white", "gray", "black"];
+        let target = ["red", "blue", "yellow", "green"]; // 4 أسلاك مطلوبة
+        let renderColors = [...colors].sort(() => Math.random() - 0.5);
 
-        if(Math.random() > 0.5) {
-            this.playSound('success');
-            alert("🎉 حظ أسطوري! تم اختراق نظام القطاع بنجاح!");
-            this.winMiniGame(); 
-            // تخطي اللغز الكتابي أيضاً
-            document.getElementById('user-input').value = this.activeGate.answer;
-            this.checkResult();
-        } else {
-            this.playSound('error');
-            this.triggerVisualGlitch();
-            this.coins = 0;
-            this.timeLeft = Math.floor(this.timeLeft / 2);
-            this.updateStats();
-            this.updateTimerUI();
-            alert("💀 حظ سيء جداً! تم تصفير رصيدك وقص وقتك للنصف!");
+        renderColors.forEach(col => {
+            let w = document.createElement('div'); w.className = `wire`; w.style.backgroundColor = col;
+            w.onclick = () => {
+                if(w.classList.contains('cut')) return;
+                w.classList.add('cut'); this.wireSeq.push(col);
+                if(this.wireSeq[this.wireSeq.length-1] !== target[this.wireSeq.length-1]) {
+                    this.failMiniGame("سلك خاطئ!"); this.wireSeq=[]; document.querySelectorAll('.wire').forEach(x=>x.classList.remove('cut'));
+                } else if(this.wireSeq.length === target.length) this.winMiniGame();
+            }; c.appendChild(w);
+        });
+    }
+
+    setupSafeGame() {
+        document.getElementById('game-safe').classList.remove('hidden');
+        const inps = document.getElementById('safe-inputs'); inps.innerHTML = ''; 
+        const pad = document.getElementById('safe-keypad'); pad.innerHTML = '';
+        document.getElementById('safe-history').innerHTML = '';
+        this.safeTarget = [1,9,8,4]; this.safeInputs = [];
+        
+        for(let i=0; i<4; i++){ let d = document.createElement('input'); d.readOnly=true; inps.appendChild(d); }
+        let keys = ["1","2","3","4","5","6","7","8","9","*","0","#"];
+        keys.forEach(k => {
+            let btn = document.createElement('button'); btn.className='safe-key'; btn.innerText=k;
+            btn.onclick = () => {
+                if(this.safeInputs.length < 4 && !isNaN(k)) {
+                    this.safeInputs.push(parseInt(k));
+                    inps.children[this.safeInputs.length-1].value = k;
+                    if(this.safeInputs.length === 4) this.checkSafe();
+                }
+            }; pad.appendChild(btn);
+        });
+    }
+    checkSafe() {
+        let feedback = [], correctCount = 0; let tempTarget = [...this.safeTarget];
+        this.safeInputs.forEach((val, i) => {
+            if(val === tempTarget[i]) { feedback.push('🟢'); correctCount++; tempTarget[i]=null; }
+            else if(tempTarget.includes(val)) { feedback.push('🟡'); tempTarget[tempTarget.indexOf(val)]=null; }
+            else feedback.push('🔴');
+        });
+        document.getElementById('safe-history').innerHTML += `<div>${this.safeInputs.join('')} ➔ ${feedback.join('')}</div>`;
+        this.safeInputs = []; Array.from(document.getElementById('safe-inputs').children).forEach(x=>x.value='');
+        if(correctCount === 4) this.winMiniGame(); else this.failMiniGame("شفرة خاطئة!");
+    }
+
+    setupSwitchesGame() {
+        document.getElementById('game-switches').classList.remove('hidden');
+        const c = document.getElementById('switches-grid'); c.innerHTML = ''; this.switchStates = Array(12).fill(false);
+        for(let i=0; i<12; i++){
+            let btn = document.createElement('div'); btn.className='switch-btn';
+            btn.onclick = () => {
+                this.toggleSwitch(i); this.toggleSwitch(i-1); this.toggleSwitch(i+1);
+                if(this.switchStates.every(x=>x)) this.winMiniGame();
+            }; c.appendChild(btn);
+        }
+    }
+    toggleSwitch(i) {
+        if(i>=0 && i<12) {
+            this.switchStates[i] = !this.switchStates[i]; let btns = document.getElementById('switches-grid').children;
+            this.switchStates[i] ? btns[i].classList.add('on') : btns[i].classList.remove('on');
         }
     }
 
-    /* الألعاب التفاعلية */
-    setupWireGame() { const c = document.getElementById('wire-container'); c.innerHTML = ''; this.wireSeq = []; document.getElementById('wire-hint').innerText = `التسلسل السري: ${this.activeGate.gameHint}`; let colorsToRender = [...this.activeGate.target]; colorsToRender.push("purple", "orange"); colorsToRender.sort(() => Math.random() - 0.5); colorsToRender.forEach(col => { let w = document.createElement('div'); w.className = `wire`; w.style.backgroundColor = col; w.onclick = () => { if(w.classList.contains('cut')) return; w.classList.add('cut'); this.wireSeq.push(col); if(this.wireSeq[this.wireSeq.length-1] !== this.activeGate.target[this.wireSeq.length-1]){ this.failMiniGame("سلك خاطئ!"); this.wireSeq=[]; document.querySelectorAll('.wire').forEach(x=>x.classList.remove('cut')); } else if(this.wireSeq.length === this.activeGate.target.length) this.winMiniGame(); }; c.appendChild(w); }); }
-    setupSliderGame() { document.getElementById('slider-hint').innerText = `طابق: ض=${this.activeGate.target[0]} | ح=${this.activeGate.target[1]} | ط=${this.activeGate.target[2]}`; }
-    checkSliders() { let v1=parseInt(document.getElementById('sl1').value), v2=parseInt(document.getElementById('sl2').value), v3=parseInt(document.getElementById('sl3').value); let t = this.activeGate.target; if(v1===t[0] && v2===t[1] && v3===t[2]) this.winMiniGame(); else this.failMiniGame("قيم غير متزامنة!"); }
-    setupMemoryGame() { const c = document.getElementById('memory-cards'); c.innerHTML = ''; let icons = ['🔋','⚙️','🛡️','🔑','📡','💻','💣','⏳']; let used = icons.slice(0, this.activeGate.target); let deck = [...used, ...used].sort(()=>Math.random() - 0.5); this.flippedCards = []; this.matchedPairs = 0; deck.forEach(sym => { let card = document.createElement('div'); card.className = 'mem-card'; card.dataset.v = sym; card.onclick = () => { if(this.flippedCards.length<2 && !card.classList.contains('flipped')){ card.classList.add('flipped'); card.innerText=sym; this.flippedCards.push(card); if(this.flippedCards.length===2) setTimeout(()=>this.checkMem(), 500); } }; c.appendChild(card); }); }
-    checkMem() { let [c1, c2] = this.flippedCards; if(c1.dataset.v === c2.dataset.v){ c1.classList.add('matched'); c2.classList.add('matched'); this.playSound('success'); this.matchedPairs++; if(this.matchedPairs === this.activeGate.target) this.winMiniGame(); } else { c1.classList.remove('flipped'); c2.classList.remove('flipped'); c1.innerText=''; c2.innerText=''; this.failMiniGame(); } this.flippedCards=[]; }
-    setupSafeGame() { const c = document.getElementById('safe-inputs'); c.innerHTML = ''; document.getElementById('safe-history').innerHTML = ''; for(let i=0; i<this.activeGate.target.length; i++){ let inp = document.createElement('input'); inp.type='number'; inp.min=0; inp.max=9; inp.value=0; c.appendChild(inp); } }
-    checkSafe() { let inputs = Array.from(document.getElementById('safe-inputs').children).map(x=>parseInt(x.value)); let target = [...this.activeGate.target]; let feedback = [], correctCount = 0; inputs.forEach((val, i) => { if(val === target[i]) { feedback.push('🟢'); correctCount++; target[i]=null; } else if(target.includes(val)) { feedback.push('🟡'); target[target.indexOf(val)]=null; } else feedback.push('🔴'); }); document.getElementById('safe-history').innerHTML += `<div>${inputs.join('')} ➔ ${feedback.join('')}</div>`; if(correctCount === this.activeGate.target.length) this.winMiniGame(); }
-    setupSwitchesGame() { const c = document.getElementById('switches-grid'); c.innerHTML = ''; this.switchStates = Array(this.activeGate.target).fill(false); for(let i=0; i<this.activeGate.target; i++){ let btn = document.createElement('div'); btn.className='switch-btn'; btn.onclick = () => { this.toggleSwitch(i); this.toggleSwitch(i-1); this.toggleSwitch(i+1); if(this.switchStates.every(x=>x)) this.winMiniGame(); }; c.appendChild(btn); } }
-    toggleSwitch(i) { if(i>=0 && i<this.switchStates.length) { this.switchStates[i] = !this.switchStates[i]; let btns = document.getElementById('switches-grid').children; this.switchStates[i] ? btns[i].classList.add('on') : btns[i].classList.remove('on'); } }
-    setupArrowsGame() { this.userArrows = []; document.getElementById('arrow-display').innerText = ''; document.getElementById('arrow-hint').innerText = `المسار: ${this.activeGate.gameHint}`; }
-    addArrow(dir) { let map = {UP:'⬆️', DOWN:'⬇️', LEFT:'⬅️', RIGHT:'➡️'}; if(this.userArrows.length < this.activeGate.target.length) { this.userArrows.push(dir); document.getElementById('arrow-display').innerText += map[dir]; } }
-    checkArrows() { if(JSON.stringify(this.userArrows) === JSON.stringify(this.activeGate.target)) this.winMiniGame(); else { this.failMiniGame("مسار خاطئ!"); this.setupArrowsGame(); } }
-    setupTimingGame() { this.timingSuccesses = 0; document.getElementById('timing-status').innerText = `التقاطات ناجحة: 0 / ${this.activeGate.target}`; let zone = document.getElementById('timing-zone'); let width = 30 - (this.activeGate.level * 2); zone.style.width = width + '%'; zone.style.left = Math.random()*(100-width) + '%'; let speed = 0.8 + (this.activeGate.level * 0.4); const animate = () => { this.timingPos += speed * this.timingDir; if(this.timingPos >= 98 || this.timingPos <= 0) this.timingDir *= -1; document.getElementById('timing-cursor').style.left = this.timingPos + '%'; this.timingPulseId = requestAnimationFrame(animate); }; animate(); }
-    catchPulse() { let cursor = this.timingPos, zLeft = parseFloat(document.getElementById('timing-zone').style.left), zWidth = parseFloat(document.getElementById('timing-zone').style.width); if(cursor >= zLeft && cursor <= zLeft+zWidth) { this.playSound('success'); this.timingSuccesses++; document.getElementById('timing-status').innerText = `التقاطات ناجحة: ${this.timingSuccesses} / ${this.activeGate.target}`; if(this.timingSuccesses >= this.activeGate.target) { cancelAnimationFrame(this.timingPulseId); this.winMiniGame(); } else document.getElementById('timing-zone').style.left = Math.random()*(100-zWidth) + '%'; } else this.failMiniGame("توقيت سيء!"); }
-    setupNodesGame() { const c = document.getElementById('nodes-container'); c.innerHTML = ''; this.userNodes = []; document.getElementById('nodes-hint').innerText = `النقاط: ${this.activeGate.target.join(' ➔ ')}`; for(let i=1; i<=9; i++){ let btn = document.createElement('button'); btn.className = 'node-btn'; btn.innerText = i; btn.onclick = () => { if(btn.classList.contains('active')) return; btn.classList.add('active'); this.userNodes.push(i); if(this.userNodes[this.userNodes.length-1] !== this.activeGate.target[this.userNodes.length-1]){ this.failMiniGame("نمط خاطئ!"); this.setupNodesGame(); } else if(this.userNodes.length === this.activeGate.target.length) this.winMiniGame(); }; c.appendChild(btn); } }
-    setupCipherGame() { document.getElementById('cipher-hint').innerText = `الإزاحة +${this.activeGate.shift} للأمام.`; document.getElementById('cipher-text').innerText = this.activeGate.target; document.getElementById('cipher-input').value = ''; }
-    checkCipher() { if(document.getElementById('cipher-input').value.trim().toUpperCase() === this.activeGate.baseWord) this.winMiniGame(); else this.failMiniGame("فك التشفير خاطئ!"); }
-    setupServerGame() { this.serverPower = 0; this.serverStableTime = 0; document.getElementById('server-level').style.width = '0%'; document.getElementById('server-level').classList.remove('stable'); document.getElementById('server-timer').innerText = "0.0 ثانية"; let dropRate = 2 + (this.activeGate.level * 0.5); this.serverLoop = setInterval(() => { this.serverPower = Math.max(0, this.serverPower - dropRate); document.getElementById('server-level').style.width = this.serverPower + '%'; if(this.serverPower >= 40 && this.serverPower <= 60) { document.getElementById('server-level').classList.add('stable'); this.serverStableTime += 0.1; document.getElementById('server-timer').innerText = this.serverStableTime.toFixed(1) + " ثانية"; if(this.serverStableTime >= 3.0) { clearInterval(this.serverLoop); this.winMiniGame(); } } else { document.getElementById('server-level').classList.remove('stable'); this.serverStableTime = 0; document.getElementById('server-timer').innerText = "0.0 ثانية"; } }, 100); }
-    pumpServer() { this.serverPower = Math.min(100, this.serverPower + 15); }
+    setupNodesGame() {
+        document.getElementById('game-nodes').classList.remove('hidden');
+        const c = document.getElementById('nodes-container'); c.innerHTML = ''; this.userNodes = [];
+        let target = [1, 4, 9, 12];
+        for(let i=1; i<=12; i++){
+            let btn = document.createElement('button'); btn.className = 'node-btn'; btn.innerText = i;
+            btn.onclick = () => {
+                if(btn.classList.contains('active')) return;
+                btn.classList.add('active'); this.userNodes.push(i);
+                if(this.userNodes[this.userNodes.length-1] !== target[this.userNodes.length-1]){
+                    this.failMiniGame("نمط خاطئ!"); this.setupNodesGame();
+                } else if(this.userNodes.length === target.length) this.winMiniGame();
+            }; c.appendChild(btn);
+        }
+    }
 
+    /* --- المحرك الذكي (Grid-12) يغطي أكثر من 20 لعبة مختلفة --- */
+    setupGrid12Game() {
+        document.getElementById('game-grid12').classList.remove('hidden');
+        const p = this.activeGate;
+        document.getElementById('grid12-desc').innerText = p.desc;
+        const c = document.getElementById('grid12-box'); c.innerHTML = '';
+        const subBtn = document.getElementById('grid12-submit'); subBtn.classList.add('hidden');
+        
+        this.gridState = { selections: [], step: 0, pairs: [] };
+        let opts = [...p.opts];
+        if(p.mode !== 'SEQ') opts.sort(() => Math.random() - 0.5); // خلط عشوائي
+
+        opts.forEach((opt, index) => {
+            let btn = document.createElement('button'); btn.className = 'grid12-btn'; btn.innerText = opt;
+            btn.onclick = () => this.handleGrid12Click(btn, opt, index);
+            c.appendChild(btn);
+        });
+
+        if(p.mode === 'MULTI') subBtn.classList.remove('hidden');
+    }
+
+    handleGrid12Click(btn, opt, index) {
+        const p = this.activeGate;
+        
+        if (p.mode === 'QUIZ') {
+            if (p.ans.includes(opt)) this.winMiniGame();
+            else this.failMiniGame("اختيار خاطئ!");
+        } 
+        else if (p.mode === 'MULTI') {
+            btn.classList.toggle('selected');
+            if(btn.classList.contains('selected')) this.gridState.selections.push(opt);
+            else this.gridState.selections = this.gridState.selections.filter(x => x !== opt);
+        }
+        else if (p.mode === 'SEQ') {
+            if (btn.classList.contains('selected')) return;
+            btn.classList.add('selected');
+            if (opt !== p.ans[this.gridState.step]) {
+                this.failMiniGame("تسلسل خاطئ!"); this.setupGrid12Game();
+            } else {
+                this.gridState.step++;
+                if (this.gridState.step === p.ans.length) this.winMiniGame();
+            }
+        }
+        else if (p.mode === 'PAIRS') {
+            if(btn.classList.contains('selected') || btn.classList.contains('matched') || this.gridState.pairs.length >= 2) return;
+            btn.classList.add('selected'); this.gridState.pairs.push({btn, opt});
+            if(this.gridState.pairs.length === 2) {
+                setTimeout(() => {
+                    let [c1, c2] = this.gridState.pairs;
+                    // فحص تطابق (في لعبة الذاكرة يكونون نفس الرمز، في المتضادات برمجتها تعتمد على الـ Index لكن للتبسيط طابقنا الرموز في المصفوفة)
+                    if(c1.opt === c2.opt) {
+                        c1.btn.classList.replace('selected', 'matched'); c2.btn.classList.replace('selected', 'matched');
+                        this.playSound('success'); this.gridState.step += 2;
+                        if(this.gridState.step === p.opts.length) this.winMiniGame();
+                    } else {
+                        c1.btn.classList.remove('selected'); c2.btn.classList.remove('selected'); this.failMiniGame();
+                    }
+                    this.gridState.pairs = [];
+                }, 500);
+            }
+        }
+    }
+
+    checkGrid12() {
+        const p = this.activeGate;
+        let selected = this.gridState.selections;
+        // فحص Multi (هل اختار الإجابات الصحيحة كلها وبدون زيادة؟)
+        // للتبسيط: إذا كل اختياراته موجودة في ans وعددها يطابق
+        let isCorrect = selected.length === p.ans.length && selected.every(val => p.ans.includes(val) || p.ans[0] === "V"); // استثناء للفايروس
+        
+        if (isCorrect) this.winMiniGame();
+        else { this.failMiniGame("اختيارات غير صحيحة!"); this.setupGrid12Game(); }
+    }
+
+    // --- الانتقال والنتيجة ---
     winMiniGame() {
-        this.playSound('success'); this.notify("✅ تم تجاوز الجدار الناري!");
+        this.playSound('success'); this.notify("✅ تم تجاوز الجدار التفاعلي!");
         document.getElementById('interactive-stage').classList.add('hidden');
         document.getElementById('text-stage').classList.remove('hidden');
         document.getElementById('input-area').classList.remove('hidden');
@@ -258,38 +332,23 @@ class MajesticEscape {
     
     failMiniGame(msg = "النظام يرفض التشفير!") {
         this.playSound('error'); this.triggerVisualGlitch(); this.notify(msg, "error"); 
-        if(!this.isTimerFrozen) this.timeLeft -= 15; 
-    }
-
-    triggerGetOut() {
-        clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop);
-        const screen = document.getElementById('get-out-screen'); screen.innerHTML = '';
-        for(let i=0; i<85; i++) {
-            let span = document.createElement('span'); span.className = 'get-out-text'; span.innerText = 'GET OUT! , NEXT';
-            span.style.fontSize = (Math.random() * 2 + 1.5) + 'rem'; screen.appendChild(span);
-        }
-        screen.classList.remove('hidden');
-        this.playSound('error'); setTimeout(() => this.playSound('error'), 300); setTimeout(() => this.playSound('error'), 600);
-        setTimeout(() => { screen.classList.add('hidden'); this.switchScreen('lobby'); this.notify("تم طردك لتكرار الخطأ النهائي!", "error"); }, 4000);
+        if(!this.isTimerFrozen && !this.hasShield) this.timeLeft -= 10; 
     }
 
     checkResult() {
         let answerInput = document.getElementById('user-input').value.trim();
-        if (answerInput === this.activeGate.answer) {
-            clearInterval(this.timer); this.playSound('success'); this.coins += 15;
-            this.solvedGates.add(this.activeGate.id); this.notify("✅ تم الاختراق الشامل للقطاع!");
+        if (answerInput === this.activeGate.textAns) {
+            clearInterval(this.timer); this.playSound('success'); this.coins += 20;
+            this.solvedGates.add(this.activeGate.id); this.notify("✅ تم اختراق القطاع بالكامل!");
             this.updateStats(); this.renderLobby(); this.switchScreen('lobby');
         } else {
             if (this.hasShield) {
                 this.hasShield = false;
-                document.getElementById('btn-buy-shield').innerText = "40 🪙"; 
-                this.notify("🛡️ تم استهلاك بروتوكول الحماية! لم تُحسب المحاولة الخاطئة.");
+                this.notify("🛡️ تم استهلاك المانع! لم يُخصم وقت.");
                 this.playSound('success');
                 return;
             }
-            this.textFailCount++; 
-            if (this.textFailCount >= 3) { this.triggerGetOut(); } 
-            else { this.failMiniGame(`إجابة خاطئة! متبقي ${3 - this.textFailCount} محاولات قبل تفجير النظام.`); }
+            this.failMiniGame(`إجابة اللغز خاطئة!`);
         }
     }
 
@@ -308,132 +367,49 @@ class MajesticEscape {
         document.getElementById('timer-display').innerText = `${m}:${s}`;
     }
 
-    onFail() { clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop); this.playSound('error'); alert("انتهى الوقت المقدر! فشل الاقتحام."); this.switchScreen('lobby'); }
+    onFail() { clearInterval(this.timer); this.playSound('error'); alert("انتهى الوقت المقدر! فشل الاقتحام."); this.switchScreen('lobby'); }
 
-    /* --- 🛒 متجر القرصنة المطور (التضخم + السوق السوداء) --- */
-    openMarket() { 
-        if(!this.activeGate) return alert("يجب دخول القطاع أولاً لفتح المتجر!");
-        
-        // نظام التضخم (Inflation)
-        let isInflated = this.activeGate.id >= 15;
-        document.getElementById('inflation-warning').classList.toggle('hidden', !isInflated);
-        let m = isInflated ? 2 : 1; // السعر يتضاعف
-        
-        document.getElementById('price-hint').innerText = 30 * m;
-        document.getElementById('price-shield').innerText = 40 * m;
-        document.getElementById('price-emp').innerText = 50 * m;
-        document.getElementById('price-nv').innerText = 50 * m;
-
-        // ظهور النظارة الليلية فقط للبوابات المظلمة
-        let isDark = (this.activeGate.id === 15 || this.activeGate.id === 30) && !this.hasNightVision;
-        document.getElementById('item-nv').style.display = isDark ? 'flex' : 'none';
-
-        document.getElementById('panel-market').classList.remove('hidden'); 
-    }
-    
+    /* --- 🛒 المتجر السري المدمج --- */
+    openMarket() { document.getElementById('panel-market').classList.remove('hidden'); }
     closeMarket() { document.getElementById('panel-market').classList.add('hidden'); }
-    
     buy(type) {
-        let m = (this.activeGate.id >= 15) ? 2 : 1;
-        let prices = { hint: 30*m, shield: 40*m, emp: 50*m, night_vision: 50*m };
-        
+        let prices = { hint: 30, shield: 40, time: 60 };
         if (this.coins < prices[type]) return this.failMiniGame("العملات لا تكفي!");
-        if (type === 'shield' && this.hasShield) return alert("الحماية نشطة بالفعل!");
+        if (type === 'shield' && this.hasShield) return alert("المانع نشط بالفعل!");
 
-        this.coins -= prices[type];
-        this.playSound('success');
-        this.updateStats();
+        this.coins -= prices[type]; this.playSound('success'); this.updateStats();
 
         if (type === 'hint') { 
-            alert(this.activeGate.hint);
-            document.getElementById('puzzle-desc').innerText += `\n\n💡 ${this.activeGate.hint}`; 
+            alert(`تلميح التحدي: ${this.activeGate.gameHint} \n\nتلميح اللغز: ${this.activeGate.textHint}`); 
         }
-        else if (type === 'shield') { this.hasShield = true; document.getElementById('btn-buy-shield').innerText = "🛡️ نشط"; this.notify("تم تفعيل جدار الحماية."); }
-        else if (type === 'emp') { this.closeMarket(); this.winMiniGame(); this.notify("تم تخطي التحدي بنجاح!"); }
-        else if (type === 'night_vision') { this.hasNightVision = true; document.getElementById('dark-gate-overlay').classList.add('hidden'); this.notify("تم تفعيل الرؤية الليلية! يمكنك قراءة اللغز الآن."); }
+        else if (type === 'shield') { this.hasShield = true; this.notify("تم تفعيل مانع الطرد."); }
+        else if (type === 'time') { this.timeLeft += 60; this.updateTimerUI(); this.notify("تم ضخ 60 ثانية للعداد."); }
         
         this.closeMarket();
     }
 
-    // شراء من السوق السوداء بالوقت
-    buyBlackMarket(type) {
-        if(this.timeLeft <= 180) return this.failMiniGame("ليس لديك وقت كافي للتضحية به!");
-        
-        this.timeLeft -= 180; // خصم 3 دقائق
-        this.playSound('success');
-        this.updateTimerUI();
-
-        if (type === 'hint') { 
-            alert(this.activeGate.hint); 
-            document.getElementById('puzzle-desc').innerText += `\n\n💀 تلميح السوق السوداء: ${this.activeGate.hint}`; 
-        }
-        else if (type === 'emp') { this.closeMarket(); this.winMiniGame(); this.notify("تم اختراق اللعبة عبر السوق السوداء."); }
-        
-        this.closeMarket();
-    }
-
-    /* --- ⚙️ مقالب المشرف (Trolls) والتحكم المباشر --- */
+    /* --- ⚙️ لوحة المشرف --- */
     toggleAdminSidebar(open) {
         const sidebar = document.getElementById('admin-sidebar');
         open ? sidebar.classList.add('open') : sidebar.classList.remove('open');
     }
-
-    adminInstantDetonate() {
-        if(!this.activeGate) return alert("لا يوجد لاعب داخل بوابة!");
-        this.toggleAdminSidebar(false);
-        this.triggerGetOut();
-    }
-
     adminToggleFreeze() {
         this.isTimerFrozen = !this.isTimerFrozen;
         const btn = document.getElementById('btn-freeze');
         if(this.isTimerFrozen) { btn.innerText = "⏱️ تجميد الوقت: مُفعّل ❄️"; btn.style.background = "#004d4d"; } 
-        else { btn.innerText = "⏱️ تجميد الوقت: إيقاف"; btn.style.background = ""; }
+        else { btn.innerText = "⏱️ تجميد الوقت"; btn.style.background = ""; }
     }
-
-    adminSkipToText() {
-        if(!this.activeGate) return alert("لا يوجد لاعب داخل بوابة!");
-        this.toggleAdminSidebar(false);
-        this.winMiniGame();
-    }
-
     adminInstantSolveGate() {
         if(!this.activeGate) return alert("لا يوجد لاعب داخل بوابة!");
-        this.toggleAdminSidebar(false);
-        clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop);
+        this.toggleAdminSidebar(false); clearInterval(this.timer);
         this.coins += 15; this.solvedGates.add(this.activeGate.id);
         this.notify("⚙️ تجاوز مشرف: تم فتح البوابة بالقوة!");
         this.updateStats(); this.renderLobby(); this.switchScreen('lobby');
     }
-
-    // مقلب التشويش
-    adminTrollGlitch() {
-        this.toggleAdminSidebar(false);
-        let count = 0;
-        let trollInterval = setInterval(() => {
-            this.playSound('error');
-            document.body.classList.add('error-glitch');
-            setTimeout(()=> document.body.classList.remove('error-glitch'), 150);
-            count++;
-            if(count >= 10) clearInterval(trollInterval);
-        }, 300);
-    }
-
-    // مقلب إطفاء الشاشة
-    adminTrollBlackout() {
-        this.toggleAdminSidebar(false);
-        document.getElementById('blackout-overlay').classList.remove('hidden');
-        this.playSound('error');
-        setTimeout(() => {
-            document.getElementById('blackout-overlay').classList.add('hidden');
-        }, 5000);
-    }
-
     adminModifyCoins(val) { this.coins = Math.max(0, this.coins + val); this.updateStats(); }
-    adminZeroCoins() { this.coins = 0; this.updateStats(); this.notify("❌ تم تصفير الرصيد!"); }
     adminModifyTime(val) { if(this.activeGate) { this.timeLeft = Math.max(5, this.timeLeft + val); this.updateTimerUI(); } }
 
-    returnToLobby() { if(confirm("تأكيد الانسحاب الميداني؟")) { clearInterval(this.timer); cancelAnimationFrame(this.timingPulseId); clearInterval(this.serverLoop); this.switchScreen('lobby'); } }
+    returnToLobby() { if(confirm("تأكيد الانسحاب الميداني؟")) { clearInterval(this.timer); this.switchScreen('lobby'); } }
     updateStats() { document.getElementById('coin-val').innerText = this.coins; }
     notify(m, t="success") {
         let c = document.getElementById('toast-container'), n = document.createElement('div'); n.className='toast';
