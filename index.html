@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>SOLAR GAMES</title>
+    <title>SOLAR GAMES </title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@300;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -16,16 +16,16 @@
             <h1 class="main-title">SOLAR GAMES</h1>
             <p class="subtitle">SYSTEM OVERRIDE INITIATED</p>
             <div class="cyber-divider"></div>
-            <!-- زر الدخول (يفعل نظام الصوت) -->
+            <!-- هذا الزر مهم جداً: يفعل النظام الصوتي في متصفحك -->
             <button type="button" class="btn-prime" onclick="game.startLobby()">JOIN SERVER</button>
         </div>
         
+        <!-- الشريط الإخباري الفخم بالعربي -->
         <div class="news-ticker-container">
             <div class="ticker-label">SERVER LOG</div>
-            <div class="ticker-text" dir="ltr">
+            <div class="ticker-text">
                 <div class="ticker-track">
-                    <span>[SYSTEM MSG]: Welcome to SOLAR GAMES... Voice Channels Locked... Complete the Interactive Puzzle to reveal the Bot's Cipher... Failure leads to instant Ban... </span>
-                    <span>[SYSTEM MSG]: Welcome to SOLAR GAMES... Voice Channels Locked... Complete the Interactive Puzzle to reveal the Bot's Cipher... Failure leads to instant Ban... </span>
+                    <span>[رسالة النظام]: مرحباً بكم في رومات SOLAR GAMES السرية... البوابات الصوتية مشفرة بالكامل، ويتطلب الوصول تجاوز بروتوكولات الحماية التفاعلية وفك شفرات البوت... أي محاولة للاختراق العشوائي ستؤدي إلى حظر نهائي (BAN) من السيرفر... المتحدث الرسمي Leba يتمنى لكم التوفيق في مهمتكم... </span>
                 </div>
             </div>
         </div>
@@ -86,13 +86,13 @@
                 </div>
                 
                 <div class="puzzle-body">
-                    <!-- المرحلة الأولى: الأكشن التفاعلي -->
+                    <!-- المرحلة الأولى -->
                     <div id="interactive-stage-container">
                         <p class="track-title" id="int-desc">Action Required...</p>
                         <div id="interactive-stage"></div>
                     </div>
 
-                    <!-- المرحلة الثانية: اللغز الكتابي -->
+                    <!-- المرحلة الثانية (اللغز الكتابي) -->
                     <div id="text-stage" class="hidden bot-message">
                         <div class="bot-header">🤖 SolarBot <span class="bot-tag">SYSTEM CHECK</span></div>
                         <p id="puzzle-desc">اللغز الكتابي يظهر هنا</p>
@@ -100,7 +100,7 @@
                 </div>
                 
                 <div class="puzzle-controls hidden" id="input-area">
-                    <input type="text" id="user-input" placeholder="Type Answer...">
+                    <input type="text" id="user-input" placeholder="أدخل الإجابة هنا...">
                     <button type="button" class="btn-decode" onclick="game.checkResult()">Send</button>
                 </div>
 
