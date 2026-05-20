@@ -9,8 +9,8 @@ class MajesticEscape {
         this.hasShield = false;      
         this.solvedGates = new Set();
         
-        // إعداد نظام توليد الصوت المستقل (بدون ملفات!)
-        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // مولد الصوت المستقل (بدون ملفات)
+        this.audioCtx = null;
         this.gameConfig = this.buildPuzzles();
         this.init();
         this.setupClickSounds();
@@ -18,23 +18,32 @@ class MajesticEscape {
 
     init() { this.renderLobby(); this.updateStats(); this.startTimer(); }
 
-    // مولد الأصوات الذكي (Web Audio API)
+    // تشغيل نظام الصوت برمجياً (أول ما يضغط زر الدخول)
+    initAudio() {
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+    }
+
     playSound(type) {
-        if(this.audioCtx.state === 'suspended') this.audioCtx.resume();
+        if (!this.audioCtx) return;
         const osc = this.audioCtx.createOscillator();
         const gain = this.audioCtx.createGain();
         osc.connect(gain); gain.connect(this.audioCtx.destination);
         
         const now = this.audioCtx.currentTime;
         if(type === 'click') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(450, now);
+            osc.type = 'square'; osc.frequency.setValueAtTime(400, now);
             gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
             osc.start(now); osc.stop(now + 0.1);
         } else if (type === 'success') {
             osc.type = 'sine'; 
-            osc.frequency.setValueAtTime(523.25, now); // C5
-            osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-            osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+            osc.frequency.setValueAtTime(523.25, now); 
+            osc.frequency.setValueAtTime(659.25, now + 0.1); 
+            osc.frequency.setValueAtTime(783.99, now + 0.2); 
             gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
             osc.start(now); osc.stop(now + 0.4);
         } else if (type === 'error') {
@@ -57,52 +66,42 @@ class MajesticEscape {
         }); 
     }
 
-    // بناء الـ 30 لعبة (منوعة بين 8 أسلاك، 4 صمامات، 16 بطاقة، 9 مفاتيح، مؤشرات)
+    // 30 فكرة تفاعلية مختلفة الأشكال والأنماط + الألغاز الكتابية الـ 30
     buildPuzzles() {
         const games = [
-            // 1. أسلاك (8 أسلاك)
+            // 1-10 (مثل ما طلبت احتفظنا بأسلوبها مع تغييرات تناسب التصميم)
             { type: 'WIRES', count: 8, colors: ['red','blue','green','yellow','red','black','white','red'], target: 'red', desc: "اكتشف مسار التسريب: اقطع جميع الأسلاك الحمراء فقط.", intHint: "اقطع الـ 3 أسلاك الحمراء", txtQ: "شيء كلما زاد، قلّت رؤيتك له.", txtA: "الظلام" },
-            // 2. كيبورد رموز (9 أزرار)
             { type: 'KEYPAD', count: 9, icons: ['Ω','Δ','Σ','Φ','Ψ','Θ','Γ','Λ','Π'], targetSeq: ['Δ','Φ','Λ'], desc: "شفرة المرور: أدخل الرموز (المثلث، الدائرة المقطوعة، والثمانية المقلوبة).", intHint: "Δ ثم Φ ثم Λ", txtQ: "ابن الماء، وإذا وضعته في الماء مات.", txtA: "الثلج" },
-            // 3. قواطع طاقة (10 قواطع)
             { type: 'SWITCHES', count: 10, target: [1,3,5,7,9], desc: "توزيع الجهد: ارفع القواطع الزوجية فقط (2, 4, 6, 8, 10).", intHint: "شغل المحولات بالأرقام الزوجية", txtQ: "شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", txtA: "السر" },
-            // 4. مؤشرات سحب (3 مؤشرات)
-            { type: 'SLIDERS', count: 3, targets: [80, 20, 50], desc: "معايرة التردد: اضبط المؤشرات على (عالي جداً، منخفض جداً، متوسط).", intHint: "اسحب الأول يمين للأخير، الثاني يسار، والثالث بالنص", txtQ: "شيء يرتفع ولا ينزل أبدًا؟", txtA: "العمر" },
-            // 5. بكرات/صمامات (4 صمامات)
+            { type: 'SLIDERS', count: 3, targets: [80, 20, 50], desc: "معايرة التردد: اضبط المؤشرات على (عالي جداً، منخفض جداً، متوسط).", intHint: "يمين، يسار، بالنص", txtQ: "شيء يرتفع ولا ينزل أبدًا؟", txtA: "العمر" },
             { type: 'VALVES', count: 4, targetAngles: [90, 180, 270, 0], desc: "توجيه الضغط: لف الصمامات لتشير (يمين، أسفل، يسار، أعلى).", intHint: "لفة، لفتين، ثلاث لفات، ولا لفة", txtQ: "يتحدث بلا فم ويسمع بلا أذنين؟", txtA: "الصدى" },
-            // 6. ذاكرة بطاقات (16 بطاقة)
             { type: 'MEMORY', count: 16, icons: ['⚙️','🔋','💻','📡','🔑','🛡️','💾','🕹️'], desc: "استعادة البيانات: طابق أزواج الملفات التالفة.", intHint: "ركز واحفظ أماكن الرموز", txtQ: "مليء بالثقوب ولكنه يحتفظ بالماء؟", txtA: "الاسفنج" },
-            // 7. أسلاك (8 أسلاك)
             { type: 'WIRES', count: 8, colors: ['blue','blue','yellow','blue','black','white','blue','green'], target: 'blue', desc: "إيقاف التبريد: اقطع كافة مسارات الماء (الأزرق).", intHint: "الأسلاك الزرقاء فقط", txtQ: "دائمًا أمامك ولكن لا يمكنك رؤيته؟", txtA: "المستقبل" },
-            // 8. كيبورد رموز (9 أزرار)
-            { type: 'KEYPAD', count: 9, icons: ['★','♦','♥','♠','♣','✖','✔','►','◄'], targetSeq: ['★','►','✖'], desc: "مسار البوت: نجمة، ثم يمين، ثم إغلاق.", intHint: "اضغط النجمة، السهم اليمين، ثم الاكس", txtQ: "لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", txtA: "الوعد" },
-            // 9. قواطع طاقة (10 قواطع)
-            { type: 'SWITCHES', count: 10, target: [0,4,5,9], desc: "الأطراف الأساسية: شغّل القواطع في الأطراف اليمنى واليسرى فقط.", intHint: "أول واحد يمين ويسار، واللي تحتهم مباشرة", txtQ: "إذا نطقت باسمه كسرته؟", txtA: "الصمت" },
-            // 10. بكرات (4 صمامات)
+            { type: 'KEYPAD', count: 9, icons: ['★','♦','♥','♠','♣','✖','✔','►','◄'], targetSeq: ['★','►','✖'], desc: "مسار البوت: نجمة، ثم سهم يمين، ثم إغلاق.", intHint: "★ ثم ► ثم ✖", txtQ: "لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", txtA: "الوعد" },
+            { type: 'SWITCHES', count: 10, target: [0,4,5,9], desc: "الأطراف الأساسية: شغّل القواطع في الأطراف اليمنى واليسرى فقط.", intHint: "أول وأخر واحد بالصفين", txtQ: "إذا نطقت باسمه كسرته؟", txtA: "الصمت" },
             { type: 'VALVES', count: 4, targetAngles: [180, 180, 180, 180], desc: "الإغلاق التام: وجّه جميع الصمامات للأسفل.", intHint: "لف كل واحد مرتين", txtQ: "شيء يجب كسره قبل استخدامه؟", txtA: "البيضة" },
             
-            // تكرار المحركات بكونفيج جديد للألغاز من 11 لـ 30
-            { type: 'SLIDERS', count: 3, targets: [100, 100, 100], desc: "رفع الطاقة للحد الأقصى (Overclock).", intHint: "كلها فل يمين", txtQ: "كلما جففت شيئًا، أصبحت أكثر بللًا؟", txtA: "المنشفة" }, // 11
-            { type: 'MEMORY', count: 12, icons: ['🔴','🔵','🟢','🟡','🟣','⚪'], desc: "مزامنة الألوان: طابق الدوائر الملونة.", intHint: "لعبة تطابق للـ 12 كرت", txtQ: "فيها مدن بلا منازل، وغابات بلا أشجار؟", txtA: "الخريطة" }, // 12
-            { type: 'WIRES', count: 6, colors: ['black','black','black','white','black','black'], target: 'black', desc: "مسح السجل المظلم: اقطع الأسلاك السوداء الـ 5.", intHint: "كل شيء أسود اقطعه", txtQ: "لها عقارب ولكن لا تلدغ؟", txtA: "الساعة" }, // 13
-            { type: 'KEYPAD', count: 9, icons: ['1','2','3','4','5','6','7','8','9'], targetSeq: ['1','5','9'], desc: "رقم قطري: اختر مساراً قطرياً من اليسار لليمين.", intHint: "1 ثم 5 ثم 9", txtQ: "يمشي بلا أرجل ويبكي بلا أعين؟", txtA: "السحاب" }, // 14
-            { type: 'SWITCHES', count: 8, target: [0,1,2,3,4,5,6,7], desc: "تفعيل النظام بالكامل: ارفع الـ 8 قواطع.", intHint: "شغل كل شيء", txtQ: "أخضر من الخارج، أحمر من الداخل؟", txtA: "البطيخ" }, // 15
-            { type: 'VALVES', count: 3, targetAngles: [90, 90, 90], desc: "توجيه البيانات: لف الـ 3 صمامات لليمين.", intHint: "لفة وحدة لكل صمام", txtQ: "له رأس ولا عين له؟", txtA: "المسمار" }, // 16
-            { type: 'SLIDERS', count: 4, targets: [0, 25, 75, 100], desc: "تدرج هرمي: رتب المؤشرات كتصاعد سلم.", intHint: "صفر، ربع، ثلاث أرباع، فل", txtQ: "يبكي دمعًا أسود ليضيء العقول؟", txtA: "القلم" }, // 17
-            { type: 'WIRES', count: 8, colors: ['yellow','cyan','yellow','purple','yellow','orange','gray','yellow'], target: 'yellow', desc: "عزل الإشارة الصفراء: اقطع الـ 4 أسلاك الصفراء.", intHint: "الأصفر فقط", txtQ: "يكبر في الصباح ويختفي في الظهيرة؟", txtA: "الظل" }, // 18
-            { type: 'MEMORY', count: 16, icons: ['A','B','C','D','E','F','G','H'], desc: "طابق الحروف الإنجليزية.", intHint: "ركز وتذكر", txtQ: "دائمًا تشير للشمال ولكنها لا تتحرك؟", txtA: "البوصلة" }, // 19
-            { type: 'KEYPAD', count: 9, icons: ['A','S','D','W','Q','E','Z','X','C'], targetSeq: ['W','A','S','D'], desc: "مفاتيح الحركة الأساسية للجيمنج بالترتيب.", intHint: "W, A, S, D", txtQ: "تسمعها ولكن لا تراها ولا تلمسها؟", txtA: "الريح" }, // 20
-            
-            { type: 'SWITCHES', count: 12, target: [1,4,7,10], desc: "نمط الشطرنج العمودي المتباعد.", intHint: "شغل العمود اللي بالنص", txtQ: "تأكل كل شيء وتخاف من الماء؟", txtA: "النار" }, // 21
-            { type: 'VALVES', count: 4, targetAngles: [270, 270, 270, 270], desc: "تفريغ عكسي: وجه الصمامات لليسار.", intHint: "ثلاث لفات لكل صمام", txtQ: "كلما أخذت منه كبر؟", txtA: "الحفرة" }, // 22
-            { type: 'SLIDERS', count: 3, targets: [50, 50, 50], desc: "توازن تام: ضع الجميع في المنتصف.", intHint: "النص بالضبط", txtQ: "يقرصك ولا تراه؟", txtA: "الجوع" }, // 23
-            { type: 'WIRES', count: 8, colors: ['green','green','green','green','white','white','white','white'], target: 'green', desc: "حذف ملفات النظام الخضراء.", intHint: "اقطع الأخضر فقط", txtQ: "يملكه الشخص ويستخدمه الآخرون أكثر منه؟", txtA: "الاسم" }, // 24
-            { type: 'KEYPAD', count: 9, icons: ['/','*','-','+','=','%','$','#','@'], targetSeq: ['#','*','+'], desc: "هاشتاق، نجمة، زائد.", intHint: "الشباك، النجمة، الزائد", txtQ: "كلما أخذت منه أكثر، تركت أكثر وراءك؟", txtA: "الخطوة" }, // 25
-            { type: 'MEMORY', count: 12, icons: ['♠','♣','♥','♦','★','✖'], desc: "فك تشفير الرموز المعقدة.", intHint: "لعبة تطابق", txtQ: "يسقط ولا يتأذى أبدًا؟", txtA: "المطر" }, // 26
-            { type: 'SWITCHES', count: 10, target: [0,1,2,3,4], desc: "النصف العلوي: فعّل الـ 5 قواطع العليا.", intHint: "الصف اللي فوق كله", txtQ: "كلمة من 4 حروف، إذا أكلت نصفها تموت؟", txtA: "سمسم" }, // 27
-            { type: 'VALVES', count: 4, targetAngles: [90, 180, 270, 0], desc: "دوران عقارب الساعة (يمين، تحت، يسار، فوق).", intHint: "يمين، أسفل، يسار، أعلى", txtQ: "مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", txtA: "العلا" }, // 28
-            { type: 'SLIDERS', count: 4, targets: [100, 0, 100, 0], desc: "نمط النبضة القصوى (فل، صفر، فل، صفر).", intHint: "الأول يمين، الثاني يسار، الثالث يمين، الرابع يسار", txtQ: "تحترق وتبكي لتضيء للآخرين؟", txtA: "الشمعة" }, // 29
-            { type: 'KEYPAD', count: 9, icons: ['S','O','L','A','R','G','M','E','!'], targetSeq: ['S','O','L','A','R'], desc: "كلمة السر الخاصة بالنسخة.", intHint: "اضغط حروف SOLAR بالترتيب", txtQ: "المعدن النقي الذي يرمز لنسخة SOLAR؟", txtA: "الذهب" } // 30
+            // 11-30 أفكار جديدة كلياً ومنوعة الأشكال والأعداد
+            { type: 'SLIDERS', count: 4, targets: [0, 33, 66, 100], desc: "توازن الصوت (Equalizer): اصنع مدرجاً تصاعدياً للمؤشرات.", intHint: "من اليسار لليمين: صفر، ثلث، ثلثين، فل", txtQ: "كلما جففت شيئًا، أصبحت أكثر بللًا؟", txtA: "المنشفة" },
+            { type: 'KEYPAD', count: 9, icons: ['↖️','⬆️','↗️','⬅️','⏺️','➡️','↙️','⬇️','↘️'], targetSeq: ['⬆️','⬇️','⬅️','➡️'], desc: "أزرار الاتجاهات (D-Pad): أدخل (فوق، تحت، يسار، يمين).", intHint: "أسهم: فوق، تحت، يسار، يمين", txtQ: "فيها مدن بلا منازل، وغابات بلا أشجار؟", txtA: "الخريطة" },
+            { type: 'MEMORY', count: 12, icons: ['🔲','🔳','🔘','🧿','🌀','🎯'], desc: "مطابقة البصمات: اعثر على البصمات المتطابقة.", intHint: "لعبة تطابق 12 كرت", txtQ: "لها عقارب ولكن لا تلدغ؟", txtA: "الساعة" },
+            { type: 'SWITCHES', count: 12, target: [0,2,4, 7,9,11], desc: "نمط رقعة الشطرنج: فعّل المربعات بشكل متبادل تماماً.", intHint: "واحد شغال والثاني طافي", txtQ: "يمشي بلا أرجل ويبكي بلا أعين؟", txtA: "السحاب" },
+            { type: 'WIRES', count: 6, colors: ['black','white','black','white','black','white'], target: 'black', desc: "ألياف بصرية: دمر المسارات المظلمة (الأسود) فقط.", intHint: "الأسود الـ 3 فقط", txtQ: "أخضر من الخارج، أحمر من الداخل؟", txtA: "البطيخ" },
+            { type: 'VALVES', count: 3, targetAngles: [0, 0, 0], desc: "أقفال الخزنة: وجّه جميع البكرات للأعلى.", intHint: "لا تلفها، أو لفها لين ترجع فوق", txtQ: "له رأس ولا عين له؟", txtA: "المسمار" },
+            { type: 'KEYPAD', count: 9, icons: ['🎵','🎶','🎼','🎹','🎷','🎺','🎸','🎻','📻'], targetSeq: ['🎹','🎸','🎺'], desc: "البيانو المشفر: بيانو، جيتار، بوق.", intHint: "🎹 ثم 🎸 ثم 🎺", txtQ: "يبكي دمعًا أسود ليضيء العقول؟", txtA: "القلم" },
+            { type: 'SLIDERS', count: 2, targets: [0, 0], desc: "تبريد المفاعل: خفّض حرارة المفاعلين للصفر.", intHint: "نزلهم لليسار للأخير", txtQ: "يكبر في الصباح ويختفي في الظهيرة؟", txtA: "الظل" },
+            { type: 'SWITCHES', count: 8, target: [1,2,5,6], desc: "كاميرات المراقبة: أطفئ الكاميرات بالأطراف، وأبقِ المنتصف.", intHint: "شغل الـ 4 اللي بالنص فقط", txtQ: "دائمًا تشير للشمال ولكنها لا تتحرك؟", txtA: "البوصلة" },
+            { type: 'MEMORY', count: 16, icons: ['🦠','🧬','🩸','🧪','💊','💉','🔬','🔭'], desc: "فيروسات متخفية: اعثر على أزواج الفيروسات المخبرية.", intHint: "لعبة تطابق 16 كرت", txtQ: "تسمعها ولكن لا تراها ولا تلمسها؟", txtA: "الريح" },
+            { type: 'WIRES', count: 10, colors: ['red','yellow','blue','green','yellow','black','green','white','orange','yellow'], target: 'yellow', desc: "أسلاك القنبلة: اقطع اللون الأصفر فقط لتجنب الانفجار.", intHint: "الأصفر الـ 3", txtQ: "تأكل كل شيء وتخاف من الماء؟", txtA: "النار" },
+            { type: 'VALVES', count: 5, targetAngles: [90, 90, 90, 90, 90], desc: "توجيه الرادار: وجّه جميع الرادارات لليمين.", intHint: "لفة وحدة يمين لكل واحد", txtQ: "كلما أخذت منه كبر؟", txtA: "الحفرة" },
+            { type: 'KEYPAD', count: 9, icons: ['🌍','🌕','🌞','🪐','☄️','🌌','🌠','🌟','☁️'], targetSeq: ['🌞','🌍','🌕'], desc: "كواكب المجموعة: شمس، ثم أرض، ثم قمر.", intHint: "🌞 ثم 🌍 ثم 🌕", txtQ: "يقرصك ولا تراه؟", txtA: "الجوع" },
+            { type: 'SWITCHES', count: 16, target: [0,1,2,3, 4,7, 8,11, 12,13,14,15], desc: "مسح قطاع البيانات: فعّل إطار الشبكة الخارجي بالكامل.", intHint: "شغل الأطراف واترك الـ 4 اللي بالنص", txtQ: "يملكه الشخص ويستخدمه الآخرون أكثر منه؟", txtA: "الاسم" },
+            { type: 'SLIDERS', count: 3, targets: [100, 50, 0], desc: "خلط الألوان RGB: أحمر كامل، أخضر للنصف، أزرق صفر.", intHint: "أول واحد يمين، الثاني بالنص، الثالث يسار", txtQ: "كلما أخذت منه أكثر، تركت أكثر وراءك؟", txtA: "الخطوة" },
+            { type: 'MEMORY', count: 12, icons: ['👤','👥','🕵️','👮','💂','👷'], desc: "هويات مزيفة: طابق أصحاب المهن.", intHint: "تطابق 12 كرت", txtQ: "يسقط ولا يتأذى أبدًا؟", txtA: "المطر" },
+            { type: 'VALVES', count: 2, targetAngles: [90, 270], desc: "أقفال التيتانيوم: توجيه متعاكس (الأول يمين، الثاني يسار).", intHint: "الأول لفة وحدة، الثاني 3 لفات", txtQ: "كلمة من 4 حروف، إذا أكلت نصفها تموت؟", txtA: "سمسم" },
+            { type: 'WIRES', count: 7, colors: ['white','black','gray','white','blue','red','white'], target: 'white', desc: "شبكة الاتصال: دمّر المسارات البيضاء لقطع الاتصال.", intHint: "الأبيض الـ 3", txtQ: "مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", txtA: "العلا" },
+            { type: 'KEYPAD', count: 9, icons: ['/','*','-','+','$','#','@','!','&'], targetSeq: ['#','*','+'], desc: "مفاتيح الهاكر: هاشتاق، ثم نجمة، ثم زائد.", intHint: "الشباك، النجمة، الزائد", txtQ: "تحترق وتبكي لتضيء للآخرين؟", txtA: "الشمعة" },
+            { type: 'SWITCHES', count: 12, target: [0,1,2,3,4,5,6,7,8,9,10,11], desc: "Master Override: فعّل جميع الأزرار لاقتحام النظام المركزي.", intHint: "شغلها كلها", txtQ: "المعدن النقي الذي يرمز لنسخة SOLAR؟", txtA: "الذهب" }
         ];
 
         return games.map((g, i) => ({ id: i + 1, ...g }));
@@ -115,7 +114,8 @@ class MajesticEscape {
     }
 
     startLobby() { 
-        this.playSound('click'); // تهيئة الصوت
+        this.initAudio(); // تفعيل الصوت
+        this.playSound('click'); 
         this.switchScreen('lobby'); 
     }
 
@@ -136,7 +136,6 @@ class MajesticEscape {
         this.activeGate = this.gameConfig.find(x => x.id === id);
         this.hasShield = false;
         
-        // إعداد واجهة المرحلة الأولى
         document.getElementById('interactive-stage-container').classList.remove('hidden');
         document.getElementById('text-stage').classList.add('hidden');
         document.getElementById('input-area').classList.add('hidden');
@@ -146,7 +145,6 @@ class MajesticEscape {
         this.switchScreen('puzzle');
     }
 
-    // بناء المرحلة التفاعلية (6 محركات بصرية مختلفة)
     setupStage() {
         const p = this.activeGate;
         document.getElementById('puzzle-title').innerText = `# ROOM-${p.id.toString().padStart(2,'0')}`;
@@ -196,9 +194,10 @@ class MajesticEscape {
             }
             let btn = document.createElement('button'); btn.className = 'btn-submit-sliders'; btn.innerText = "VERIFY SYNC";
             btn.onclick = () => {
+                this.playSound('click');
                 let inputs = document.querySelectorAll('.slider-input');
-                let isCorrect = Array.from(inputs).every((inp, i) => Math.abs(parseInt(inp.value) - p.targets[i]) <= 5); // تسامح 5%
-                if(isCorrect) this.winInteractive(); else this.failRoom("Sync Failed!");
+                let isCorrect = Array.from(inputs).every((inp, i) => Math.abs(parseInt(inp.value) - p.targets[i]) <= 5);
+                if(isCorrect) this.winInteractive(); else { this.failRoom("Sync Failed!"); this.setupStage(); }
             };
             stage.appendChild(btn);
         }
@@ -262,11 +261,9 @@ class MajesticEscape {
         }
     }
 
-    // الانتقال للمرحلة الكتابية
     winInteractive() {
         this.playSound('success'); 
         this.notify("✅ Interactive Override Successful! Bot unlocked...");
-        
         document.getElementById('interactive-stage-container').classList.add('hidden');
         document.getElementById('puzzle-desc').innerText = this.activeGate.txtQ;
         document.getElementById('text-stage').classList.remove('hidden');
@@ -274,8 +271,8 @@ class MajesticEscape {
         document.getElementById('user-input').focus();
     }
 
-    // التحقق من اللغز الكتابي
     checkResult() {
+        this.playSound('click');
         let answerInput = document.getElementById('user-input').value.trim();
         if (answerInput === this.activeGate.txtA) {
             this.winRoomFinal();
@@ -298,16 +295,14 @@ class MajesticEscape {
             return;
         }
         this.playSound('error'); this.triggerVisualGlitch(); this.notify(msg, "error"); 
-        if(!this.isTimerFrozen) this.timeLeft -= 20;
+        if(!this.isTimerFrozen) this.timeLeft -= 15;
     }
 
-    /* --- التايمر والمشرف --- */
     startTimer() {
         if(this.timer) clearInterval(this.timer);
         this.timer = setInterval(() => {
             if (!this.isPaused && !this.isTimerFrozen && this.timeLeft > 0) {
                 this.timeLeft--; this.updateTimerUI();
-                if (this.timeLeft <= 10 && this.timeLeft > 0) this.playSound('click'); // Ticking sound
             } else if (this.timeLeft <= 0 && !this.isTimerFrozen) { this.onFail(); }
         }, 1000);
     }
@@ -318,8 +313,8 @@ class MajesticEscape {
     }
     onFail() { clearInterval(this.timer); this.playSound('error'); alert("Server Timeout! GAME OVER."); this.switchScreen('welcome'); }
 
-    openMarket() { document.getElementById('panel-market').classList.remove('hidden'); }
-    closeMarket() { document.getElementById('panel-market').classList.add('hidden'); }
+    openMarket() { this.playSound('click'); document.getElementById('panel-market').classList.remove('hidden'); }
+    closeMarket() { this.playSound('click'); document.getElementById('panel-market').classList.add('hidden'); }
     buy(type) {
         let prices = { hint: 30, shield: 40 };
         if (this.coins < prices[type]) return this.failRoom("Not enough coins!");
@@ -334,22 +329,24 @@ class MajesticEscape {
         this.closeMarket();
     }
 
-    toggleAdminSidebar(open) { const sidebar = document.getElementById('admin-sidebar'); open ? sidebar.classList.add('open') : sidebar.classList.remove('open'); }
+    toggleAdminSidebar(open) { this.playSound('click'); const sidebar = document.getElementById('admin-sidebar'); open ? sidebar.classList.add('open') : sidebar.classList.remove('open'); }
     adminToggleFreeze() {
+        this.playSound('click');
         this.isTimerFrozen = !this.isTimerFrozen;
         const btn = document.getElementById('btn-freeze');
         if(this.isTimerFrozen) { btn.innerText = "⏱️ Stream Paused ❄️"; btn.style.background = "#4a3311"; btn.style.color="#ffd700"; } 
         else { btn.innerText = "⏱️ Pause Stream"; btn.style.background = ""; btn.style.color=""; }
     }
     adminInstantSolveGate() {
+        this.playSound('click');
         if(!this.activeGate) return alert("Please enter a room first!");
         this.toggleAdminSidebar(false);
         this.winRoomFinal();
     }
-    adminModifyCoins(val) { this.coins = Math.max(0, this.coins + val); this.updateStats(); }
-    adminModifyTime(val) { this.timeLeft = Math.max(5, this.timeLeft + val); this.updateTimerUI(); }
+    adminModifyCoins(val) { this.playSound('click'); this.coins = Math.max(0, this.coins + val); this.updateStats(); }
+    adminModifyTime(val) { this.playSound('click'); this.timeLeft = Math.max(5, this.timeLeft + val); this.updateTimerUI(); }
 
-    returnToLobby() { this.switchScreen('lobby'); }
+    returnToLobby() { this.playSound('click'); this.switchScreen('lobby'); }
     updateStats() { document.getElementById('coin-val').innerText = this.coins; }
     notify(m, t="success") {
         let c = document.getElementById('toast-container'), n = document.createElement('div'); n.className='toast';
