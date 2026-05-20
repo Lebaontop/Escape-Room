@@ -6,20 +6,22 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Changa', sans-serif; }
 body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height: 100vh; user-select: none; }
 
-.main-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('bg.jpg'); background-size: cover; background-position: center; opacity: 0.15; z-index: -3; }
-.vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.95) 100%); z-index: -1; pointer-events: none; }
+.main-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; opacity: 0.9; z-index: -3; }
+.vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.95) 100%); z-index: -1; pointer-events: none; }
 
 .hidden { display: none !important; }
 .mt-10 { margin-top: 15px; }
 .solar-txt { color: var(--solar-orange); font-weight: 800; text-shadow: 0 0 10px rgba(255, 107, 0, 0.4); }
 
+/* News Ticker */
 .news-ticker-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; background: #111214; border-top: 2px solid var(--solar-orange); display: flex; align-items: center; z-index: 50; overflow: hidden;}
 .ticker-label { background: var(--solar-orange); color: #fff; font-family: 'Rajdhani', sans-serif; font-weight: 700; padding: 0 20px; height: 100%; display: flex; align-items: center; z-index: 2; position: relative; letter-spacing: 1px; }
 .ticker-text { flex-grow: 1; white-space: nowrap; overflow: hidden; position: relative; }
-.ticker-track { display: inline-block; white-space: nowrap; animation: ticker 25s linear infinite; }
+.ticker-track { display: inline-block; white-space: nowrap; animation: ticker 30s linear infinite; padding-left: 100vw; }
 .ticker-track span { padding-right: 50px; color: #949ba4; font-size: 1.1rem; }
-@keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
+/* Intro Screen */
 #screen-welcome { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
 .stream-hero { padding: 60px; border-radius: 12px; text-align: center; background: rgba(43, 45, 49, 0.85); border: 1px solid #3f4147; backdrop-filter: blur(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.8); position: relative; }
 .live-badge { position: absolute; top: 20px; left: 20px; background: var(--discord-red); color: #fff; font-family: 'Rajdhani', sans-serif; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; animation: pulse 2s infinite; }
@@ -30,14 +32,13 @@ body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height
 .btn-prime { background: var(--discord-blurple); color: #fff; border: none; padding: 15px 40px; font-size: 1.3rem; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; border-radius: 4px; transition: 0.2s; letter-spacing: 1px; }
 .btn-prime:hover { background: #4752c4; transform: translateY(-2px); }
 
+/* Header & Sidebar */
 #main-nav { position: fixed; top: 0; width: 100%; height: 70px; padding: 10px 40px; z-index: 100; background: rgba(43, 45, 49, 0.9); backdrop-filter: blur(5px); border-bottom: 1px solid #1f2023; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 .nav-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
 .stat-box { display: flex; flex-direction: column; align-items: center; }
 .stat-box .label { font-size: 0.75rem; color: #949ba4; font-family: 'Rajdhani', sans-serif; font-weight: bold; letter-spacing: 1px; }
 .timer-txt { color: var(--discord-red); font-weight: 800; font-size: 1.4rem; font-family: monospace; }
 .action-btn { background: #1e1f22; border: 1px solid #3f4147; color: #dbdee1; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s; font-family: 'Rajdhani', sans-serif;}
-.action-btn:hover { background: #3f4147; color: #fff; }
-
 .sidebar { position: fixed; top: 0; left: 0; width: 320px; height: 100vh; background: #111214; border-right: 1px solid #2b2d31; transform: translateX(-100%); transition: 0.3s; z-index: 2000; padding: 20px; }
 .sidebar.open { transform: translateX(0); }
 .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #2b2d31; color: #fff; }
@@ -51,59 +52,78 @@ body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height
 .admin-input-group .row { display: flex; gap: 5px; }
 .admin-input-group .row button { flex: 1; padding: 6px; background: #313338; border: none; color: #fff; cursor: pointer; border-radius: 4px; }
 
+/* Lobby */
 .lobby-wrapper { padding: 100px 50px 50px; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
 .category-title { width: 100%; max-width: 900px; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; color: #949ba4; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #3f4147; padding-bottom: 5px; text-align: left;}
-.discord-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 900px; }
+.discord-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; max-width: 1000px; }
 .gate-card { background: rgba(43, 45, 49, 0.8); border-radius: 6px; padding: 15px; backdrop-filter: blur(5px); display: flex; align-items: center; cursor: pointer; transition: 0.2s; color: #949ba4; border: 1px solid #3f4147; }
-.gate-card h3 { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; margin-right: 10px; }
-.gate-card::before { content: '🔊'; margin-left: 10px; font-size: 1.1rem; filter: grayscale(100%); opacity: 0.5;}
+.gate-card h3 { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; margin-right: 5px; }
+.gate-card::before { content: '🔊'; margin-left: 10px; font-size: 1rem; filter: grayscale(100%); opacity: 0.5;}
 .gate-card:hover:not(.locked) { background: #313338; color: #fff; border-color: var(--discord-blurple); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
 .gate-card.solved { color: var(--discord-green); }
 .gate-card.solved::before { filter: grayscale(0%); opacity: 1; content: '🟢'; }
 .gate-card.locked { opacity: 0.5; cursor: not-allowed; background: #111214; }
 .gate-card.locked::before { content: '🔒'; }
 
+/* Puzzle UI */
 .puzzle-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
-.puzzle-card { width: 800px; padding: 25px; border-radius: 8px; background: rgba(43, 45, 49, 0.95); backdrop-filter: blur(15px); border: 1px solid #1f2023; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+.puzzle-card { width: 850px; padding: 25px; border-radius: 8px; background: rgba(43, 45, 49, 0.95); backdrop-filter: blur(15px); border: 1px solid #1f2023; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
 .puzzle-header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #3f4147; }
 .track-title { font-size: 1.1rem; color: #fff; margin-bottom: 15px; background: var(--discord-dark); padding: 10px 15px; border-radius: 4px; font-weight: bold; border-right: 4px solid var(--solar-orange); }
 
-/* محركات الألعاب التفاعلية */
-#interactive-stage { margin: 20px 0; display: flex; justify-content: center; align-items: center; min-height: 200px; }
+/* --- تصميم الألعاب التفاعلية المنوعة --- */
+#interactive-stage { margin: 20px 0; display: flex; justify-content: center; align-items: center; min-height: 250px; background: #1a1b1e; border-radius: 8px; border: 1px solid #3f4147; padding: 20px;}
 
-.wires-engine { display: flex; flex-direction: column; gap: 12px; width: 80%; }
-.wire-item { height: 25px; width: 100%; border-radius: 4px; cursor: pointer; border: 2px solid #111; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: 0.2s; position: relative;}
-.wire-item::after { content: '⚡'; position: absolute; left: 10px; top: 2px; font-size: 0.8rem; color: rgba(255,255,255,0.5);}
-.wire-item.cut { opacity: 0.15; transform: scaleX(0.9); pointer-events: none; }
+/* الأسلاك */
+.eng-wires { display: flex; flex-direction: column; gap: 15px; width: 80%; }
+.e-wire { height: 25px; width: 100%; border-radius: 4px; cursor: pointer; border: 2px solid #000; box-shadow: 0 3px 6px rgba(0,0,0,0.6); position: relative;}
+.e-wire::after { content: '⚡'; position: absolute; left: 15px; top: 1px; font-size: 0.9rem; color: rgba(255,255,255,0.4);}
+.e-wire.cut { opacity: 0.2; transform: scaleX(0.95); pointer-events: none; }
 
-.valves-engine { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
-.valve-item { width: 75px; height: 75px; border-radius: 50%; background: #313338; border: 6px solid #1f2023; cursor: pointer; transition: transform 0.3s; position: relative; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--solar-orange); box-shadow: 0 5px 10px rgba(0,0,0,0.4);}
-.valve-item::before { content: ''; position: absolute; top: -10px; width: 12px; height: 25px; background: var(--solar-yellow); border-radius: 4px;}
+/* البكرات/الصمامات */
+.eng-valves { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+.e-valve { width: 90px; height: 90px; border-radius: 50%; background: #313338; border: 6px solid #1f2023; cursor: pointer; transition: transform 0.3s; position: relative; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; color: var(--solar-orange); box-shadow: 0 5px 10px rgba(0,0,0,0.4);}
+.e-valve::before { content: ''; position: absolute; top: -10px; width: 14px; height: 25px; background: var(--discord-red); border-radius: 4px;}
 
-.sliders-engine { display: flex; flex-direction: column; gap: 20px; width: 80%; }
-.slider-row { display: flex; align-items: center; gap: 15px; }
-.slider-row span { font-family: monospace; font-size: 1.2rem; color: var(--solar-orange); width: 40px;}
-.slider-input { flex-grow: 1; appearance: none; height: 10px; background: #1f2023; outline: none; border-radius: 5px; }
-.slider-input::-webkit-slider-thumb { appearance: none; width: 25px; height: 25px; background: var(--discord-blurple); cursor: pointer; border-radius: 50%; }
-.btn-submit-sliders { margin-top: 15px; background: var(--discord-green); color: #000; padding: 10px 20px; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+/* المؤشرات (Sliders) */
+.eng-sliders { display: flex; flex-direction: column; gap: 20px; width: 80%; }
+.e-slider-row { display: flex; align-items: center; gap: 15px; }
+.e-slider-row span { font-family: monospace; font-size: 1.2rem; color: var(--solar-orange); width: 45px;}
+.e-slider-input { flex-grow: 1; appearance: none; height: 12px; background: #111; outline: none; border-radius: 6px; }
+.e-slider-input::-webkit-slider-thumb { appearance: none; width: 28px; height: 28px; background: var(--discord-blurple); cursor: pointer; border-radius: 50%; border: 2px solid #fff;}
+.btn-verify { margin-top: 15px; background: var(--discord-green); color: #000; padding: 12px 25px; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 1.1rem; }
 
-.memory-engine { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; justify-content: center;}
-.mem-card { width: 70px; height: 70px; background: #313338; border: 2px solid #1f2023; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: transparent; transition: 0.2s; }
-.mem-card.flipped { background: var(--discord-blurple); color: #fff; transform: scale(1.05); }
-.mem-card.matched { background: var(--discord-green); color: #000; pointer-events: none; opacity: 0.8; }
+/* الذاكرة (Memory) */
+.eng-memory { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; justify-content: center;}
+.e-mem-card { width: 75px; height: 75px; background: #2b2d31; border: 2px solid #1f2023; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; color: transparent; transition: 0.3s; }
+.e-mem-card.flipped { background: var(--discord-blurple); color: #fff; transform: rotateY(180deg); }
+.e-mem-card.matched { background: var(--discord-green); color: #000; pointer-events: none; opacity: 0.7; }
 
-.keypad-engine { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;}
-.keypad-btn { width: 80px; height: 80px; background: #1e1f22; border: 2px solid #3f4147; border-radius: 8px; color: var(--solar-yellow); font-size: 2rem; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 #111; display: flex; justify-content: center; align-items: center;}
-.keypad-btn:active { transform: translateY(4px); box-shadow: none; }
-.keypad-btn.pressed { background: var(--solar-orange); color: #fff; border-color: #fff; }
+/* الكيبوردات المنوعة (Keypads) */
+.eng-keypad { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 400px;}
+.e-key-btn { width: 85px; height: 85px; background: #1e1f22; border: 2px solid #3f4147; border-radius: 10px; color: var(--solar-yellow); font-size: 2.5rem; cursor: pointer; box-shadow: 0 6px 0 #111; display: flex; justify-content: center; align-items: center; transition: 0.1s;}
+.e-key-btn:active { transform: translateY(6px); box-shadow: none; }
+.e-key-btn.pressed { background: var(--solar-orange); color: #fff; border-color: #fff; }
 
-.switches-engine { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;}
-.switch-box { background: #313338; padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; border: 2px solid #1f2023; width: 80px;}
-.switch-box.on { background: var(--discord-green); border-color: #3ba55c; }
-.switch-box .indicator { width: 20px; height: 20px; background: #ED4245; border-radius: 50%; margin: 0 auto 10px; }
-.switch-box.on .indicator { background: #fff; box-shadow: 0 0 10px #fff; }
+/* القواطع (Breakers/Switches) */
+.eng-switches { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;}
+.e-switch { background: #313338; padding: 20px 15px; border-radius: 6px; text-align: center; cursor: pointer; border: 2px solid #1f2023; width: 90px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);}
+.e-switch.on { background: #2b2d31; border-color: #3ba55c; }
+.e-switch .ind { width: 25px; height: 40px; background: #ED4245; border-radius: 4px; margin: 0 auto 10px; transition: 0.3s;}
+.e-switch.on .ind { background: var(--discord-green); transform: translateY(-5px); box-shadow: 0 5px 15px var(--discord-green); }
 
-/* المرحلة الثانية (الكتابية) */
+/* أزرار ضغط عملاقة (Push Buttons) */
+.eng-push { display: flex; gap: 20px; justify-content: center; }
+.e-push-btn { width: 100px; height: 100px; border-radius: 50%; background: #ED4245; border: 8px solid #111; cursor: pointer; box-shadow: 0 10px 0 #800; transition: 0.1s; }
+.e-push-btn:active { transform: translateY(10px); box-shadow: none; background: #ff6b6b;}
+.e-push-btn.locked { background: var(--discord-green); box-shadow: none; transform: translateY(10px); pointer-events: none;}
+
+/* لوحة رادار/إحداثيات (Grid) */
+.eng-radar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; background: #001a00; border: 4px solid #00ff00; padding: 10px; border-radius: 50%; width: 300px; height: 300px; }
+.e-radar-cell { border: 1px solid rgba(0, 255, 0, 0.3); cursor: pointer; display: flex; justify-content: center; align-items: center; color: rgba(0, 255, 0, 0.5); font-family: monospace;}
+.e-radar-cell:hover { background: rgba(0, 255, 0, 0.4); color: #fff;}
+
+/* المرحلة 2 (الكتابية) */
 .bot-message { background: var(--discord-dark); border-radius: 6px; padding: 15px; margin-top: 20px; border: 1px solid #1f2023; text-align: right;}
 .bot-header { font-family: 'Rajdhani', sans-serif; font-weight: bold; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; justify-content: flex-start; flex-direction: row-reverse;}
 .bot-tag { background: var(--discord-red); color: #fff; font-size: 0.65rem; padding: 2px 4px; border-radius: 3px; }
@@ -117,15 +137,9 @@ body { background: var(--discord-dark); color: #dbdee1; overflow: hidden; height
 .btn-cancel { background: transparent; color: #ED4245; padding: 8px 15px; border: 1px solid #ED4245; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s;}
 .btn-cancel:hover { background: #ED4245; color: #fff; }
 
-.market-list { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; text-align: right; }
-.m-item { display: flex; justify-content: space-between; align-items: center; background: var(--discord-dark); padding: 12px; border-radius: 6px; border: 1px solid #1f2023; }
-.m-info b { color: var(--solar-yellow); font-size: 1rem; }
-.m-info small { color: #949ba4; font-size: 0.8rem;}
-.m-item button { background: #313338; color: #fff; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1500; }
 .modal-box { padding: 25px; border-radius: 8px; background: var(--discord-mid); border: 1px solid #3f4147; }
 .close-btn { background: transparent; color: #949ba4; border: 1px solid #3f4147; padding: 8px; border-radius: 4px; cursor: pointer; }
-
 #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; }
 .toast { background: var(--discord-dark); border-right: 4px solid var(--discord-blurple); color: #fff; padding: 12px 20px; border-radius: 4px; margin-top: 10px; animation: slideIn 0.3s forwards; }
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
