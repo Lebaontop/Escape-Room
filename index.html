@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOLAR GAMES</title>
+    <title>SOLAR GAMES - Streamer HUD</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@300;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
@@ -12,26 +12,30 @@
     <div class="main-bg"></div>
     <div class="vignette"></div>
 
-    <!-- شاشة البداية (Stream Starting Soon) -->
+    <!-- شاشة الانتظار للستريم -->
     <section id="screen-welcome" class="screen active">
         <div class="stream-hero">
             <div class="live-badge">🔴 LIVE</div>
             <h1 class="main-title">SOLAR GAMES</h1>
-            <p class="subtitle">STREAM STARTING SOON...</p>
+            <p class="subtitle">SYSTEM OVERRIDE INITIATED</p>
             <div class="cyber-divider"></div>
             <button type="button" class="btn-prime" onclick="game.startLobby()">JOIN SERVER</button>
         </div>
         
-        <!-- شريط الإعلانات الخاص بالستريم -->
+        <!-- الشريط الإخباري اللانهائي -->
         <div class="news-ticker-container">
             <div class="ticker-label">SERVER LOG</div>
-            <div class="ticker-text">
-                <span>[SYSTEM MSG]: مرحباً بكم في تحديات SOLAR GAMES... المتحدث الرسمي يعلن بدء الفعالية... يرجى الالتزام بالرومات الصوتية المخصصة... أي محاولة للغش ستؤدي إلى باند نهائي (Ban)...</span>
+            <div class="ticker-text" dir="ltr">
+                <div class="ticker-track">
+                    <span>[SYSTEM MSG]: Welcome to SOLAR GAMES... Voice Channels Locked... Co-op Override Required... Failure leads to instant Ban... </span>
+                    <span>[SYSTEM MSG]: Welcome to SOLAR GAMES... Voice Channels Locked... Co-op Override Required... Failure leads to instant Ban... </span>
+                    <span>[SYSTEM MSG]: Welcome to SOLAR GAMES... Voice Channels Locked... Co-op Override Required... Failure leads to instant Ban... </span>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- شريط المهام (Discord Style Header) -->
+    <!-- شريط المهام العلوي -->
     <header id="main-nav" class="hidden">
         <div class="nav-content">
             <div class="stat-box"><span class="label">SOLAR COINS</span><div class="value solar-txt"><span id="coin-val">60</span> <small>C</small></div></div>
@@ -42,7 +46,7 @@
         </div>
     </header>
 
-    <!-- لوحة تحكم الأدمن -->
+    <!-- لوحة تحكم المشرف -->
     <div id="admin-sidebar" class="sidebar">
         <div class="sidebar-header">
             <h3>Admin Panel 👑</h3>
@@ -50,8 +54,8 @@
         </div>
         <div class="sidebar-section">
             <h4>Stream Controls</h4>
-            <button type="button" class="btn-admin-action btn-warning" id="btn-freeze" onclick="game.adminToggleFreeze()">⏱️ Pause Stream (تجميد)</button>
-            <button type="button" class="btn-admin-action btn-prime-style" onclick="game.adminInstantSolveGate()">✅ Force Unlock (حل فوري)</button>
+            <button type="button" class="btn-admin-action btn-warning" id="btn-freeze" onclick="game.adminToggleFreeze()">⏱️ Pause Stream</button>
+            <button type="button" class="btn-admin-action btn-prime-style" onclick="game.adminInstantSolveGate()">✅ Force Unlock Room</button>
         </div>
         <div class="sidebar-section">
             <h4>Economy & Time</h4>
@@ -72,69 +76,46 @@
         </div>
     </div>
 
-    <!-- اللوبي (Voice Channels) -->
+    <!-- الرومات (البوابات الـ 30) -->
     <section id="screen-lobby" class="screen hidden">
         <div class="lobby-wrapper">
-            <div class="category-title">🔻 VOICE CHANNELS - SOLAR GAMES</div>
+            <div class="category-title">🔻 SECURE VOICE CHANNELS</div>
             <div class="discord-grid" id="gates-container"></div>
         </div>
     </section>
 
-    <!-- شاشة اللغز (Streamer HUD) -->
+    <!-- شاشة اللعبة التفاعلية -->
     <section id="screen-puzzle" class="screen hidden">
         <div class="puzzle-container">
             <div class="puzzle-card" id="main-puzzle-card">
-                
                 <div class="puzzle-header-actions">
                     <h2 id="puzzle-title" class="solar-txt" style="margin: 0; font-family: 'Rajdhani', sans-serif;"># ROOM-01</h2>
                     <button type="button" class="action-btn market-btn" onclick="game.openMarket()">🎁 Server Boosts</button>
                 </div>
                 
-                <div class="puzzle-body" id="puzzle-body-container">
-                    <!-- الألعاب التفاعلية -->
-                    <div id="interactive-stage">
-                        <div id="game-wire" class="mini-game hidden"><p class="track-title" id="wire-desc">Logic Puzzle</p><div class="wires-container" id="wire-container"></div></div>
-                        <div id="game-safe" class="mini-game hidden"><p class="track-title" id="safe-desc">Password Required</p><div id="safe-history" class="safe-history"></div><div class="safe-inputs" id="safe-inputs"></div><div class="safe-keypad" id="safe-keypad"></div></div>
-                        <div id="game-grid12" class="mini-game hidden">
-                            <p id="grid12-desc" class="track-title"></p>
-                            <div class="grid12-container" id="grid12-box"></div>
-                            <button id="grid12-submit" type="button" class="btn-decode mt-10 hidden" onclick="game.checkGrid12()">Submit Answer</button>
-                        </div>
-                    </div>
-
-                    <!-- اللغز الكتابي (Server Bot Message) -->
-                    <div id="text-stage" class="hidden bot-message">
-                        <div class="bot-header">🤖 SolarBot <span class="bot-tag">BOT</span></div>
-                        <p id="puzzle-desc"></p>
-                    </div>
-                </div>
-
-                <div class="puzzle-controls hidden" id="input-area">
-                    <input type="text" id="user-input" placeholder="Type answer here...">
-                    <button type="button" class="btn-decode" onclick="game.checkResult()">Send</button>
+                <div class="puzzle-body">
+                    <p class="track-title" id="game-desc">الوصف هنا</p>
+                    <!-- مسرح العمليات الـ 12 عنصر -->
+                    <div id="interactive-stage" class="stage-12"></div>
                 </div>
                 
-                <br><button type="button" class="btn-cancel mt-10" onclick="game.returnToLobby()">Disconnect (تراجع)</button>
+                <button type="button" class="btn-cancel mt-10" onclick="game.returnToLobby()">Disconnect (تراجع)</button>
             </div>
         </div>
     </section>
 
-    <!-- المتجر (Server Boosts) -->
+    <!-- المتجر -->
     <div id="panel-market" class="modal-overlay hidden">
         <div class="modal-box market-border" style="width: 450px;">
             <h3 class="solar-txt" style="margin-bottom: 15px;">🎁 SOLAR BOOSTS</h3>
             <div class="market-list">
                 <div class="m-item">
-                    <div class="m-info">💡 <b>Admin Hint</b><br><small>تلميح مباشر من الإدارة</small></div>
+                    <div class="m-info">💡 <b>Admin Hint</b><br><small>تلميح لحل الغرفة</small></div>
                     <button type="button" onclick="game.buy('hint')">30 C</button>
                 </div>
                 <div class="m-item">
-                    <div class="m-info">⏳ <b>Time Extension</b><br><small>إضافة +60 ثانية للستريم</small></div>
-                    <button type="button" onclick="game.buy('time')">60 C</button>
-                </div>
-                <div class="m-item">
-                    <div class="m-info">🛡️ <b>Anti-Ban Shield</b><br><small>يحميك من العقوبة عند الإجابة الخطأ</small></div>
-                    <button type="button" id="btn-buy-shield" onclick="game.buy('shield')">40 C</button>
+                    <div class="m-info">🛡️ <b>Anti-Ban Shield</b><br><small>يحميك من خصم الوقت عند الخطأ</small></div>
+                    <button type="button" onclick="game.buy('shield')">40 C</button>
                 </div>
             </div>
             <button type="button" class="close-btn mt-10" style="width: 100%;" onclick="game.closeMarket()">Close</button>
