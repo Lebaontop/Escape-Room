@@ -2,21 +2,17 @@ class SolarGamesEngine {
     constructor() {
         this.coins = 60;
         this.activeGate = null;
-        this.timer = null;
-        this.timeLeft = 5400; // ساعة ونص
-        this.isPaused = false;
-        this.isTimerFrozen = false; 
-        this.hasShield = false;      
+        this.roomTimer = 0;
+        this.roomInterval = null;
         this.solvedGates = new Set();
-        
-        // نظام Web Audio للصوت (يعمل بدون ملفات)
         this.audioCtx = null;
+        
         this.gameConfig = this.buildPuzzles();
         this.init();
         this.setupClickListeners();
     }
 
-    init() { this.renderLobby(); this.updateStats(); this.startTimer(); }
+    init() { this.renderLobby(); document.getElementById('coin-val').innerText = this.coins; }
 
     initAudio() {
         if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -31,16 +27,16 @@ class SolarGamesEngine {
         const now = this.audioCtx.currentTime;
         
         if(type === 'click') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(350, now);
+            osc.type = 'square'; osc.frequency.setValueAtTime(300, now);
             gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
             osc.start(now); osc.stop(now + 0.1);
         } else if (type === 'success') {
             osc.type = 'sine'; 
-            osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); osc.frequency.setValueAtTime(783.99, now + 0.2); 
-            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
-            osc.start(now); osc.stop(now + 0.4);
+            osc.frequency.setValueAtTime(440, now); osc.frequency.setValueAtTime(554.37, now + 0.1); 
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
         } else if (type === 'error') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(120, now);
             gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
             osc.start(now); osc.stop(now + 0.3);
         }
@@ -53,80 +49,72 @@ class SolarGamesEngine {
     
     setupClickListeners() { 
         document.addEventListener('click', (e) => { 
-            if(e.target.tagName==='BUTTON' || e.target.closest('.e-wire') || e.target.closest('.e-valve') || e.target.closest('.e-mem-card') || e.target.closest('.e-key-btn') || e.target.closest('.e-switch') || e.target.closest('.e-push-btn') || e.target.closest('.e-radar-cell') || e.target.classList.contains('gate-card')){ 
+            if(e.target.tagName==='BUTTON' || e.target.classList.contains('uni-btn') || e.target.closest('.gate-card')){ 
                 this.initAudio(); this.playSound('click'); 
             } 
         }); 
     }
 
-    // بناء 30 فكرة تفاعلية فريدة ومختلفة الأشكال لكل غرفة + الألغاز الكتابية المطلوبة!
+    // 30 لغز تفاعلي بأشكال وأفكار مختلفة (لا يوجد تكرار)
     buildPuzzles() {
-        const games = [
-            // 1. أسلاك (8)
-            { type: 'WIRES', count: 8, colors: ['red','blue','green','yellow','red','black','white','red'], target: 'red', desc: "اكتشف مسار التسريب: اقطع جميع الأسلاك الحمراء فقط.", intHint: "اقطع الـ 3 أسلاك الحمراء", txtQ: "شيء كلما زاد، قلّت رؤيتك له.", txtA: "الظلام" },
-            // 2. كيبورد رموز فضائية (9)
-            { type: 'KEYPAD', count: 9, icons: ['Ω','Δ','Σ','Φ','Ψ','Θ','Γ','Λ','Π'], targetSeq: ['Δ','Φ','Λ'], desc: "شفرة المرور: أدخل الرموز (المثلث، الدائرة المقطوعة، الثمانية المقلوبة).", intHint: "Δ ثم Φ ثم Λ", txtQ: "ابن الماء، وإذا وضعته في الماء مات.", txtA: "الثلج" },
-            // 3. قواطع كهرباء (10)
-            { type: 'SWITCHES', count: 10, target: [1,3,5,7,9], desc: "توزيع الجهد: ارفع القواطع الزوجية فقط.", intHint: "شغل المحولات الزوجية (2،4،6،8،10)", txtQ: "شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", txtA: "السر" },
-            // 4. مؤشرات سحب (3)
-            { type: 'SLIDERS', count: 3, targets: [80, 20, 50], desc: "معايرة التردد: اضبط المؤشرات على (عالي جداً، منخفض جداً، متوسط).", intHint: "يمين، يسار، بالنص", txtQ: "شيء يرتفع ولا ينزل أبدًا؟", txtA: "العمر" },
-            // 5. بكرات حمراء (4)
-            { type: 'VALVES', count: 4, targetAngles: [90, 180, 270, 0], desc: "توجيه الضغط: لف الصمامات لتشير (يمين، أسفل، يسار، أعلى).", intHint: "لفة، لفتين، ثلاث لفات، ولا لفة", txtQ: "يتحدث بلا فم ويسمع بلا أذنين؟", txtA: "الصدى" },
-            // 6. ذاكرة جيمنج (16 بطاقة)
-            { type: 'MEMORY', count: 16, icons: ['⚙️','🔋','💻','📡','🔑','🛡️','💾','🕹️'], desc: "استعادة البيانات: طابق أزواج الملفات التالفة.", intHint: "لعبة تطابق 16 كرت", txtQ: "مليء بالثقوب ولكنه يحتفظ بالماء؟", txtA: "الاسفنج" },
-            // 7. أزرار ضغط عملاقة (3)
-            { type: 'PUSH', count: 3, desc: "تفريغ الغاز: اضغط الأزرار الثلاثة لتأمين النظام.", intHint: "اضغطها كلها", txtQ: "دائمًا أمامك ولكن لا يمكنك رؤيته؟", txtA: "المستقبل" },
-            // 8. كيبورد D-Pad جيمنج (4)
-            { type: 'KEYPAD', count: 4, icons: ['⬆️','⬇️','⬅️','➡️'], targetSeq: ['⬆️','⬇️','⬅️','➡️'], desc: "كومبو النظام: أدخل تسلسل الاتجاهات الأساسي (فوق، تحت، يسار، يمين).", intHint: "فوق تحت يسار يمين", txtQ: "لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", txtA: "الوعد" },
-            // 9. رادار شبكي (16 خلية)
-            { type: 'RADAR', count: 16, target: 10, desc: "التقط الهدف: حدد المربع C3 (العمود 3، الصف 3).", intHint: "الصف الثالث، العمود الثالث", txtQ: "إذا نطقت باسمه كسرته؟", txtA: "الصمت" },
-            // 10. مفاتيح بيانو (7)
-            { type: 'KEYPAD', count: 7, icons: ['C','D','E','F','G','A','B'], targetSeq: ['C','E','G'], desc: "عزف الشفرة: اعزف الكورد الأساسي (C ثم E ثم G).", intHint: "C E G", txtQ: "شيء يجب كسره قبل استخدامه؟", txtA: "البيضة" },
-            
-            // 11. أسلاك سوداءوبيضاء (6)
-            { type: 'WIRES', count: 6, colors: ['black','white','black','white','black','white'], target: 'black', desc: "ألياف بصرية: دمر المسارات المظلمة (الأسود) فقط.", intHint: "الأسود הـ 3 فقط", txtQ: "كلما جففت شيئًا، أصبحت أكثر بللًا؟", txtA: "المنشفة" },
-            // 12. قواطع (12 نمط شطرنج)
-            { type: 'SWITCHES', count: 12, target: [0,2,4,7,9,11], desc: "نمط رقعة الشطرنج: فعّل المربعات بشكل متبادل.", intHint: "واحد شغال والثاني طافي", txtQ: "فيها مدن بلا منازل، وغابات بلا أشجار؟", txtA: "الخريطة" },
-            // 13. مؤشرات صوت (4)
-            { type: 'SLIDERS', count: 4, targets: [0, 33, 66, 100], desc: "توازن الصوت (Equalizer): اصنع مدرجاً تصاعدياً للمؤشرات.", intHint: "صفر، ثلث، ثلثين، فل", txtQ: "لها عقارب ولكن لا تلدغ؟", txtA: "الساعة" },
-            // 14. ذاكرة هويات (12 بطاقة)
-            { type: 'MEMORY', count: 12, icons: ['👤','👥','🕵️','👮','💂','👷'], desc: "مطابقة البصمات: اعثر على الهويات المتطابقة.", intHint: "لعبة تطابق 12 كرت", txtQ: "يمشي بلا أرجل ويبكي بلا أعين؟", txtA: "السحاب" },
-            // 15. بكرات (3 أقفال خزنة)
-            { type: 'VALVES', count: 3, targetAngles: [0, 0, 0], desc: "أقفال الخزنة: وجّه جميع البكرات للأعلى.", intHint: "لا تلفها، أو لفها لين ترجع فوق", txtQ: "أخضر من الخارج، أحمر من الداخل؟", txtA: "البطيخ" },
-            // 16. كيبورد أرقام كلاسيك (9)
-            { type: 'KEYPAD', count: 9, icons: ['1','2','3','4','5','6','7','8','9'], targetSeq: ['1','5','9'], desc: "رقم قطري: اختر مساراً قطرياً من اليسار لليمين.", intHint: "1 ثم 5 ثم 9", txtQ: "له رأس ولا عين له؟", txtA: "المسمار" },
-            // 17. أزرار ضغط حمراء (5)
-            { type: 'PUSH', count: 5, desc: "إبطال المتفجرات: اضغط جميع الأزرار بسرعة قبل التزامن.", intHint: "اضغط الـ 5 أزرار", txtQ: "يبكي دمعًا أسود ليضيء العقول؟", txtA: "القلم" },
-            // 18. أسلاك القنبلة (10)
-            { type: 'WIRES', count: 10, colors: ['red','yellow','blue','green','yellow','black','green','white','orange','yellow'], target: 'yellow', desc: "عزل الإشارة الصفراء: اقطع الـ 3 أسلاك الصفراء.", intHint: "الأصفر الـ 3", txtQ: "يكبر في الصباح ويختفي في الظهيرة؟", txtA: "الظل" },
-            // 19. رادار بوصلة (9 خلايا)
-            { type: 'RADAR', count: 9, target: 2, desc: "بوصلة السيرفر: اضغط على اتجاه الشمال الشرقي (NE).", intHint: "الزاوية اليمنى العليا", txtQ: "دائمًا تشير للشمال ولكنها لا تتحرك؟", txtA: "البوصلة" },
-            // 20. كيبورد جيمنج حروف (9)
-            { type: 'KEYPAD', count: 9, icons: ['A','S','D','W','Q','E','Z','X','C'], targetSeq: ['W','A','S','D'], desc: "مفاتيح الحركة: أدخل التسلسل الكلاسيكي لألعاب الـ PC.", intHint: "W, A, S, D", txtQ: "تسمعها ولكن لا تراها ولا تلمسها؟", txtA: "الريح" },
-            
-            // 21. قواطع الكاميرات (8)
-            { type: 'SWITCHES', count: 8, target: [1,2,5,6], desc: "كاميرات المراقبة: أطفئ كاميرات الأطراف، وأبقِ المنتصف شغالة.", intHint: "شغل الـ 4 اللي بالنص فقط", txtQ: "تأكل كل شيء وتخاف من الماء؟", txtA: "النار" },
-            // 22. مؤشرات ألوان (3)
-            { type: 'SLIDERS', count: 3, targets: [100, 50, 0], desc: "خلط الألوان RGB: أحمر كامل، أخضر للنصف، أزرق صفر.", intHint: "أول واحد يمين، الثاني بالنص، الثالث يسار", txtQ: "كلما أخذت منه كبر؟", txtA: "الحفرة" },
-            // 23. ذاكرة فيروسات (16 بطاقة)
-            { type: 'MEMORY', count: 16, icons: ['🦠','🧬','🩸','🧪','💊','💉','🔬','🔭'], desc: "فيروسات متخفية: اعثر على أزواج الفيروسات المخبرية.", intHint: "لعبة تطابق", txtQ: "يقرصك ولا تراه؟", txtA: "الجوع" },
-            // 24. بكرات التيتانيوم (2)
-            { type: 'VALVES', count: 2, targetAngles: [90, 270], desc: "أقفال التيتانيوم: توجيه متعاكس (الأول يمين، الثاني يسار).", intHint: "الأول لفة يمين، الثاني 3 لفات", txtQ: "يملكه الشخص ويستخدمه الآخرون أكثر منه؟", txtA: "الاسم" },
-            // 25. كيبورد الهاكر (9)
-            { type: 'KEYPAD', count: 9, icons: ['/','*','-','+','$','#','@','!','&'], targetSeq: ['#','*','+'], desc: "مفاتيح الهاكر: هاشتاق، ثم نجمة، ثم زائد.", intHint: "الشباك، النجمة، الزائد", txtQ: "كلما أخذت منه أكثر، تركت أكثر وراءك؟", txtA: "الخطوة" },
-            // 26. أسلاك بيضاء (7)
-            { type: 'WIRES', count: 7, colors: ['white','black','gray','white','blue','red','white'], target: 'white', desc: "شبكة الاتصال: دمّر المسارات البيضاء لقطع الاتصال.", intHint: "الأبيض الـ 3", txtQ: "يسقط ولا يتأذى أبدًا؟", txtA: "المطر" },
-            // 27. قواطع النصف (10)
-            { type: 'SWITCHES', count: 10, target: [0,1,2,3,4], desc: "النصف العلوي: فعّل الـ 5 قواطع العليا فقط.", intHint: "الصف اللي فوق كله", txtQ: "كلمة من 4 حروف، إذا أكلت نصفها تموت؟", txtA: "سمسم" },
-            // 28. كيبورد كواكب (9)
-            { type: 'KEYPAD', count: 9, icons: ['🌍','🌕','🌞','🪐','☄️','🌌','🌠','🌟','☁️'], targetSeq: ['🌞','🌍','🌕'], desc: "ترتيب فلكي: شمس، ثم أرض، ثم قمر.", intHint: "🌞 ثم 🌍 ثم 🌕", txtQ: "مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", txtA: "العلا" },
-            // 29. كيبورد اسم اللعبة (9)
-            { type: 'KEYPAD', count: 9, icons: ['S','O','L','A','R','G','M','E','!'], targetSeq: ['S','O','L','A','R'], desc: "شفرة النظام المركزية: أدخل اسم النظام.", intHint: "S O L A R", txtQ: "تحترق وتبكي لتضيء للآخرين؟", txtA: "الشمعة" },
-            // 30. زر الزعيم النهائي (1 كبير جداً)
-            { type: 'PUSH', count: 1, desc: "MASTER OVERRIDE: اضغط الزر الأحمر لاقتحام النظام المركزي.", intHint: "اضغط الزر", txtQ: "المعدن النقي الذي يرمز لنسخة SOLAR؟", txtA: "الذهب" }
+        const riddles = [
+            {q: "شيء كلما زاد، قلّت رؤيتك له.", a: "الظلام"}, {q: "ابن الماء، وإذا وضعته في الماء مات.", a: "الثلج"},
+            {q: "شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", a: "السر"}, {q: "شيء يرتفع ولا ينزل أبدًا؟", a: "العمر"},
+            {q: "يتحدث بلا فم ويسمع بلا أذنين؟", a: "الصدى"}, {q: "مليء بالثقوب ولكنه يحتفظ بالماء؟", a: "الاسفنج"},
+            {q: "دائمًا أمامك ولكن لا يمكنك رؤيته؟", a: "المستقبل"}, {q: "لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a: "الوعد"},
+            {q: "إذا نطقت باسمه كسرته؟", a: "الصمت"}, {q: "شيء يجب كسره قبل استخدامه؟", a: "البيضة"},
+            {q: "كلما جففت شيئًا، أصبحت أكثر بللًا؟", a: "المنشفة"}, {q: "فيها مدن بلا منازل، وغابات بلا أشجار؟", a: "الخريطة"},
+            {q: "لها عقارب ولكن لا تلدغ؟", a: "الساعة"}, {q: "يمشي بلا أرجل ويبكي بلا أعين؟", a: "السحاب"},
+            {q: "أخضر من الخارج، أحمر من الداخل؟", a: "البطيخ"}, {q: "له رأس ولا عين له؟", a: "المسمار"},
+            {q: "يبكي دمعًا أسود ليضيء العقول؟", a: "القلم"}, {q: "يكبر في الصباح ويختفي في الظهيرة؟", a: "الظل"},
+            {q: "دائمًا تشير للشمال ولكنها لا تتحرك؟", a: "البوصلة"}, {q: "تسمعها ولكن لا تراها ولا تلمسها؟", a: "الريح"},
+            {q: "تأكل كل شيء وتخاف من الماء؟", a: "النار"}, {q: "كلما أخذت منه كبر؟", a: "الحفرة"},
+            {q: "يقرصك ولا تراه؟", a: "الجوع"}, {q: "يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a: "الاسم"},
+            {q: "كلما أخذت منه أكثر، تركت أكثر وراءك؟", a: "الخطوة"}, {q: "يسقط ولا يتأذى أبدًا؟", a: "المطر"},
+            {q: "كلمة من 4 حروف، إذا أكلت نصفها تموت؟", a: "سمسم"}, {q: "مدينة سعودية تقرأ طرديا وعكسيا نفس الشيء؟", a: "العلا"},
+            {q: "تحترق وتبكي لتضيء للآخرين؟", a: "الشمعة"}, {q: "المعدن النقي الذي يرمز لنسخة SOLAR؟", a: "الذهب"}
         ];
 
-        return games.map((g, i) => ({ id: i + 1, ...g }));
+        let mechanics = [];
+        // توليد 30 محرك تفاعلي مختلف
+        for(let i=1; i<=30; i++) {
+            let m = {};
+            if(i===1) m = { id: 1, type: 'WIRES', desc: "اقطع الأسلاك الحمراء الثلاثة فقط.", data: ['red','blue','green','red','white','black','red'], ans: 3 };
+            else if(i===2) m = { id: 2, type: 'VALVES', desc: "لف البكرات الأربع لتشير جميعها للأسفل.", data: 4, ans: 180 };
+            else if(i===3) m = { id: 3, type: 'SLIDERS', desc: "اسحب المؤشرات الثلاثة للنهاية (اليمين).", data: 3, ans: 100 };
+            else if(i===4) m = { id: 4, type: 'MEMORY', desc: "طابق بطاقات الكاميرات المتشابهة.", data: ['📷','📹','🎥','📽'] };
+            else if(i===5) m = { id: 5, type: 'KEYPAD', desc: "أدخل شفرة المثلث ثم المربع ثم الدائرة.", data: ['▲','■','●','♦','★','✖'], ans: ['▲','■','●'] };
+            else if(i===6) m = { id: 6, type: 'SWITCHES', desc: "ارفع القواطع الفردية فقط.", data: 6, ans: [0,2,4] };
+            else if(i===7) m = { id: 7, type: 'PUSH', desc: "اضغط الزر الأحمر الكبير.", data: 1 };
+            else if(i===8) m = { id: 8, type: 'RADAR', desc: "حدد الهدف في الخلية C3.", data: 16, ans: 10 };
+            else if(i===9) m = { id: 9, type: 'NODES', desc: "وصل زوايا الشبكة.", data: 9, ans: [0,2,6,8] };
+            else if(i===10) m = { id: 10, type: 'SAFE_DIAL', desc: "أدخل الرقم 5 عن طريق الأزرار (+/-).", ans: 5 };
+            else if(i===11) m = { id: 11, type: 'COLOR_MIX', desc: "اختر لوني الأحمر والأصفر لتكوين البرتقالي.", data: ['Red','Blue','Yellow','Green'], ans: ['Red','Yellow'] };
+            else if(i===12) m = { id: 12, type: 'VENN', desc: "اضغط على تقاطع الدوائر الثلاث.", data: 7, ans: 3 };
+            else if(i===13) m = { id: 13, type: 'FINGERPRINT', desc: "امسح البصمة (اضغط 5 مرات متتالية).", ans: 5 };
+            else if(i===14) m = { id: 14, type: 'DPAD', desc: "أدخل: يمين، يسار، يمين.", data: ['↑','↓','←','→'], ans: ['➡️','⬅️','➡️'] };
+            else if(i===15) m = { id: 15, type: 'PIANO', desc: "اعزف النوتة 1 ثم 3 ثم 5.", data: 5, ans: [0,2,4] };
+            else if(i===16) m = { id: 16, type: 'WEIGHTS', desc: "وازن الكفة باختيار 3 أوزان متساوية.", data: [10, 20, 10, 30, 10], ans: [0,2,4] };
+            else if(i===17) m = { id: 17, type: 'LASER', desc: "قم بتدوير المرآتين بزاوية 90 درجة.", data: 2, ans: 90 };
+            else if(i===18) m = { id: 18, type: 'FILES', desc: "حدد ملف الـ Virus للحذف.", data: ['System.sys', 'Config.ini', 'Virus.exe', 'Log.txt'], ans: 2 };
+            else if(i===19) m = { id: 19, type: 'CLOCK', desc: "اضبط عقرب الساعات على 3.", data: 12, ans: 3 };
+            else if(i===20) m = { id: 20, type: 'RUNES', desc: "اضغط الحجر ذو النجمة.", data: ['☾','★','✦','✧'], ans: 1 };
+            else if(i===21) m = { id: 21, type: 'COMPASS', desc: "وجه البوصلة للشمال (N).", data: ['N','S','E','W'], ans: 0 };
+            else if(i===22) m = { id: 22, type: 'PIXELS', desc: "نور المربعات المركزية لعمل خط عمودي.", data: 9, ans: [1,4,7] };
+            else if(i===23) m = { id: 23, type: 'HEATMAP', desc: "ابحث عن النقطة الساخنة واضغطها.", data: 6, ans: 4 };
+            else if(i===24) m = { id: 24, type: 'DIFFERENCE', desc: "حدد العنصر المختلف في المجموعة الثانية.", data: ['A','A','A','B'], ans: 3 };
+            else if(i===25) m = { id: 25, type: 'JIGSAW', desc: "اضغط حروف S O L A R بالترتيب.", data: ['L','S','R','O','A'], ans: [1,3,0,4,2] };
+            else if(i===26) m = { id: 26, type: 'BATTERY', desc: "اربط الأقطاب الموجبة (+).", data: ['+','-','-','+'], ans: [0,3] };
+            else if(i===27) m = { id: 27, type: 'PRESSURE', desc: "نفّس الضغط عن طريق فتح الصمام الأخير.", data: 4, ans: [3] };
+            else if(i===28) m = { id: 28, type: 'RADIO', desc: "اضبط الراديو على القناة 3.", data: 5, ans: 2 };
+            else if(i===29) m = { id: 29, type: 'WAVE', desc: "طابق الموجات برفع المؤشرين للوسط.", data: 2, ans: 50 };
+            else if(i===30) m = { id: 30, type: 'MASTER', desc: "MASTER OVERRIDE: فعّل النظام بكتابة YES.", ans: 'YES' };
+
+            m.txtQ = riddles[i-1].q;
+            m.txtA = riddles[i-1].a;
+            mechanics.push(m);
+        }
+        return mechanics;
     }
 
     switchScreen(id) {
@@ -135,11 +123,7 @@ class SolarGamesEngine {
         document.getElementById('main-nav').classList.toggle('hidden', id === 'welcome');
     }
 
-    startLobby() { 
-        this.initAudio(); 
-        this.playSound('click'); 
-        this.switchScreen('lobby'); 
-    }
+    startLobby() { this.initAudio(); this.playSound('click'); this.switchScreen('lobby'); }
 
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
@@ -154,168 +138,133 @@ class SolarGamesEngine {
     }
 
     handleGateClick(id) {
-        if(this.solvedGates.has(id)) return this.notify("Room already unlocked!", "error");
+        if(this.solvedGates.has(id)) return;
         this.activeGate = this.gameConfig.find(x => x.id === id);
-        this.hasShield = false;
         
+        // إعداد الغرفة وإيقاف التايمر القديم
         document.getElementById('interactive-stage-container').classList.remove('hidden');
         document.getElementById('text-stage').classList.add('hidden');
         document.getElementById('input-area').classList.add('hidden');
         document.getElementById('user-input').value = '';
 
+        this.roomTimer = 0;
+        this.updateRoomTimerUI();
+        this.pauseRoomTimer(); // العداد يبدأ يدوياً من المشرف
+
         this.setupStage(); 
         this.switchScreen('puzzle');
     }
 
-    // بناء الواجهة التفاعلية (7 محركات تصميم مختلفة تماماً)
+    // بناء الواجهات التفاعلية (HTML/CSS Factory لـ 30 لعبة)
     setupStage() {
         const p = this.activeGate;
         document.getElementById('puzzle-title').innerText = `# ROOM-${p.id.toString().padStart(2,'0')}`;
         document.getElementById('int-desc').innerText = p.desc;
         const stage = document.getElementById('interactive-stage');
         stage.innerHTML = '';
-        stage.className = ''; // ريست الكلاسات
         
-        this.stageState = { active: [], step: 0, pairs: [] };
+        this.stageState = { clicks: 0, sequence: [], active: [] };
         
+        // واجهة مرنة تناسب جميع الألعاب
+        stage.style.display = 'flex'; stage.style.flexWrap = 'wrap'; stage.style.gap = '15px';
+
+        let generateButtons = (arr, clickHandler) => {
+            arr.forEach((item, i) => {
+                let btn = document.createElement('div'); btn.className = 'uni-btn';
+                btn.style.width = '80px'; btn.style.height = '80px'; btn.innerText = item;
+                btn.onclick = () => clickHandler(btn, i);
+                stage.appendChild(btn);
+            });
+        };
+
         if (p.type === 'WIRES') {
-            stage.classList.add('eng-wires');
-            for(let i=0; i<p.count; i++) {
-                let w = document.createElement('div'); w.className = 'e-wire'; w.style.backgroundColor = p.colors[i];
-                w.onclick = () => {
-                    if(w.classList.contains('cut')) return;
-                    w.classList.add('cut');
-                    if(p.colors[i] !== p.target) { this.failRoom("Wrong Wire Cut!"); this.setupStage(); }
-                    else {
-                        let allTargetCut = Array.from(document.querySelectorAll('.e-wire')).every((el, idx) => p.colors[idx] !== p.target || el.classList.contains('cut'));
-                        if(allTargetCut) this.winInteractive();
-                    }
-                };
-                stage.appendChild(w);
-            }
-        } 
+            p.data.forEach((color, i) => {
+                let btn = document.createElement('div'); btn.className = 'uni-btn'; btn.style.width = '100%'; btn.style.height = '30px';
+                btn.style.borderLeft = `10px solid ${color}`; btn.innerText = `WIRE ${i+1}`;
+                btn.onclick = () => { btn.style.opacity = '0.2'; if(color === 'red') { this.stageState.clicks++; if(this.stageState.clicks === p.ans) this.winInteractive(); } }
+                stage.appendChild(btn);
+            });
+        }
         else if (p.type === 'VALVES') {
-            stage.classList.add('eng-valves');
-            this.stageState.angles = Array(p.count).fill(0);
-            for(let i=0; i<p.count; i++) {
-                let v = document.createElement('div'); v.className = 'e-valve'; v.innerHTML = '⚙';
-                v.onclick = () => {
-                    this.stageState.angles[i] = (this.stageState.angles[i] + 90) % 360;
-                    v.style.transform = `rotate(${this.stageState.angles[i]}deg)`;
-                    if(this.stageState.angles.every((ang, idx) => ang === p.targetAngles[idx])) this.winInteractive();
-                };
-                stage.appendChild(v);
+            this.stageState.angles = Array(p.data).fill(0);
+            for(let i=0; i<p.data; i++) {
+                let btn = document.createElement('div'); btn.className = 'uni-btn'; btn.innerText = '⚙'; btn.style.fontSize = '2rem'; btn.style.borderRadius='50%';
+                btn.onclick = () => { this.stageState.angles[i] = (this.stageState.angles[i]+90)%360; btn.style.transform = `rotate(${this.stageState.angles[i]}deg)`; if(this.stageState.angles.every(a => a === p.ans)) this.winInteractive(); }
+                stage.appendChild(btn);
             }
         }
-        else if (p.type === 'SLIDERS') {
-            stage.classList.add('eng-sliders');
-            for(let i=0; i<p.count; i++) {
-                let row = document.createElement('div'); row.className = 'e-slider-row';
-                let valDisplay = document.createElement('span'); valDisplay.innerText = '0%';
-                let inp = document.createElement('input'); inp.type = 'range'; inp.className = 'e-slider-input'; inp.min = 0; inp.max = 100; inp.value = 0;
-                inp.oninput = () => { valDisplay.innerText = inp.value + '%'; };
-                row.appendChild(inp); row.appendChild(valDisplay); stage.appendChild(row);
+        else if (p.type === 'SLIDERS' || p.type === 'WAVE') {
+            stage.style.flexDirection = 'column';
+            for(let i=0; i<p.data; i++) {
+                let inp = document.createElement('input'); inp.type = 'range'; inp.min=0; inp.max=100; inp.value=0; inp.style.width='100%';
+                stage.appendChild(inp);
             }
-            let btn = document.createElement('button'); btn.className = 'btn-verify'; btn.innerText = "VERIFY SYNC";
-            btn.onclick = () => {
-                this.playSound('click');
-                let inputs = document.querySelectorAll('.e-slider-input');
-                let isCorrect = Array.from(inputs).every((inp, i) => Math.abs(parseInt(inp.value) - p.targets[i]) <= 5);
-                if(isCorrect) this.winInteractive(); else { this.failRoom("Sync Failed!"); this.setupStage(); }
-            };
-            stage.appendChild(btn);
+            let check = document.createElement('button'); check.className='uni-btn'; check.innerText="SYNC";
+            check.onclick = () => { let vals = Array.from(stage.querySelectorAll('input')).map(i=>parseInt(i.value)); if(vals.every(v => Math.abs(v - p.ans) < 10)) this.winInteractive(); else this.failRoom(); }
+            stage.appendChild(check);
         }
         else if (p.type === 'MEMORY') {
-            stage.classList.add('eng-memory');
-            let icons = [...p.icons, ...p.icons].slice(0, p.count);
-            icons.sort(() => Math.random() - 0.5);
-            for(let i=0; i<p.count; i++) {
-                let card = document.createElement('div'); card.className = 'e-mem-card'; card.dataset.val = icons[i]; card.innerText = icons[i];
-                card.onclick = () => {
-                    if(card.classList.contains('flipped') || card.classList.contains('matched') || this.stageState.pairs.length >= 2) return;
-                    card.classList.add('flipped'); this.stageState.pairs.push(card);
-                    if(this.stageState.pairs.length === 2) {
-                        setTimeout(() => {
-                            let [c1, c2] = this.stageState.pairs;
-                            if(c1.dataset.val === c2.dataset.val) {
-                                c1.classList.replace('flipped', 'matched'); c2.classList.replace('flipped', 'matched'); this.playSound('success');
-                                if(document.querySelectorAll('.matched').length === p.count) this.winInteractive();
-                            } else {
-                                c1.classList.remove('flipped'); c2.classList.remove('flipped'); this.failRoom("No Match!");
-                            }
-                            this.stageState.pairs = [];
-                        }, 600);
-                    }
-                };
-                stage.appendChild(card);
-            }
+            let deck = [...p.data, ...p.data].sort(()=>Math.random()-0.5);
+            generateButtons(deck, (btn, i) => {
+                if(btn.style.background === 'white') return;
+                btn.style.background = 'white'; btn.style.color = '#000'; this.stageState.sequence.push({btn, val: deck[i]});
+                if(this.stageState.sequence.length === 2) {
+                    setTimeout(() => {
+                        if(this.stageState.sequence[0].val === this.stageState.sequence[1].val) { this.stageState.clicks+=2; if(this.stageState.clicks === deck.length) this.winInteractive(); }
+                        else { this.stageState.sequence[0].btn.style.background = ''; this.stageState.sequence[0].btn.style.color = ''; this.stageState.sequence[1].btn.style.background = ''; this.stageState.sequence[1].btn.style.color = ''; }
+                        this.stageState.sequence = [];
+                    }, 500);
+                }
+            });
+            Array.from(stage.children).forEach(b => {b.style.color='transparent';});
         }
-        else if (p.type === 'KEYPAD') {
-            stage.classList.add('eng-keypad');
-            for(let i=0; i<p.count; i++) {
-                let btn = document.createElement('button'); btn.className = 'e-key-btn'; btn.innerText = p.icons[i];
-                btn.onclick = () => {
-                    btn.classList.add('pressed'); setTimeout(()=>btn.classList.remove('pressed'), 200);
-                    if(p.icons[i] !== p.targetSeq[this.stageState.step]) {
-                        this.failRoom("Sequence Error!"); this.stageState.step = 0;
-                    } else {
-                        this.stageState.step++;
-                        if(this.stageState.step === p.targetSeq.length) this.winInteractive();
-                    }
-                };
-                stage.appendChild(btn);
-            }
+        else if (p.type === 'SWITCHES' || p.type === 'PIXELS') {
+            generateButtons(Array(p.data).fill(''), (btn, i) => {
+                btn.classList.toggle('active');
+                let actives = Array.from(stage.children).map((b,idx)=>b.classList.contains('active')?idx:-1).filter(idx=>idx!==-1);
+                if(actives.length === p.ans.length && p.ans.every(v=>actives.includes(v))) this.winInteractive();
+            });
         }
-        else if (p.type === 'SWITCHES') {
-            stage.classList.add('eng-switches');
-            for(let i=0; i<p.count; i++) {
-                let box = document.createElement('div'); box.className = 'e-switch';
-                box.innerHTML = `<div class="ind"></div><small>SW-${i+1}</small>`;
-                box.onclick = () => {
-                    box.classList.toggle('on');
-                    let actives = Array.from(document.querySelectorAll('.e-switch')).map((el, idx) => el.classList.contains('on') ? idx : -1).filter(idx => idx !== -1);
-                    if(actives.length === p.target.length && p.target.every(val => actives.includes(val))) {
-                        this.winInteractive();
-                    } else if (actives.length > p.target.length || actives.some(val => !p.target.includes(val))) {
-                        this.failRoom("Power Surge!"); this.setupStage();
-                    }
-                };
-                stage.appendChild(box);
-            }
+        else if (p.type === 'SAFE_DIAL') {
+            let val = 0; let d = document.createElement('div'); d.className='uni-btn'; d.innerText=val; d.style.width='100px';
+            let plus = document.createElement('div'); plus.className='uni-btn'; plus.innerText='+'; plus.onclick=()=>{val++; d.innerText=val; if(val===p.ans) this.winInteractive();}
+            let minus = document.createElement('div'); minus.className='uni-btn'; minus.innerText='-'; minus.onclick=()=>{val--; d.innerText=val;}
+            stage.append(minus, d, plus);
         }
-        else if (p.type === 'PUSH') {
-            stage.classList.add('eng-push');
-            for(let i=0; i<p.count; i++) {
-                let btn = document.createElement('button'); btn.className = 'e-push-btn';
-                if(p.count === 1) { btn.style.width = '150px'; btn.style.height = '150px'; btn.style.boxShadow = '0 15px 0 #800';}
-                btn.onclick = () => {
-                    btn.classList.add('locked');
-                    if(document.querySelectorAll('.locked').length === p.count) this.winInteractive();
-                };
-                stage.appendChild(btn);
-            }
+        else if (p.type === 'MASTER') {
+            let inp = document.createElement('input'); inp.placeholder="TYPE YES"; inp.style.padding="10px";
+            let btn = document.createElement('button'); btn.className='uni-btn'; btn.innerText="EXECUTE"; btn.onclick=()=>{if(inp.value.toUpperCase()==='YES') this.winInteractive(); else this.failRoom();}
+            stage.append(inp, btn);
         }
-        else if (p.type === 'RADAR') {
-            stage.classList.add('eng-radar');
-            let cols = Math.sqrt(p.count);
-            stage.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            for(let i=0; i<p.count; i++) {
-                let cell = document.createElement('div'); cell.className = 'e-radar-cell';
-                let row = Math.floor(i / cols); let col = i % cols;
-                cell.innerText = String.fromCharCode(65 + row) + (col + 1);
-                cell.onclick = () => {
-                    if(i === p.target) { cell.style.background = '#0f0'; cell.style.color = '#000'; this.winInteractive(); }
-                    else { this.failRoom("Target Missed!"); }
-                };
-                stage.appendChild(cell);
-            }
+        else if (p.type === 'COLOR_MIX') {
+            generateButtons(p.data, (btn, i) => {
+                btn.classList.toggle('active');
+                let actives = Array.from(stage.children).filter(b=>b.classList.contains('active')).map(b=>b.innerText);
+                if(actives.length === p.ans.length && p.ans.every(v=>actives.includes(v))) this.winInteractive();
+            });
+        }
+        else if (p.type === 'FINGERPRINT' || p.type === 'PUSH') {
+            let btn = document.createElement('div'); btn.className='uni-btn'; btn.style.width='150px'; btn.style.height='150px'; btn.style.borderRadius='50%'; btn.innerText="SCAN";
+            btn.onclick = () => { this.stageState.clicks++; if(this.stageState.clicks >= (p.ans||1)) this.winInteractive(); }
+            stage.appendChild(btn);
+        }
+        else {
+            // كيبوردات عادية وتسلسلات واختيارات (تغطي باقي الألعاب)
+            generateButtons(p.data || Array(p.data).fill('X'), (btn, i) => {
+                if(Array.isArray(p.ans)) {
+                    if(p.ans[this.stageState.step] === i || p.ans[this.stageState.step] === p.data[i]) {
+                        btn.classList.add('active'); this.stageState.step++;
+                        if(this.stageState.step === p.ans.length) this.winInteractive();
+                    } else { this.failRoom(); this.setupStage(); }
+                } else {
+                    if(i === p.ans) this.winInteractive(); else this.failRoom();
+                }
+            });
         }
     }
 
-    // الانتقال للمرحلة الكتابية
     winInteractive() {
         this.playSound('success'); 
-        this.notify("✅ Interactive Override Successful! Bot unlocked...");
         document.getElementById('interactive-stage-container').classList.add('hidden');
         document.getElementById('puzzle-desc').innerText = this.activeGate.txtQ;
         document.getElementById('text-stage').classList.remove('hidden');
@@ -327,82 +276,39 @@ class SolarGamesEngine {
         this.playSound('click');
         let answerInput = document.getElementById('user-input').value.trim();
         if (answerInput === this.activeGate.txtA) {
-            this.winRoomFinal();
+            this.playSound('success'); this.solvedGates.add(this.activeGate.id);
+            this.pauseRoomTimer(); this.returnToLobby();
         } else {
-            this.failRoom(`Bot: Incorrect Cipher!`);
+            this.failRoom();
         }
-    }
-
-    winRoomFinal() {
-        this.playSound('success'); this.coins += 20;
-        this.solvedGates.add(this.activeGate.id); this.notify("✅ Room Completely Unlocked!");
-        this.updateStats(); this.renderLobby(); this.switchScreen('lobby');
     }
     
-    failRoom(msg) {
-        if (this.hasShield) {
-            this.hasShield = false;
-            this.notify("🛡️ Shield Activated! No penalty.");
-            this.playSound('success');
-            return;
-        }
-        this.playSound('error'); this.triggerVisualGlitch(); this.notify(msg, "error"); 
-        if(!this.isTimerFrozen) this.timeLeft -= 15;
-    }
+    failRoom() { this.playSound('error'); this.triggerVisualGlitch(); }
 
-    startTimer() {
-        if(this.timer) clearInterval(this.timer);
-        this.timer = setInterval(() => {
-            if (!this.isPaused && !this.isTimerFrozen && this.timeLeft > 0) {
-                this.timeLeft--; this.updateTimerUI();
-            } else if (this.timeLeft <= 0 && !this.isTimerFrozen) { this.onFail(); }
+    /* --- التايمر الخاص بالغرفة (Room Timer) بناءً على طلبك --- */
+    startRoomTimer() {
+        if(this.roomInterval) clearInterval(this.roomInterval);
+        this.roomInterval = setInterval(() => {
+            this.roomTimer++; this.updateRoomTimerUI();
         }, 1000);
     }
-    updateTimerUI() {
-        let m = Math.floor(Math.max(0, this.timeLeft)/60).toString().padStart(2,'0');
-        let s = (Math.max(0, this.timeLeft)%60).toString().padStart(2,'0');
-        document.getElementById('timer-display').innerText = `${m}:${s}`;
-    }
-    onFail() { clearInterval(this.timer); this.playSound('error'); alert("Server Timeout! GAME OVER."); this.switchScreen('welcome'); }
-
-    openMarket() { this.playSound('click'); document.getElementById('panel-market').classList.remove('hidden'); }
-    closeMarket() { this.playSound('click'); document.getElementById('panel-market').classList.add('hidden'); }
-    buy(type) {
-        let prices = { hint: 30, shield: 40 };
-        if (this.coins < prices[type]) return this.failRoom("Not enough coins!");
-        if (type === 'shield' && this.hasShield) return alert("Shield already active!");
-
-        this.coins -= prices[type]; this.playSound('success'); this.updateStats();
-
-        if (type === 'hint') { 
-            alert(`Interactive Hint: ${this.activeGate.intHint}\n\nRiddle Answer: ${this.activeGate.txtA}`); 
-        }
-        else if (type === 'shield') { this.hasShield = true; this.notify("Anti-Ban Shield active."); }
-        this.closeMarket();
+    pauseRoomTimer() { clearInterval(this.roomInterval); }
+    modifyRoomTimer(secs) { this.roomTimer = Math.max(0, this.roomTimer + secs); this.updateRoomTimerUI(); }
+    updateRoomTimerUI() {
+        let m = Math.floor(this.roomTimer/60).toString().padStart(2,'0');
+        let s = (this.roomTimer%60).toString().padStart(2,'0');
+        document.getElementById('room-timer-display').innerText = `${m}:${s}`;
     }
 
     toggleAdminSidebar(open) { this.playSound('click'); const sidebar = document.getElementById('admin-sidebar'); open ? sidebar.classList.add('open') : sidebar.classList.remove('open'); }
-    adminToggleFreeze() {
-        this.playSound('click');
-        this.isTimerFrozen = !this.isTimerFrozen;
-        const btn = document.getElementById('btn-freeze');
-        if(this.isTimerFrozen) { btn.innerText = "⏱️ Stream Paused ❄️"; btn.style.background = "#4a3311"; btn.style.color="#ffd700"; } 
-        else { btn.innerText = "⏱️ Pause Stream"; btn.style.background = ""; btn.style.color=""; }
-    }
     adminInstantSolveGate() {
         this.playSound('click');
-        if(!this.activeGate) return alert("Please enter a room first!");
+        if(!this.activeGate) return;
         this.toggleAdminSidebar(false);
-        this.winRoomFinal();
+        this.solvedGates.add(this.activeGate.id);
+        this.pauseRoomTimer(); this.returnToLobby();
     }
-    adminModifyCoins(val) { this.playSound('click'); this.coins = Math.max(0, this.coins + val); this.updateStats(); }
-    adminModifyTime(val) { this.playSound('click'); this.timeLeft = Math.max(5, this.timeLeft + val); this.updateTimerUI(); }
 
-    returnToLobby() { this.playSound('click'); this.switchScreen('lobby'); }
-    updateStats() { document.getElementById('coin-val').innerText = this.coins; }
-    notify(m, t="success") {
-        let c = document.getElementById('toast-container'), n = document.createElement('div'); n.className='toast';
-        if(t==='error') n.style.borderRightColor='var(--discord-red)'; n.innerText = m; c.appendChild(n); setTimeout(()=>n.remove(), 3000);
-    }
+    returnToLobby() { this.playSound('click'); this.switchScreen('lobby'); this.renderLobby(); }
 }
 const game = new SolarGamesEngine();
