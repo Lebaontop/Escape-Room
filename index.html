@@ -4,42 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOLAR Escape Room</title>
-    <!-- ربط ملف التنسيق -->
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@300;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="main-bg"></div>
 
-    <h1>SOLAR GOLDEN EDITION</h1>
-    
-    <!-- حاوية الـ 30 باب -->
-    <div class="grid-container" id="doorsGrid"></div>
-
-    <!-- نافذة اللغز المستقلة -->
-    <div class="modal" id="puzzleModal">
-        <div class="modal-content">
-            <h2 id="puzzleTitle">الباب</h2>
-            
-            <div class="puzzle-visual" id="puzzleVisual">
-                <!-- يتم حقن الوصف البصري الواقعي هنا برمجياً -->
-            </div>
-            
-            <p id="puzzleDescription" class="puzzle-desc">محتوى اللغز...</p>
-            
-            <!-- المؤقت اليدوي المنفصل -->
-            <div class="timer-container">
-                <div class="timer" id="puzzleTimer">05:00</div>
-                <div class="controls">
-                    <button onclick="startTimer()">بدء الوقت</button>
-                    <button onclick="pauseTimer()">إيقاف مؤقت</button>
-                    <button onclick="resetTimer()">إعادة ضبط</button>
+    <!-- شاشة الترحيب -->
+    <section id="screen-welcome" class="screen active">
+        <div class="stream-hero">
+            <div class="live-badge">🔴 SECURE CONNECTION</div>
+            <h1 class="main-title">SOLAR GAMES</h1>
+            <p class="subtitle">GOLDEN EDITION INITIATED</p>
+            <div class="cyber-divider"></div>
+            <button type="button" class="btn-prime" onclick="game.startLobby()">START SERVER</button>
+        </div>
+        
+        <!-- شريط الأخبار (اللوج) -->
+        <div class="news-ticker-container">
+            <div class="ticker-label">SERVER LOG</div>
+            <div class="ticker-text" dir="ltr">
+                <div class="ticker-track">
+                    <span>[SYSTEM]: مرحباً بكم في رومات SOLAR GAMES السرية... البوابات مشفرة ببروتوكولات ذهبية معقدة... يتطلب الوصول تجاوز آليات حماية تفاعلية وفك شفرات دقيقة... أي محاولة للاختراق العشوائي ستؤدي إلى تفعيل جدار الحماية (FIREWALL)... حظاً موفقاً في مهمتكم. </span>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <button class="close-btn" onclick="closeModal()">العودة للأبواب</button>
+    <!-- الهيدر ولوحة التحكم (المؤقت هنا خاص بكل غرفة) -->
+    <header id="main-nav" class="hidden">
+        <div class="nav-content">
+            <div class="stat-box"><span class="label">SOLAR HASH</span><div class="value solar-txt"><span id="coin-val">OVR-99</span></div></div>
+            <div class="nav-actions">
+                <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ Admin Panel</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- قائمة الآدمن الجانبية -->
+    <div id="admin-sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Panel 👑</h3>
+            <button type="button" class="close-sidebar-btn" onclick="game.toggleAdminSidebar(false)">×</button>
+        </div>
+        <div class="sidebar-section">
+            <h4>Room Timer Control</h4>
+            <div class="admin-input-group">
+                <div class="row">
+                    <button type="button" onclick="game.startRoomTimer()">▶️ Start Timer</button>
+                    <button type="button" onclick="game.pauseRoomTimer()">⏸️ Pause</button>
+                </div>
+                <div class="row" style="margin-top:5px;">
+                    <button type="button" onclick="game.modifyRoomTimer(60)">+1 Min</button>
+                    <button type="button" onclick="game.modifyRoomTimer(-60)">-1 Min</button>
+                    <button type="button" onclick="game.resetRoomTimer()">🔄 Reset</button>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <h4>Stream Controls</h4>
+            <button type="button" class="btn-admin-action btn-prime-style" onclick="game.adminInstantSolveGate()">✅ Force Unlock Room</button>
         </div>
     </div>
 
-    <!-- ربط ملف البرمجة -->
+    <!-- شاشة اللوبي (ستايل ديسكورد) -->
+    <section id="screen-lobby" class="screen hidden">
+        <div class="lobby-wrapper">
+            <div class="category-title">🔻 SECURE VOICE CHANNELS (GOLDEN PROTOCOL)</div>
+            <div class="discord-grid" id="gates-container"></div>
+        </div>
+    </section>
+
+    <!-- شاشة الغرفة والمرحلتين -->
+    <section id="screen-puzzle" class="screen hidden">
+        <div class="puzzle-container">
+            <div class="puzzle-card" id="main-puzzle-card">
+                <div class="puzzle-header-actions">
+                    <h2 id="puzzle-title" class="solar-txt" style="margin: 0; font-family: 'Rajdhani', sans-serif;"># ROOM-01</h2>
+                    <!-- عداد الوقت المستقل بالغرفة -->
+                    <div id="room-timer-display" class="timer-txt">00:00</div>
+                </div>
+                
+                <div class="puzzle-body">
+                    <!-- المرحلة 1: اللعبة التفاعلية الفريدة -->
+                    <div id="interactive-stage-container">
+                        <p class="track-title" id="int-desc">Action Required...</p>
+                        <div id="interactive-stage"></div>
+                    </div>
+
+                    <!-- المرحلة 2: اللغز الكتابي -->
+                    <div id="text-stage" class="hidden bot-message">
+                        <div class="bot-header">🤖 SolarBot <span class="bot-tag" style="background:var(--gold); color:#000;">SYSTEM CHECK</span></div>
+                        <p id="puzzle-desc">اللغز يظهر هنا</p>
+                    </div>
+                </div>
+                
+                <div class="puzzle-controls hidden" id="input-area">
+                    <input type="text" id="user-input" placeholder="أدخل الإجابة هنا لفك التشفير النهائي...">
+                    <button type="button" class="btn-decode" onclick="game.checkResult()">EXECUTE</button>
+                </div>
+
+                <button type="button" class="btn-cancel mt-10" onclick="game.returnToLobby()">Disconnect</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="toast-container"></div>
     <script src="script.js"></script>
 </body>
 </html>
