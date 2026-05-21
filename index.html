@@ -3,148 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOLAR Escape Room </title>
-    <style>
-        :root {
-            --gold: #D4AF37;
-            --black: #0a0a0a;
-            --overlay: rgba(10, 10, 10, 0.85);
-        }
-
-        body {
-            background-image: url('logo.png'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-color: var(--black); 
-            color: var(--gold);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 3em;
-            text-shadow: 2px 2px 10px #000;
-            letter-spacing: 3px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .door {
-            background: var(--overlay);
-            border: 2px solid var(--gold);
-            padding: 40px 10px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(5px);
-        }
-
-        .door:hover {
-            background: var(--gold);
-            color: var(--black);
-            box-shadow: 0 0 25px var(--gold);
-            transform: translateY(-5px);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .modal-content {
-            background: var(--overlay);
-            border: 2px solid var(--gold);
-            padding: 50px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-        }
-
-        .modal-content h2 {
-            font-size: 2em;
-            margin-top: 0;
-        }
-
-        .modal-content p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin: 20px 0;
-        }
-
-        .timer-container {
-            margin: 30px 0;
-            padding: 20px;
-            border: 1px dashed var(--gold);
-            border-radius: 8px;
-        }
-
-        .timer {
-            font-size: 40px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-        }
-
-        .controls button, .close-btn {
-            background: transparent;
-            color: var(--gold);
-            border: 1px solid var(--gold);
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 5px;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-
-        .controls button:hover, .close-btn:hover {
-            background: var(--gold);
-            color: var(--black);
-        }
-
-        .close-btn {
-            margin-top: 30px;
-            width: 100%;
-            font-size: 18px;
-            padding: 15px;
-        }
-    </style>
+    <title>SOLAR Escape Room</title>
+    <!-- ربط ملف التنسيق -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <h1>SOLAR GOLDEN EDITION</h1>
     
+    <!-- حاوية الـ 30 باب -->
     <div class="grid-container" id="doorsGrid"></div>
 
+    <!-- نافذة اللغز المستقلة -->
     <div class="modal" id="puzzleModal">
         <div class="modal-content">
             <h2 id="puzzleTitle">الباب</h2>
-            <div id="puzzleVisual">
-            </div>
-            <p id="puzzleDescription">محتوى اللغز والنموذج البصري المستقل...</p>
             
+            <div class="puzzle-visual" id="puzzleVisual">
+                <!-- يتم حقن الوصف البصري الواقعي هنا برمجياً -->
+            </div>
+            
+            <p id="puzzleDescription" class="puzzle-desc">محتوى اللغز...</p>
+            
+            <!-- المؤقت اليدوي المنفصل -->
             <div class="timer-container">
                 <div class="timer" id="puzzleTimer">05:00</div>
                 <div class="controls">
@@ -158,68 +39,7 @@
         </div>
     </div>
 
-    <script>
-        const grid = document.getElementById('doorsGrid');
-        const modal = document.getElementById('puzzleModal');
-        const pTitle = document.getElementById('puzzleTitle');
-        const pDesc = document.getElementById('puzzleDescription');
-        const pTimer = document.getElementById('puzzleTimer');
-        
-        let currentTimer = null;
-        let timeLeft = 300; 
-        let isRunning = false;
-
-        for(let i = 1; i <= 30; i++) {
-            let door = document.createElement('div');
-            door.className = 'door';
-            door.innerText = i;
-            door.onclick = () => openDoor(i);
-            grid.appendChild(door);
-        }
-
-        function openDoor(id) {
-            pTitle.innerText = `الاختراق الذهبي - المرحلة ${id}`;
-            pDesc.innerText = `نموذج بصري واقعي ولغز خاص بالباب رقم ${id}.`;
-            
-            modal.style.display = 'flex';
-            resetTimer(); 
-        }
-
-        function closeModal() {
-            modal.style.display = 'none';
-            pauseTimer(); 
-        }
-
-        function updateTimerDisplay() {
-            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            let s = (timeLeft % 60).toString().padStart(2, '0');
-            pTimer.innerText = `${m}:${s}`;
-        }
-
-        function startTimer() {
-            if(isRunning) return;
-            isRunning = true;
-            currentTimer = setInterval(() => {
-                if(timeLeft > 0) {
-                    timeLeft--;
-                    updateTimerDisplay();
-                } else {
-                    pauseTimer();
-                    alert('انتهى الوقت المخصص لحل هذا اللغز!');
-                }
-            }, 1000);
-        }
-
-        function pauseTimer() {
-            isRunning = false;
-            clearInterval(currentTimer);
-        }
-
-        function resetTimer() {
-            pauseTimer();
-            timeLeft = 300; 
-            updateTimerDisplay();
-        }
-    </script>
+    <!-- ربط ملف البرمجة -->
+    <script src="script.js"></script>
 </body>
 </html>
