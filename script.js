@@ -55,7 +55,6 @@ class SolarGamesEngine {
         }); 
     }
 
-    // بناء 30 لغز تفاعلي بمستوى متوسط إلى صعب مع أفكار بصرية مبهرة
     buildPuzzles() {
         const riddles = [
             {q: "شيء كلما زاد، قلّت رؤيتك له.", a: "الظلام"}, {q: "ابن الماء، وإذا وضعته في الماء مات.", a: "الثلج"},
@@ -79,7 +78,6 @@ class SolarGamesEngine {
         for(let i=1; i<=30; i++) {
             let m = { id: i, type: `TYPE_${i}` };
             
-            // توزيع الأفكار البصرية (من 1 إلى 30)
             if(i===1) { m.desc="اقطع سلكي الجهد العالي (الأحمر والنيون) فقط بالترتيب."; m.ans=[1,3]; }
             else if(i===2) { m.desc="قم بموازنة ضغط المحركات ليكون 180 درجة في كل صمام."; m.ans=[180,180,180]; }
             else if(i===3) { m.desc="تطابق الذاكرة المشفرة: افتح البطاقات المتطابقة بسرعة."; }
@@ -87,7 +85,7 @@ class SolarGamesEngine {
             else if(i===5) { m.desc="حدد الإحداثي الدقيق على الرادار الدوار (المنتصف)."; }
             else if(i===6) { m.desc="اضبط الموجات الصوتية لتطابق التردد السري."; m.ans=[75, 40]; }
             else if(i===7) { m.desc="أدخل الرقم السري: 739 في لوحة الهولوغرام."; m.ans='739'; }
-            else if(i===8) { m.desc="حلل المكون المختلف في مصفوفة البيانات."; m.ans=7; } // Index 7 is odd one out
+            else if(i===8) { m.desc="حلل المكون المختلف في مصفوفة البيانات."; m.ans=7; }
             else if(i===9) { m.desc="ارفع القواطع المنطقية لتحصل على مجموع 21 (16+4+1)."; m.ans=[16,4,1]; }
             else if(i===10) { m.desc="أدر خزنة التشفير: يمين 3 طقات، يسار طقتين."; }
             else if(i===11) { m.desc="اضغط مع الاستمرار لتفعيل البصمة (5 ثواني بالضبط)."; }
@@ -155,7 +153,6 @@ class SolarGamesEngine {
         this.switchScreen('puzzle');
     }
 
-    // هنا يتم رسم الألعاب باختلافات بصرية رهيبة بدون تغيير هيكلك
     setupStage() {
         const p = this.activeGate;
         document.getElementById('puzzle-title').innerText = `# ROOM-${p.id.toString().padStart(2,'0')}`;
@@ -165,7 +162,6 @@ class SolarGamesEngine {
         stage.style.flexDirection = 'row'; stage.style.flexWrap = 'wrap'; stage.style.gap = '15px';
         this.stageState = { clicks: 0, arr: [], val: 0, timer: null };
 
-        // ألعاب الأسلاك (نيون)
         if (p.id === 1) {
             stage.style.flexDirection = 'column';
             let colors = ['#fff', '#ff0055', '#00ffaa', '#ff0055', '#444'];
@@ -181,7 +177,6 @@ class SolarGamesEngine {
                 stage.appendChild(w);
             });
         }
-        // ألعاب الصمامات (دوائر دائرية)
         else if (p.id === 2 || p.id === 17) {
             for(let i=0; i<3; i++) {
                 let dial = document.createElement('div'); dial.className = 'dial-base';
@@ -195,7 +190,6 @@ class SolarGamesEngine {
                 stage.appendChild(dial);
             }
         }
-        // لعبة الذاكرة (بطاقات تنقلب 3D)
         else if (p.id === 3) {
             let symbols = ['Δ','Ω','Φ','Δ','Ω','Φ']; symbols.sort(()=>Math.random()-0.5);
             let flipped = [];
@@ -216,7 +210,6 @@ class SolarGamesEngine {
                 stage.appendChild(card);
             });
         }
-        // لعبة الرادار (أنيميشن دوران)
         else if (p.id === 5) {
             let r = document.createElement('div'); r.className = 'radar-bg';
             let sw = document.createElement('div'); sw.className = 'radar-sweep'; r.appendChild(sw);
@@ -231,7 +224,6 @@ class SolarGamesEngine {
             };
             stage.appendChild(r);
         }
-        // لعبة الهولوغرام (كيبورد)
         else if (p.id === 7 || p.id === 4) {
             let chars = p.id===7 ? [1,2,3,4,5,6,7,8,9] : ['A','B','C','D','E','F'];
             let inp = document.createElement('div'); inp.className='timer-txt'; inp.style.width='100%'; inp.style.textAlign='center'; inp.innerText='_ _ _'; stage.appendChild(inp);
@@ -247,7 +239,6 @@ class SolarGamesEngine {
                 stage.appendChild(b);
             });
         }
-        // البصمة (استمرار الضغط)
         else if (p.id === 11 || p.id === 25) {
             let scan = document.createElement('div'); scan.className='uni-btn'; scan.innerText='[ HOLD ]'; scan.style.width='150px'; scan.style.height='150px'; scan.style.borderRadius='50%'; scan.style.boxShadow='inset 0 0 20px #fff';
             let holdTime;
@@ -259,7 +250,6 @@ class SolarGamesEngine {
             };
             stage.appendChild(scan);
         }
-        // الموجات والأشرطة (Sliders)
         else if (p.id === 6 || p.id === 12) {
             stage.style.flexDirection = 'column';
             let s1 = document.createElement('input'); s1.type='range'; s1.min=0; s1.max=100; s1.value=0; s1.style.width='100%';
@@ -268,12 +258,12 @@ class SolarGamesEngine {
             btn.onclick = () => { if(Math.abs(s1.value - p.ans[0])<10 && Math.abs(s2.value - p.ans[1])<10) this.winInteractive(); else this.failRoom(); };
             stage.append(s1, s2, btn);
         }
-        // مصفوفة الشذوذ / الفيروسات
         else if (p.id === 8 || p.id === 23) {
             for(let i=0; i<9; i++) {
                 let b = document.createElement('div'); b.className='uni-btn'; b.style.width='60px'; b.style.height='60px';
                 b.innerText = p.id===8 ? (i===7?'0':'O') : 'V';
-                if(p.id===23 && p.ans.includes(i)) b.style.color = var(--red);
+                // الخطأ كان هنا، تم التعديل بوضع كود اللون النصي
+                if(p.id===23 && p.ans.includes(i)) b.style.color = '#ff3333'; 
                 b.onclick = () => {
                     if(p.id===8) { if(i===7) this.winInteractive(); else this.failRoom(); }
                     else {
@@ -284,14 +274,12 @@ class SolarGamesEngine {
                 stage.appendChild(b);
             }
         }
-        // الماستر (كتابة النص النهائي)
         else if (p.id === 30 || p.id === 27 || p.id === 24) {
             let i = document.createElement('input'); i.type='text'; i.style.padding='15px'; i.style.fontSize='1.2rem'; i.style.background='#000'; i.style.color='#fff'; i.style.border='1px solid #555'; i.style.width='80%'; i.style.textAlign='center';
             let b = document.createElement('button'); b.className='uni-btn'; b.innerText='EXECUTE'; b.style.width='80%';
             b.onclick = () => { if(i.value.toUpperCase() === p.ans) this.winInteractive(); else this.failRoom(); };
             stage.append(i, b);
         }
-        // الألعاب العادية والمنطقية المتبقية
         else {
             let count = p.ans.length || 5;
             for(let i=0; i<count; i++) {
