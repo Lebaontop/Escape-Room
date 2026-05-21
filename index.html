@@ -3,45 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOLAR Escape Room</title>
+    <title>SOLAR GAMES - Master HUD</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@300;600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="main-bg"></div>
 
-    <!-- شاشة الترحيب -->
     <section id="screen-welcome" class="screen active">
         <div class="stream-hero">
-            <div class="live-badge">🔴 SECURE CONNECTION</div>
+            <div class="live-badge">🔴 LIVE</div>
             <h1 class="main-title">SOLAR GAMES</h1>
-            <p class="subtitle">GOLDEN EDITION INITIATED</p>
+            <p class="subtitle">SYSTEM OVERRIDE INITIATED</p>
             <div class="cyber-divider"></div>
             <button type="button" class="btn-prime" onclick="game.startLobby()">START SERVER</button>
         </div>
         
-        <!-- شريط الأخبار (اللوج) -->
         <div class="news-ticker-container">
             <div class="ticker-label">SERVER LOG</div>
             <div class="ticker-text" dir="ltr">
                 <div class="ticker-track">
-                    <span>[SYSTEM]: مرحباً بكم في رومات SOLAR GAMES السرية... البوابات مشفرة ببروتوكولات ذهبية معقدة... يتطلب الوصول تجاوز آليات حماية تفاعلية وفك شفرات دقيقة... أي محاولة للاختراق العشوائي ستؤدي إلى تفعيل جدار الحماية (FIREWALL)... حظاً موفقاً في مهمتكم. </span>
+                    <span>[رسالة النظام]: مرحباً بكم في رومات SOLAR GAMES السرية... البوابات الصوتية مشفرة بالكامل، ويتطلب الوصول تجاوز بروتوكولات الحماية التفاعلية وفك شفرات البوت... أي محاولة للاختراق العشوائي ستؤدي إلى حظر نهائي (BAN) من السيرفر... المتحدث الرسمي يتمنى لكم التوفيق في مهمتكم... </span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- الهيدر ولوحة التحكم (المؤقت هنا خاص بكل غرفة) -->
+    <!-- الهيدر ولوحة التحكم -->
     <header id="main-nav" class="hidden">
         <div class="nav-content">
-            <div class="stat-box"><span class="label">SOLAR HASH</span><div class="value solar-txt"><span id="coin-val">OVR-99</span></div></div>
+            <div class="stat-box"><span class="label">SOLAR COINS</span><div class="value solar-txt"><span id="coin-val">60</span></div></div>
             <div class="nav-actions">
-                <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ Admin Panel</button>
+                <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ Control Panel</button>
             </div>
         </div>
     </header>
 
-    <!-- قائمة الآدمن الجانبية -->
     <div id="admin-sidebar" class="sidebar">
         <div class="sidebar-header">
             <h3>Admin Panel 👑</h3>
@@ -57,7 +54,6 @@
                 <div class="row" style="margin-top:5px;">
                     <button type="button" onclick="game.modifyRoomTimer(60)">+1 Min</button>
                     <button type="button" onclick="game.modifyRoomTimer(-60)">-1 Min</button>
-                    <button type="button" onclick="game.resetRoomTimer()">🔄 Reset</button>
                 </div>
             </div>
         </div>
@@ -67,26 +63,26 @@
         </div>
     </div>
 
-    <!-- شاشة اللوبي (ستايل ديسكورد) -->
+    <!-- شاشة اللوبي -->
     <section id="screen-lobby" class="screen hidden">
         <div class="lobby-wrapper">
-            <div class="category-title">🔻 SECURE VOICE CHANNELS (GOLDEN PROTOCOL)</div>
+            <div class="category-title">🔻 SECURE VOICE CHANNELS</div>
             <div class="discord-grid" id="gates-container"></div>
         </div>
     </section>
 
-    <!-- شاشة الغرفة والمرحلتين -->
+    <!-- شاشة الغرفة والمراحل -->
     <section id="screen-puzzle" class="screen hidden">
         <div class="puzzle-container">
             <div class="puzzle-card" id="main-puzzle-card">
                 <div class="puzzle-header-actions">
                     <h2 id="puzzle-title" class="solar-txt" style="margin: 0; font-family: 'Rajdhani', sans-serif;"># ROOM-01</h2>
-                    <!-- عداد الوقت المستقل بالغرفة -->
+                    <!-- عداد الوقت الخاص بالغرفة -->
                     <div id="room-timer-display" class="timer-txt">00:00</div>
                 </div>
                 
                 <div class="puzzle-body">
-                    <!-- المرحلة 1: اللعبة التفاعلية الفريدة -->
+                    <!-- المرحلة 1: اللعبة التفاعلية -->
                     <div id="interactive-stage-container">
                         <p class="track-title" id="int-desc">Action Required...</p>
                         <div id="interactive-stage"></div>
@@ -94,14 +90,14 @@
 
                     <!-- المرحلة 2: اللغز الكتابي -->
                     <div id="text-stage" class="hidden bot-message">
-                        <div class="bot-header">🤖 SolarBot <span class="bot-tag" style="background:var(--gold); color:#000;">SYSTEM CHECK</span></div>
+                        <div class="bot-header">🤖 SolarBot <span class="bot-tag">SYSTEM CHECK</span></div>
                         <p id="puzzle-desc">اللغز يظهر هنا</p>
                     </div>
                 </div>
                 
                 <div class="puzzle-controls hidden" id="input-area">
-                    <input type="text" id="user-input" placeholder="أدخل الإجابة هنا لفك التشفير النهائي...">
-                    <button type="button" class="btn-decode" onclick="game.checkResult()">EXECUTE</button>
+                    <input type="text" id="user-input" placeholder="أدخل الإجابة هنا...">
+                    <button type="button" class="btn-decode" onclick="game.checkResult()">إرسال</button>
                 </div>
 
                 <button type="button" class="btn-cancel mt-10" onclick="game.returnToLobby()">Disconnect</button>
