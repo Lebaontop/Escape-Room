@@ -13,7 +13,7 @@
     <section id="screen-welcome" class="screen active">
         <div class="stream-hero">
             <div class="live-badge">🔴 بث مباشر - نظام الاختراق</div>
-            <h1 class="main-title">SERVER BREACH</h1>
+            <h1 class="main-title">ESCAPE ROOM</h1>
             <p class="subtitle">GOLDEN PROTOCOL INITIATED</p>
             <div class="cyber-divider"></div>
             <button type="button" class="btn-prime" onclick="game.startLobby()">بدء الاختراق (Start Hack)</button>
@@ -45,12 +45,12 @@
             <div class="market-grid">
                 <div class="market-item">
                     <h3>تشفير مساعد (Hint)</h3>
-                    <p>يكشف تلميح قوي يساعد في حل الروم الحالي.</p>
+                    <p>يكشف تلميح للغز البصري واللغز الكتابي معاً.</p>
                     <button class="btn-market" onclick="game.buyHint('coins')">شراء بـ 60 كوينز</button>
                 </div>
                 <div class="market-item">
                     <h3>تلميح مقابل الوقت</h3>
-                    <p>خصم 5 دقائق من الوقت العام مقابل الحصول على التلميح.</p>
+                    <p>خصم 5 دقائق من الوقت العام مقابل التلميح.</p>
                     <button class="btn-market time-cost" onclick="game.buyHint('time')">شراء بـ 5 دقائق</button>
                 </div>
                 <div class="market-item">
@@ -107,9 +107,10 @@
             <div class="puzzle-card" id="main-puzzle-card">
                 <div class="puzzle-header-actions">
                     <h2 id="puzzle-title" class="solar-txt" style="margin: 0; font-family: 'Rajdhani', sans-serif; display:flex; align-items:center; gap:10px;"><span style="color:#aaa;">🔊</span> # CHANNEL-01</h2>
-                    <div id="hint-display" class="hidden" style="color: #00ff66; font-weight: bold; font-size: 1.1rem; background: #002200; padding: 5px 15px; border-radius: 4px; border: 1px solid #00ff66;"></div>
                 </div>
                 
+                <div id="hint-display" class="hidden" style="color: #00ff66; font-weight: bold; font-size: 1rem; background: #002200; padding: 15px; border-radius: 4px; border: 1px solid #00ff66; margin-bottom: 20px; line-height: 1.6;"></div>
+
                 <div class="puzzle-body">
                     <div id="interactive-stage-container">
                         <p class="track-title" id="int-desc">Waiting for Override Commands...</p>
