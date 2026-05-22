@@ -93,36 +93,37 @@ class SolarGamesEngine {
         for(let i=1; i<=30; i++) {
             let m = { id: i, type: `GAME_${i}` };
             
-            if(i===1) { m.uiType = 'WIRES'; m.desc="الأسلاك الحساسة: اقطع السلك الأحمر، ثم الأزرق اللي تحته."; m.ans=[1,2]; m.data=['#fff','#ff0055','#00ccff','#ff0055']; m.hint="الثاني ثم الثالث."; }
-            else if(i===2) { m.uiType = 'SIMON'; m.desc="لعبة النبض: اتبع نمط المربعات المضيئة ووجهني."; m.ans=[3, 8, 14, 5]; m.data=16; m.hint="النبضات: يمين فوق، يسار تحت، الخ."; }
-            else if(i===3) { m.uiType = 'SWITCHES'; m.desc="قواطع الطاقة: ارفع القواطع اللي مجموعها يساوي 25."; m.ans=[10,5,8,5,10,2]; m.target=25; m.hint="الأول، الرابع، الخامس."; }
-            else if(i===4) { m.uiType = 'DIAL'; m.desc="الخزنة الصوتية: استمع للطقات ووجهني (يمين/يسار)."; m.ans=[45, 90, 45]; m.hint="يمين 1، يسار 2، يمين 1."; }
-            else if(i===5) { m.uiType = 'BARCODE'; m.desc="الباركود الممزق: استنتج الأرقام الناقصة من التسلسل."; m.ans='4815'; m.hint="التسلسل هو 4815."; }
-            else if(i===6) { m.uiType = 'VALVES'; m.desc="موازنة الضغط: وجهني للصمامات ليصبح الضغط 100 PSI."; m.data=[20,30,-10,50]; m.target=100; m.hint="الأول والثاني والرابع."; }
-            else if(i===7) { m.uiType = 'WEIGHTS'; m.desc="الميزان الدقيق: اختر الأوزان التي تجعل الكفة 180 جرام."; m.data=[50,60,70,80,90]; m.target=180; m.hint="50 + 60 + 70."; }
-            else if(i===8) { m.uiType = 'RADAR'; m.desc="الرادار المعتم: حدد إحداثيات الوميض."; m.ans=12; m.data=25; m.hint="النقطة في المنتصف تماماً."; }
-            else if(i===9) { m.uiType = 'FRAGMENTS'; m.desc="البصمة المشفرة: اختر 3 أجزاء متطابقة."; m.data=6; m.ans=[1,3,5]; m.hint="الثاني والرابع والسادس."; }
-            else if(i===10) { m.uiType = 'INPUT'; m.desc="تشفير الألوان: ما هو ناتج دمج الأحمر والأصفر؟"; m.ans='برتقالي'; m.hint="اللون برتقالي."; }
-            else if(i===11) { m.uiType = 'CRYPTEX'; m.desc="الكريبتكس: حل المعادلة (5x5+10) وأدخل الكود."; m.ans='035'; m.hint="035."; }
-            else if(i===12) { m.uiType = 'NODES'; m.desc="خريطة الخوادم: اختر مسار من 3 سيرفرات سرعته 150."; m.data=[50,20,80, 50,50,40, 10,70,50]; m.target=150; m.hint="السيرفرات القطرية."; }
-            else if(i===13) { m.uiType = 'SWITCHES'; m.desc="البوابات المنطقية: (1 AND 1) OR 0."; m.ans=[1,1,0]; m.target='LOGIC'; m.hint="شغل الأول والثاني."; }
-            else if(i===14) { m.uiType = 'INPUT'; m.desc="تشفير قيصر: أزح الكلمة (CDE) بمقدار +2."; m.ans='EFG'; m.hint="EFG."; }
-            else if(i===15) { m.uiType = 'MAZE'; m.desc="المتاهة العمياء: وجهني بالأسهم."; m.data=16; m.ans=[2,6,10]; m.hint="العمود الثالث."; }
-            else if(i===16) { m.uiType = 'BARCODE'; m.desc="الملف السري: ما هو رقم الملف؟ (عكس 1234)."; m.ans='4321'; m.hint="4321."; }
-            else if(i===17) { m.uiType = 'DIAL'; m.desc="التروس: دور الترس الثاني ليتطابق مع الأول."; m.ans=[0, 90, 0]; m.hint="الثاني زاوية 90."; }
-            else if(i===18) { m.uiType = 'RADAR'; m.desc="الشذوذ: ابحث عن الرمز المختلف."; m.data=16; m.ans=7; m.hint="الصف الثاني، الأخير."; }
-            else if(i===19) { m.uiType = 'SIMON'; m.desc="الذاكرة العكسية: انقر عكس النبضات."; m.data=9; m.ans=[8,7,6]; m.hint="من اليمين لليسار تحت."; }
-            else if(i===20) { m.uiType = 'WEIGHTS'; m.desc="موازنة الحرارة: اختر المبردات لتصل إلى 0."; m.data=[10,-20,15,-5,10]; m.target=0; m.hint="اختر 10، -20، 10."; }
-            else if(i===21) { m.uiType = 'INPUT'; m.desc="المربع السحري: الرقم الناقص في المنتصف ليصبح المجموع 15."; m.ans='5'; m.hint="الرقم 5."; }
-            else if(i===22) { m.uiType = 'INPUT'; m.desc="مورس المعكوس: (.-) تصبح (-.). ما الحرف؟"; m.ans='N'; m.hint="حرف N."; }
-            else if(i===23) { m.uiType = 'NODES'; m.desc="اختراق الشبكة: شغل العقد الطرفية فقط."; m.data=[1,0,1, 0,0,0, 1,0,1]; m.target='CORNERS'; m.hint="الزوايا الأربع."; }
-            else if(i===24) { m.uiType = 'WIRES'; m.desc="الأسلاك المعقدة: اقطع الأول والأخير."; m.data=['#fff','#333','#333','#fff']; m.ans=[0,3]; m.hint="الأبيض فقط."; }
-            else if(i===25) { m.uiType = 'INPUT'; m.desc="الكلمة العكسية: (RALOS)."; m.ans='SOLAR'; m.hint="SOLAR."; }
-            else if(i===26) { m.uiType = 'VALVES'; m.desc="دوارق السوائل: كيف تحصل على 4؟"; m.data=[8,5,-3,-1]; m.target=4; m.hint="5 ناقص 1."; }
-            else if(i===27) { m.uiType = 'SWITCHES'; m.desc="قواطع الطوارئ: شغل القواطع الفردية."; m.ans=[1,2,3,4]; m.target='ODD'; m.hint="الأول والثالث."; }
-            else if(i===28) { m.uiType = 'BARCODE'; m.desc="التردد المفقود: أدخل 199X."; m.ans='1999'; m.hint="1999."; }
-            else if(i===29) { m.uiType = 'FRAGMENTS'; m.desc="التسلسل الجيني: اختر العينات الصحيحة."; m.data=4; m.ans=[0,3]; m.hint="الأول والأخير."; }
-            else if(i===30) { m.uiType = 'BOSS'; m.desc="MASTER OVERRIDE: شغل 3 مفاتيح واكتب GOLDEN."; m.ans='GOLDEN'; m.hint="شغلها كلها واكتب GOLDEN."; }
+            // تم ضبط كل الألغاز لتكون منطقية وقابلة للحل مع تلميح مزدوج
+            if(i===1) { m.uiType = 'WIRES'; m.desc="الأسلاك الحساسة: اقطع السلك الأحمر، ثم الأزرق الفاتح."; m.ans=[1,2]; m.data=['#fff','#ff0055','#00ccff','#ff0055']; m.hint="💡 تفاعلي: اقطع السلك الثاني ثم الثالث | 📝 كتابي: يعتم كلما زاد (الظلام)."; }
+            else if(i===2) { m.uiType = 'SIMON'; m.desc="لعبة النبض: اتبع نمط المربعات المضيئة ووجهني."; m.ans=[3, 8, 14, 5]; m.data=16; m.hint="💡 تفاعلي: المربعات المضيئة بالترتيب (4 ثم 9 ثم 15 ثم 6) | 📝 كتابي: يذوب في الحرارة (الثلج)."; }
+            else if(i===3) { m.uiType = 'SWITCHES'; m.desc="قواطع الطاقة: ارفع القواطع اللي مجموعها يساوي 25."; m.ans=[0,3,4]; m.data=[10,5,8,5,10,2]; m.target=25; m.hint="💡 تفاعلي: شغل القاطع الأول، الرابع، والخامس | 📝 كتابي: لا يمكنك البوح به (السر)."; }
+            else if(i===4) { m.uiType = 'DIAL'; m.desc="الخزنة الصوتية: وجهني لتدوير الخزنة 3 طقات (كل ضغطة بـ 45)."; m.ans=[45, 90, 135]; m.hint="💡 تفاعلي: اضغط على الدائرة 3 مرات | 📝 كتابي: يزيد ولا ينقص (العمر)."; }
+            else if(i===5) { m.uiType = 'BARCODE'; m.desc="الباركود الممزق: استنتج الأرقام الناقصة من التسلسل."; m.ans='4815'; m.hint="💡 تفاعلي: الأرقام هي 4815 | 📝 كتابي: يرتد لك من الجدار (الصدى)."; }
+            else if(i===6) { m.uiType = 'VALVES'; m.desc="موازنة الضغط: وجهني للصمامات ليصبح الضغط 100 PSI."; m.data=[20,30,-10,50]; m.target=100; m.hint="💡 تفاعلي: اضغط الصمام الأول (+20)، الثاني (+30)، والرابع (+50) | 📝 كتابي: يمتص السوائل (الاسفنج)."; }
+            else if(i===7) { m.uiType = 'WEIGHTS'; m.desc="الميزان الدقيق: اختر الأوزان التي تجعل الكفة 180 جرام."; m.data=[50,60,70,80,90]; m.target=180; m.hint="💡 تفاعلي: الأوزان هي 50، 60، 70 | 📝 كتابي: يأتي غداً (المستقبل)."; }
+            else if(i===8) { m.uiType = 'RADAR'; m.desc="الرادار المعتم: حدد إحداثيات الوميض في المنتصف."; m.ans=12; m.data=25; m.hint="💡 تفاعلي: الخلية في المنتصف تماماً (رقم 13) | 📝 كتابي: تقطعه لتفي به (الوعد)."; }
+            else if(i===9) { m.uiType = 'FRAGMENTS'; m.desc="البصمة المشفرة: اختر 3 أجزاء متطابقة."; m.data=6; m.ans=[1,3,5]; m.hint="💡 تفاعلي: اختر الثاني، الرابع، والسادس | 📝 كتابي: لغته السكوت (الصمت)."; }
+            else if(i===10) { m.uiType = 'INPUT'; m.desc="تشفير الألوان: ما هو ناتج دمج الأحمر والأصفر؟"; m.ans='برتقالي'; m.hint="💡 تفاعلي: برتقالي | 📝 كتابي: قشرتها هشة (البيضة)."; }
+            else if(i===11) { m.uiType = 'CRYPTEX'; m.desc="الكريبتكس: حل المعادلة (5x5+10) وأدخل الكود."; m.ans='035'; m.hint="💡 تفاعلي: الكود هو 035 | 📝 كتابي: تنشفك وتتبلل (المنشفة)."; }
+            else if(i===12) { m.uiType = 'NODES'; m.desc="خريطة الخوادم: اختر مسار قطري سرعته 150."; m.data=[50,20,80, 50,50,40, 10,70,50]; m.target=150; m.hint="💡 تفاعلي: اختر السيرفرات بالزاوية القطرية (50+50+50) | 📝 كتابي: ترسم العالم (الخريطة)."; }
+            else if(i===13) { m.uiType = 'SWITCHES'; m.desc="البوابات المنطقية: (1 AND 1) OR 0."; m.ans=[0,1]; m.target='LOGIC'; m.hint="💡 تفاعلي: شغل المفتاح الأول والثاني فقط | 📝 كتابي: تعرف بها الوقت (الساعة)."; }
+            else if(i===14) { m.uiType = 'INPUT'; m.desc="تشفير قيصر: أزح الكلمة (CDE) بمقدار +2."; m.ans='EFG'; m.hint="💡 تفاعلي: EFG | 📝 كتابي: يمطر (السحاب)."; }
+            else if(i===15) { m.uiType = 'MAZE'; m.desc="المتاهة العمياء: وجهني بالأسهم."; m.data=16; m.ans=[2,6,10]; m.hint="💡 تفاعلي: العمود الثالث من فوق لتحت | 📝 كتابي: صيفي ولذيذ (البطيخ)."; }
+            else if(i===16) { m.uiType = 'BARCODE'; m.desc="الملف السري: ما هو رقم الملف؟ (عكس 1234)."; m.ans='4321'; m.hint="💡 تفاعلي: 4321 | 📝 كتابي: يثبت الأشياء (المسمار)."; }
+            else if(i===17) { m.uiType = 'DIAL'; m.desc="التروس: اضغط الترس 6 مرات."; m.ans=[45,90,135,180,225,270]; m.hint="💡 تفاعلي: اضغط على الدائرة 6 مرات متتالية | 📝 كتابي: أداة الكتابة (القلم)."; }
+            else if(i===18) { m.uiType = 'RADAR'; m.desc="الشذوذ: ابحث عن الرمز المختلف."; m.data=16; m.ans=7; m.hint="💡 تفاعلي: الصف الثاني، الخلية الأخيرة | 📝 كتابي: يتبعك بالشمس (الظل)."; }
+            else if(i===19) { m.uiType = 'SIMON'; m.desc="الذاكرة العكسية: انقر عكس النبضات."; m.data=9; m.ans=[8,7,6]; m.hint="💡 تفاعلي: المربع 9، ثم 8، ثم 7 | 📝 كتابي: تدل على الشمال (البوصلة)."; }
+            else if(i===20) { m.uiType = 'WEIGHTS'; m.desc="موازنة الحرارة: اختر المبردات لتصل إلى 0."; m.data=[10,-20,15,-5,10]; m.target=0; m.hint="💡 تفاعلي: اختر الأول (10)، الثاني (-20)، والأخير (10) | 📝 كتابي: لا تُرى (الريح)."; }
+            else if(i===21) { m.uiType = 'INPUT'; m.desc="المربع السحري: الرقم الناقص في المنتصف ليصبح المجموع 15."; m.ans='5'; m.hint="💡 تفاعلي: 5 | 📝 كتابي: تخاف من الماء (النار)."; }
+            else if(i===22) { m.uiType = 'INPUT'; m.desc="مورس المعكوس: (.-) تصبح (-.). ما الحرف؟"; m.ans='N'; m.hint="💡 تفاعلي: حرف N | 📝 كتابي: تكبر كلما أخذت منها (الحفرة)."; }
+            else if(i===23) { m.uiType = 'NODES'; m.desc="اختراق الشبكة: شغل الزوايا الأربع للشبكة."; m.data=[1,0,1, 0,0,0, 1,0,1]; m.target='CORNERS'; m.hint="💡 تفاعلي: الأطراف والزوايا الأربع | 📝 كتابي: يقرصك ببطنك (الجوع)."; }
+            else if(i===24) { m.uiType = 'WIRES'; m.desc="الأسلاك المعقدة: اقطع الأول والأخير."; m.data=['#fff','#333','#333','#fff']; m.ans=[0,3]; m.hint="💡 تفاعلي: السلك الأبيض الأول والأخير | 📝 كتابي: ينادونك به (الاسم)."; }
+            else if(i===25) { m.uiType = 'INPUT'; m.desc="الكلمة العكسية: (RALOS)."; m.ans='SOLAR'; m.hint="💡 تفاعلي: SOLAR | 📝 كتابي: تتركها وراءك (الخطوة)."; }
+            else if(i===26) { m.uiType = 'VALVES'; m.desc="دوارق السوائل: كيف تحصل على 4؟"; m.data=[8,5,-3,-1]; m.target=4; m.hint="💡 تفاعلي: اضغط الثاني (5) والأخير (-1) | 📝 كتابي: قطرات من السماء (المطر)."; }
+            else if(i===27) { m.uiType = 'SWITCHES'; m.desc="قواطع الطوارئ: شغل القاطع الأول والثالث."; m.ans=[0,2]; m.target='ODD'; m.hint="💡 تفاعلي: الأول والثالث | 📝 كتابي: افتح يا... (سمسم)."; }
+            else if(i===28) { m.uiType = 'BARCODE'; m.desc="التردد المفقود: أدخل 199X."; m.ans='1999'; m.hint="💡 تفاعلي: 1999 | 📝 كتابي: مدينة تاريخية (العلا)."; }
+            else if(i===29) { m.uiType = 'FRAGMENTS'; m.desc="التسلسل الجيني: اختر العينات الصحيحة."; m.data=4; m.ans=[0,3]; m.hint="💡 تفاعلي: الأول والأخير | 📝 كتابي: تذوب (الشمعة)."; }
+            else if(i===30) { m.uiType = 'BOSS'; m.desc="MASTER OVERRIDE: شغل 3 مفاتيح واكتب GOLDEN."; m.ans='GOLDEN'; m.hint="💡 تفاعلي: شغل المفاتيح الثلاثة واكتب GOLDEN | 📝 كتابي: معدن أصفر نفيس (الذهب)."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -151,13 +152,13 @@ class SolarGamesEngine {
         else { document.getElementById('global-timer-display').style.color = '#fff'; }
     }
 
-    // هنا تعديل إضافة / وخصم الكوينز من الآدمن
+    // إدارة الرصيد (إضافة وخصم)
     addCoins(amount) {
         this.playSound('click');
-        this.coins = Math.max(0, this.coins + amount); // ما ينزل تحت الصفر
+        this.coins = Math.max(0, this.coins + amount); // لا يسمح بالسالب
         this.updateCoinsUI();
-        if(amount > 0) this.showToast(`تم إضافة ${amount} كوينز!`);
-        else this.showToast(`تم خصم ${Math.abs(amount)} كوينز!`, '#ff3333');
+        if(amount > 0) this.showToast(`تم استخراج ${amount} بيانات بنجاح!`);
+        else this.showToast(`تحذير: تم خصم ${Math.abs(amount)} بيانات!`, '#ff3333');
     }
     updateCoinsUI() {
         document.getElementById('coin-val').innerText = this.coins;
@@ -178,9 +179,9 @@ class SolarGamesEngine {
         if(type === 'coins') {
             if(this.coins >= 60) {
                 this.coins -= 60;
-                this.showToast('تم شراء التلميح بنجاح!');
+                this.showToast('تم فك التشفير عن التلميح بنجاح!');
                 this.displayHint();
-            } else { this.showToast('رصيدك غير كافٍ!', '#ff3333'); }
+            } else { this.showToast('بياناتك غير كافية!', '#ff3333'); }
         } else if (type === 'time') {
             if(this.globalTime > 300) {
                 this.globalTime -= 300;
@@ -203,16 +204,16 @@ class SolarGamesEngine {
             setTimeout(() => {
                 this.timeFrozen = false;
                 this.updateGlobalTimerUI();
-                this.showToast('انتهى التجميد!', '#ff3333');
+                this.showToast('انتهى التجميد، السيرفر يعمل الآن!', '#ff3333');
             }, 120000); 
-        } else { this.showToast('رصيدك غير كافٍ!', '#ff3333'); }
+        } else { this.showToast('بياناتك غير كافية!', '#ff3333'); }
         this.updateCoinsUI();
     }
 
     displayHint() {
         this.toggleMarket(false);
         const hd = document.getElementById('hint-display');
-        hd.innerText = this.activeGate.hint;
+        hd.innerHTML = this.activeGate.hint.replace('|', '<br>'); // سطر جديد عشان الترتيب البصري
         hd.classList.remove('hidden');
     }
 
@@ -228,7 +229,6 @@ class SolarGamesEngine {
         this.switchScreen('lobby'); 
     }
 
-    // بناء قائمة الرومات (بستايل ديسكورد وحالة النور الفخم)
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
         for(let i=1; i<=30; i++) {
@@ -236,7 +236,7 @@ class SolarGamesEngine {
             
             let isSolved = this.solvedGates.has(i);
             let isLocked = i !== 1 && !this.solvedGates.has(i - 1); 
-            let isNext = !isSolved && !isLocked; // الروم المتاح حالياً (يشع نور)
+            let isNext = !isSolved && !isLocked; 
 
             btn.className = `channel-card ${isSolved ? 'solved' : ''} ${isLocked ? 'locked' : ''} ${isNext ? 'unlocked-next' : ''}`;
             
@@ -470,7 +470,7 @@ class SolarGamesEngine {
             this.playSound('success'); 
             this.solvedGates.add(this.activeGate.id);
             this.addCoins(15);
-            this.showToast('تم اختراق الروم بنجاح! +15 COINS');
+            this.showToast('تم اختراق الروم بنجاح! +15 بيانات');
             this.returnToLobby();
         } else {
             this.failRoom();
