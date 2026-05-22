@@ -28,7 +28,6 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .btn-prime { background: transparent; color: var(--gold); border: 2px solid var(--gold); padding: 15px 40px; font-size: 1.3rem; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; border-radius: 4px; transition: 0.3s; letter-spacing: 1px; }
 .btn-prime:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold);}
 
-/* السوق السوداء */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; justify-content: center; align-items: center; }
 .modal-content { background: #0a0a0a; padding: 40px; border-radius: 8px; width: 800px; text-align: center; }
 .luxury-border { border: 2px solid var(--dark-gold); box-shadow: 0 0 40px rgba(212,175,55,0.1); }
@@ -43,41 +42,42 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .btn-market.freeze-cost { border-color: #00ccff; color: #00ccff; }
 .btn-market.freeze-cost:hover { background: #00ccff; color: #000; }
 
-/* تصميم الرومات (ديسكورد ستايل) */
+/* التعديل الجذري للوبي (جنب بعض - Grid) */
 .lobby-wrapper { padding: 100px 20px 50px; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-.server-header { width: 100%; max-width: 600px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-.category-title { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; color: #888; font-weight: bold; text-align: left; margin-left: 10px;}
-.discord-channels-list { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 600px; }
+.server-header { width: 100%; max-width: 1200px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+.category-title { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #888; font-weight: bold; text-align: left; margin-left: 10px;}
 
-.channel-card { background: rgba(15,15,15,0.9); border-radius: 6px; padding: 15px 20px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; transition: all 0.3s ease; color: #888; border: 1px solid #222; border-left: 4px solid #333; position: relative; overflow: hidden;}
+/* الشبكة للرومات */
+.discord-channels-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; width: 100%; max-width: 1200px; }
+
+.channel-card { background: rgba(15,15,15,0.9); border-radius: 6px; padding: 20px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; transition: all 0.3s ease; color: #888; border: 1px solid #222; border-left: 4px solid #333; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
 .channel-info { display: flex; flex-direction: column; align-items: flex-start; margin-right: 15px; }
-.channel-card h3 { font-family: 'Rajdhani', monospace; font-size: 1.3rem; margin: 0; font-weight: 600; letter-spacing: 1px;}
-.channel-status { font-size: 0.85rem; margin-top: 3px; font-weight: bold; }
+.channel-card h3 { font-family: 'Rajdhani', monospace; font-size: 1.4rem; margin: 0; font-weight: 600; letter-spacing: 1px;}
+.channel-status { font-size: 0.85rem; margin-top: 5px; font-weight: bold; }
 
-/* الأيقونات قبل الاسم بناءً على الحالة */
-.channel-card::before { content: '🔊'; margin-left: 15px; font-size: 1.5rem; filter: grayscale(1); opacity: 0.5; }
+.channel-card::before { content: '🔊'; margin-left: 15px; font-size: 1.8rem; filter: grayscale(1); opacity: 0.5; }
 
-/* 1. الغرفة المتاحة حالياً (تشع نور ذهبي فخم) */
+/* النور الفخم للغرفة المتاحة */
 .channel-card.unlocked-next {
-    background: rgba(212, 175, 55, 0.05);
+    background: rgba(212, 175, 55, 0.08);
     border-color: var(--dark-gold);
     border-left: 4px solid var(--gold);
     color: var(--gold);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), inset 4px 0 15px rgba(212, 175, 55, 0.1);
-    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.3), inset 4px 0 20px rgba(212, 175, 55, 0.1);
+    transform: translateY(-3px);
 }
-.channel-card.unlocked-next::before { content: '🔓'; filter: none; opacity: 1; text-shadow: 0 0 10px var(--gold); }
-.channel-card.unlocked-next:hover { background: rgba(212, 175, 55, 0.15); box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); }
+.channel-card.unlocked-next::before { content: '🔓'; filter: none; opacity: 1; text-shadow: 0 0 15px var(--gold); }
+.channel-card.unlocked-next:hover { background: rgba(212, 175, 55, 0.15); box-shadow: 0 0 35px rgba(212, 175, 55, 0.5); }
 
-/* 2. الغرف المقفلة */
+/* الغرف المقفلة */
 .channel-card.locked { opacity: 0.4; cursor: not-allowed; background: #050505; }
 .channel-card.locked::before { content: '🔒'; }
 
-/* 3. الغرف المحلولة */
-.channel-card.solved { border-left-color: var(--green); color: #ccc; opacity: 0.7; }
+/* الغرف المحلولة */
+.channel-card.solved { border-left-color: var(--green); color: #ccc; opacity: 0.6; }
 .channel-card.solved::before { content: '✅'; filter: none; opacity: 1; }
 
-/* شاشة الغرفة (Puzzle) */
+/* شاشة الغرفة */
 .puzzle-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
 .puzzle-card { width: 900px; padding: 30px; border-radius: 4px; background: rgba(5,5,5,0.95); border: 1px solid var(--dark-gold); box-shadow: 0 10px 50px rgba(0,0,0,0.9); }
 .puzzle-header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #222; }
@@ -119,7 +119,7 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .btn-cancel:hover { background: #222; color: #fff; }
 
 /* لوحة الآدمن */
-.sidebar { position: fixed; top: 0; right: 0; width: 350px; height: 100vh; background: #050505; border-left: 1px solid var(--dark-gold); transform: translateX(100%); transition: 0.3s; z-index: 2000; padding: 20px; }
+.sidebar { position: fixed; top: 0; right: 0; width: 350px; height: 100vh; background: #050505; border-left: 1px solid var(--dark-gold); transform: translateX(100%); transition: 0.3s; z-index: 2000; padding: 20px; box-shadow: -5px 0 20px rgba(0,0,0,0.9);}
 .sidebar.open { transform: translateX(0); }
 .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #222; color: var(--gold); }
 .close-sidebar-btn { background: transparent; border: none; color: #666; font-size: 2rem; cursor: pointer; }
