@@ -1,7 +1,7 @@
 class SolarGamesEngine {
     constructor() {
         this.coins = 0; 
-        this.globalTime = 90 * 60; // 1:30:00
+        this.globalTime = 90 * 60; // 1:30:00 (الوقت العام)
         this.isTimerRunning = false;
         this.timeFrozen = false;
         
@@ -64,7 +64,7 @@ class SolarGamesEngine {
     
     setupClickListeners() { 
         document.addEventListener('click', (e) => { 
-            if(e.target.tagName==='BUTTON' || e.target.classList.contains('box-lux') || e.target.classList.contains('stone-btn') || e.target.classList.contains('flip-card') || e.target.closest('.channel-card') || e.target.classList.contains('wire-lux') || e.target.classList.contains('simon-box') || e.target.classList.contains('astro-ring') || e.target.classList.contains('cryp-btn') || e.target.classList.contains('bc-bar') || e.target.classList.contains('dna-clickable') || e.target.classList.contains('pipe-cell') || e.target.classList.contains('slide-tile') || e.target.classList.contains('heat-btn') || e.target.classList.contains('elevator-btn') || e.target.classList.contains('matrix-word')){ 
+            if(e.target.tagName==='BUTTON' || e.target.classList.contains('simon-box') || e.target.classList.contains('flip-card') || e.target.classList.contains('stone-btn') || e.target.closest('.channel-card') || e.target.classList.contains('wire-lux') || e.target.classList.contains('astro-ring') || e.target.classList.contains('cryp-btn') || e.target.classList.contains('bc-bar') || e.target.classList.contains('dna-clickable') || e.target.classList.contains('pipe-cell') || e.target.classList.contains('slide-tile') || e.target.classList.contains('heat-btn') || e.target.classList.contains('elevator-btn') || e.target.classList.contains('matrix-word') || e.target.classList.contains('cyber-valve') || e.target.classList.contains('cyber-weight')){ 
                 this.initAudio(); this.playSound('click'); 
             } 
         }); 
@@ -93,36 +93,36 @@ class SolarGamesEngine {
         for(let i=1; i<=30; i++) {
             let m = { id: i, type: `GAME_${i}` };
             
-            if(i===1) { m.uiType = 'WIRES'; m.desc="اقطع 3 أسلاك محددة. (الأول ذهبي؟ اقطع الثالث الأسود)."; m.data=['#D4AF37','#ff3333','#333','#fff','#D4AF37','#00ccff','#333','#ff3333']; m.ans=[2,5,7]; m.hint="💡 تفاعلي: الأسود الأول، الأزرق، ثم الأحمر الأخير. | 📝 كتابي: يعتم كلما زاد."; }
-            else if(i===2) { m.uiType = 'SIMON'; m.desc="النبض: 3 جولات متتالية."; m.data=16; m.hint="💡 تفاعلي: ركز ووجهني للأنماط بدون أرقام. | 📝 كتابي: يذوب في الحرارة."; }
-            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="خزنة الألوان: أدخل 4 أرقام (أخضر=مكانه صح، برتقالي=موجود لكن مكانه غلط)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3719. | 📝 كتابي: لا يمكنك البوح به."; }
-            else if(i===4) { m.uiType = 'MATCH'; m.desc="تطابق الأشكال: 20 شريحة فلكية."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تفاعلي: احفظ الأماكن ووجهني. | 📝 كتابي: يزيد ولا ينقص."; }
-            else if(i===5) { m.uiType = 'COMPASS'; m.desc="البوصلة الفلكية: وجه الإبرة للزاوية الدقيقة 135."; m.ans=135; m.hint="💡 تفاعلي: أسفل اليمين (135 درجة). | 📝 كتابي: يرتد لك من الجدار."; }
-            else if(i===6) { m.uiType = 'STONE_RUNES'; m.desc="المعبد القديم: اضغط الرموز الحجرية المتطابقة."; m.data=['𐤀','𐤁','𐤂','𐤃','𐤄','𐤅']; m.ans=[1,4]; m.hint="💡 تفاعلي: الرمز الثاني والخامس. | 📝 كتابي: يمتص السوائل."; }
-            else if(i===7) { m.uiType = 'SCALES'; m.desc="الميزان الروماني: اختر أوزان مجموعها 150."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تفاعلي: 70 + 80. | 📝 كتابي: يأتي غداً."; }
-            else if(i===8) { m.uiType = 'RADAR_ROUNDS'; m.desc="الرادار المعتم (3 راوندات): تصاعدي (5x5, 7x7, 9x9)."; m.hint="💡 تفاعلي: ركز في مكان الوميض الخاطف. | 📝 كتابي: تقطعه لتفي به."; }
-            else if(i===9) { m.uiType = 'PAPYRUS'; m.desc="لفافة البردي: اقرأ النص السري."; m.ans='AMUN'; m.hint="💡 تفاعلي: الكلمة AMUN. | 📝 كتابي: لغته السكوت."; }
-            else if(i===10) { m.uiType = 'ASTRO_CLOCK'; m.desc="الساعة الفلكية: قم بتسوية الحلقات الثلاث (شمس، قمر، نجم) للأعلى."; m.ans=[0,0,0]; m.hint="💡 تفاعلي: دورها كلها لفوق (الساعة 12). | 📝 كتابي: قشرتها هشة."; }
-            else if(i===11) { m.uiType = 'NEON_NODES'; m.desc="الشبكة السيبرانية: اربط الأطراف العلوية فقط."; m.data=12; m.ans=[0,1,2,3]; m.hint="💡 تفاعلي: الصف الأول كامل. | 📝 كتابي: تنشفك وتتبلل."; }
-            else if(i===12) { m.uiType = 'JUGS'; m.desc="دوارق الخيمياء: احصل على 4 لتر من (8, 5, 3)."; m.hint="💡 تفاعلي: املأ الـ 5، صب في 3، يبقى 2.. | 📝 كتابي: ترسم العالم."; }
-            else if(i===13) { m.uiType = 'SLIDERS'; m.desc="اللوحة الصناعية: اضبط التردد (75, 40, 90)."; m.data=[{label:'FREQ',max:100},{label:'AMP',max:100},{label:'PITCH',max:100}]; m.ans=[75,40,90]; m.hint="💡 تفاعلي: 75، 40، 90. | 📝 كتابي: تعرف بها الوقت."; }
-            else if(i===14) { m.uiType = 'SLIDING_PUZZLE'; m.desc="الجدارية المكسورة: رتب القطع (1-8)."; m.hint="💡 تفاعلي: رتبها تصاعدياً 1 لـ 8. | 📝 كتابي: يمطر."; }
-            else if(i===15) { m.uiType = 'BLIND_MAZE'; m.desc="متاهة المينوتور: 6x6 معتمة. خطوة غلط ترجعك للصفر."; m.data=36; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تفاعلي: تحت 3 مرات، يمين مرتين... | 📝 كتابي: صيفي ولذيذ."; }
-            else if(i===16) { m.uiType = 'CAESAR'; m.desc="تشفير دافنشي: أزح كلمة ABC بمقدار +3."; m.ans='DEF'; m.hint="💡 تفاعلي: الكلمة DEF. | 📝 كتابي: يثبت الأشياء."; }
-            else if(i===17) { m.uiType = 'SHELLS'; m.desc="الخفة: تتبع الكوب الذهبي."; m.data=3; m.ans=1; m.hint="💡 تفاعلي: الكوب اللي بالمنتصف. | 📝 كتابي: أداة الكتابة."; }
-            else if(i===18) { m.uiType = 'BARCODE'; m.desc="الباركود الممزق: 2, 4, 8, ؟"; m.ans='16'; m.hint="💡 تفاعلي: 16. | 📝 كتابي: يتبعك بالشمس."; }
-            else if(i===19) { m.uiType = 'RADIO'; m.desc="جهاز الإرسال العسكري: أوجد التردد الصافي."; m.ans=199; m.hint="💡 تفاعلي: التردد 199. | 📝 كتابي: تدل على الشمال."; }
-            else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="معبد الشعلات: أطفئ جميع النيران (3x3)."; m.data=9; m.hint="💡 تفاعلي: الأطراف ثم المنتصف. | 📝 كتابي: لا تُرى."; }
-            else if(i===21) { m.uiType = 'ANOMALY_RUNES'; m.desc="الشذوذ الأثري: ابحث عن الرمز المقلوب."; m.data=25; m.ans=18; m.hint="💡 تفاعلي: الصف الرابع، الثالث. | 📝 كتابي: تخاف من الماء."; }
-            else if(i===22) { m.uiType = 'DNA'; m.desc="فك شفرة الحمض: A=T, C=G."; m.ans='TGCA'; m.hint="💡 تفاعلي: TGCA. | 📝 كتابي: تكبر كلما أخذت منها."; }
-            else if(i===23) { m.uiType = 'PIPES'; m.desc="الأنابيب القديمة: صل البداية بالنهاية."; m.hint="💡 تفاعلي: دور الأنابيب لتكون خط مستقيم. | 📝 كتابي: يقرصك ببطنك."; }
-            else if(i===24) { m.uiType = 'KEYPAD'; m.desc="خزنة الكيبورد: أدخل 4321."; m.ans='4321'; m.hint="💡 تفاعلي: 4321. | 📝 كتابي: ينادونك به."; }
-            else if(i===25) { m.uiType = 'MAGIC_SQUARE'; m.desc="الرياضيات الإسلامية: المجموع 15 بكل الاتجاهات."; m.ans='5'; m.hint="💡 تفاعلي: المنتصف 5. | 📝 كتابي: تتركها وراءك."; }
-            else if(i===26) { m.uiType = 'HEATMAP'; m.desc="البصمة الحرارية: من الأسخن للأبرد."; m.ans='8491'; m.hint="💡 تفاعلي: 8491. | 📝 كتابي: قطرات من السماء."; }
-            else if(i===27) { m.uiType = 'MATRIX'; m.desc="النص المنسدل: أوقف الشاشة عند الكلمة."; m.ans='SOLAR'; m.hint="💡 تفاعلي: SOLAR. | 📝 كتابي: افتح يا..."; }
-            else if(i===28) { m.uiType = 'ELEVATOR'; m.desc="المصعد: انزل للدور السفلي (B3)."; m.ans='B3'; m.hint="💡 تفاعلي: B3. | 📝 كتابي: مدينة تاريخية."; }
-            else if(i===29) { m.uiType = 'MATH_HACK'; m.desc="معادلة الجدار الناري: (10 * 5) + 50."; m.ans='100'; m.hint="💡 تفاعلي: 100. | 📝 كتابي: تذوب لتضيء."; }
-            else if(i===30) { m.uiType = 'BOSS'; m.desc="العرش الذهبي: فعل الـ 3 مفاتيح واكتب GOLDEN."; m.ans='GOLDEN'; m.hint="💡 تفاعلي: GOLDEN | 📝 كتابي: معدن أصفر نفيس."; }
+            if(i===1) { m.uiType = 'WIRES'; m.desc="شرح اللعبة: اقطع الأسلاك الثلاثة المطلوبة لتعطيل القفل، الترتيب مهم وأي خطأ يعيد التشفير."; m.data=['#D4AF37','#ff3333','#333','#fff','#D4AF37','#00ccff','#333','#ff3333']; m.ans=[2,5,7]; m.hint="💡 تلميح النظام: السلك الداكن أولاً، ثم لون السماء، وأخيراً لون الخطر. | 📝 تلميح اللغز: يغطي الأشياء بغيابه."; }
+            else if(i===2) { m.uiType = 'SIMON'; m.desc="شرح اللعبة: راقب المربعات المضيئة بدقة وكرر النمط عبر 3 جولات متسارعة."; m.data=16; m.hint="💡 تلميح النظام: النمط يبدأ غالباً من الأطراف ويتجه للمركز. | 📝 تلميح اللغز: حالة فيزيائية مؤقتة للماء."; }
+            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="شرح اللعبة: استنتج الكود المكون من 4 أرقام. (الأخضر=دقيق، البرتقالي=موجود بمكان آخر). 8 محاولات فقط."; m.ans=[3,7,1,9]; m.hint="💡 تلميح النظام: جرب الأرقام الفردية المتباعدة. | 📝 تلميح اللغز: إذا نطقته انتهى."; }
+            else if(i===4) { m.uiType = 'MATCH'; m.desc="شرح اللعبة: الذاكرة قصيرة المدى. طابق 10 أزواج من الشرائح الفلكية المتشابهة."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تلميح النظام: الرموز الدائرية متجمعة في المنتصف. | 📝 تلميح اللغز: يرافقك دائماً ويزداد."; }
+            else if(i===5) { m.uiType = 'ASTROLABE'; m.desc="شرح اللعبة: قم بوزن الأسطرلاب الفلكي وتوجيه الحلقات الأربع للزاوية (0) للأعلى."; m.hint="💡 تلميح النظام: كل ضغطة تدور الحلقة 45 درجة، ابدأ بالحلقة الخارجية. | 📝 تلميح اللغز: ارتداد للصوت."; }
+            else if(i===6) { m.uiType = 'RUNES'; m.desc="شرح اللعبة: ابحث عن الرمزين المتطابقين تماماً من بين 16 رمزاً هندسياً متشابهاً."; m.data=16; m.ans=[2,11]; m.hint="💡 تلميح النظام: ركز على عدد النقاط في الزوايا. | 📝 تلميح اللغز: كائن بحري يمتص."; }
+            else if(i===7) { m.uiType = 'SCALES'; m.desc="شرح اللعبة: الميزان الروماني، أضف الأوزان الدقيقة للوصول لكتلة 150 المحددة."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تلميح النظام: استخدم وزنين فقط من الأكبر. | 📝 تلميح اللغز: زمن لم يأت بعد."; }
+            else if(i===8) { m.uiType = 'RADAR_ROUNDS'; m.desc="شرح اللعبة: رادار متصاعد الصعوبة. حدد النقطة المضيئة في 3 جولات بشبكات أكبر (5x5, 7x7, 9x9)."; m.hint="💡 تلميح النظام: النقطة تظهر في النصف السفلي من الشاشة عادة. | 📝 تلميح اللغز: كلام ملزم يكسر."; }
+            else if(i===9) { m.uiType = 'KEYPAD'; m.desc="شرح اللعبة: أدخل تسلسل الأرقام السري للوحة الديجيتال بالترتيب."; m.ans='739'; m.hint="💡 تلميح النظام: تنازلي من 7 ثم يقفز لرقم كبير. | 📝 تلميح اللغز: عكس الكلام."; }
+            else if(i===10) { m.uiType = 'GEARS'; m.desc="شرح اللعبة: نظام تروس معقد. دور التروس الثلاثة حتى تتجه الأسنان جميعها للأعلى."; m.ans=[0,0,0]; m.hint="💡 تلميح النظام: استمر بالضغط حتى تصطف. | 📝 تلميح اللغز: شيء يكسر لتأكله."; }
+            else if(i===11) { m.uiType = 'MORSE'; m.desc="شرح اللعبة: فك تشفير الإشارة الضوئية (الومضات الطويلة والقصيرة) واكتب الكلمة."; m.ans='SOS'; m.hint="💡 تلميح النظام: إشارة استغاثة عالمية مشهورة. | 📝 تلميح اللغز: تجففك وهي مبللة."; }
+            else if(i===12) { m.uiType = 'HEX'; m.desc="شرح اللعبة: اربط مساراً آمناً عبر الخلايا السداسية لمرور الطاقة."; m.ans=[3,4,5]; m.hint="💡 تلميح النظام: المسار الأفقي الأوسط. | 📝 تلميح اللغز: مدن بلا سكان."; }
+            else if(i===13) { m.uiType = 'WEIGHTS'; m.desc="شرح اللعبة: أوزان الخيمياء، جد التركيبة الصحيحة للوصول لـ 140 جرام."; m.data=[40,60,80,20,50]; m.target=140; m.hint="💡 تلميح النظام: 60 زائد وزن أكبر منه. | 📝 تلميح اللغز: بها عقارب ثابتة."; }
+            else if(i===14) { m.uiType = 'SLIDERS'; m.desc="شرح اللعبة: أوزن ألوان الـ RGB للحصول على اللون الذهبي الداكن للنظام."; m.data=[{label:'RED',max:255},{label:'GRN',max:255}]; m.ans=[212, 175]; m.hint="💡 تلميح النظام: الأحمر فوق الـ 200 والأخضر 175. | 📝 تلميح اللغز: تراه في السماء."; }
+            else if(i===15) { m.uiType = 'MAZE'; m.desc="شرح اللعبة: المتاهة العمياء. تتبع مساراً خفياً من الزاوية العلوية للسفلية دون لمس الفخاخ."; m.data=36; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تلميح النظام: ابدأ بالنزول 3 خطوات ثم اتجه يميناً. | 📝 تلميح اللغز: أخضر من الخارج."; }
+            else if(i===16) { m.uiType = 'CRYPTEX'; m.desc="شرح اللعبة: أسطوانات التشفير. قم بإزاحة الأحرف (CDE) بمقدار 2 للأمام."; m.ans='EFG'; m.hint="💡 تلميح النظام: الحرف الذي يلي C بحرفين. | 📝 تلميح اللغز: يخترق ويثبت."; }
+            else if(i===17) { m.uiType = 'SHELLS'; m.desc="شرح اللعبة: الخفة البصرية. راقب حركة الكوب الذي يحتوي على الهدف عبر 3 جولات متسارعة."; m.hint="💡 تلميح النظام: الهدف يبقى غالباً في المنتصف ثم يتحرك للطرف. | 📝 تلميح اللغز: يضيء وينتهي."; }
+            else if(i===18) { m.uiType = 'BARCODE'; m.desc="شرح اللعبة: الباركود التالف. قم بتفعيل الأعمدة الصحيحة لاستكمال التسلسل البصري."; m.ans=[2,5,7]; m.hint="💡 تلميح النظام: فعل الأعمدة رقم 3 و 6 و 8. | 📝 تلميح اللغز: يتبعك ولا تلمسه."; }
+            else if(i===19) { m.uiType = 'RADIO'; m.desc="شرح اللعبة: التردد العسكري. قم بتدوير بكرة الراديو للحصول على أنعم موجة بصرية."; m.ans=199; m.hint="💡 تلميح النظام: التردد قبل 200 بدرجة واحدة. | 📝 تلميح اللغز: تشير ولا تتحرك."; }
+            else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="شرح اللعبة: معبد الشعلات. اضغط لإطفاء جميع النيران، كل ضغطة تؤثر على الجوار."; m.data=9; m.hint="💡 تلميح النظام: اضغط الأطراف الأربعة أولاً. | 📝 تلميح اللغز: تحس بها ولا تراها."; }
+            else if(i===21) { m.uiType = 'ANOMALY'; m.desc="شرح اللعبة: الشذوذ البصري الدقيق. أوجد الرمز الوحيد (𖤌) من بين 36 رمزاً متشابهاً."; m.ans=22; m.hint="💡 تلميح النظام: الرمز في الربع السفلي الأيمن. | 📝 تلميح اللغز: تخاف الماء وتأكل كل شيء."; }
+            else if(i===22) { m.uiType = 'DNA'; m.desc="شرح اللعبة: شريط الـ DNA. طابق الروابط بشكل صحيح (A مع T، و C مع G)."; m.ans=['T','G','A','C']; m.hint="💡 تلميح النظام: التسلسل يبدأ بـ T وينتهي بـ C. | 📝 تلميح اللغز: حفرة."; }
+            else if(i===23) { m.uiType = 'PIPES'; m.desc="شرح اللعبة: شبكة الأنابيب. قم بتدوير الأجزاء لتكوين مسار أفقي مستقيم."; m.hint="💡 تلميح النظام: اجعل جميع الأنابيب على شكل (━). | 📝 تلميح اللغز: الشعور بالحاجة للطعام."; }
+            else if(i===24) { m.uiType = 'SLIDING'; m.desc="شرح اللعبة: اللوحة المنزلقة. قم بإزاحة الأرقام لترتيبها تصاعدياً وترك الفراغ بالنهاية."; m.ans='123456780'; m.hint="💡 تلميح النظام: ابدأ بترتيب الصف الأول (1,2,3). | 📝 تلميح اللغز: اسمك."; }
+            else if(i===25) { m.uiType = 'MAGIC_SQUARE'; m.desc="شرح اللعبة: المربع السحري. عدل الأرقام ليكون مجموع كل صف وعمود وقطر يساوي 15."; m.ans=[8,1,6,3,5,7,4,9,2]; m.hint="💡 تلميح النظام: الرقم 5 يجب أن يكون في المنتصف تماماً. | 📝 تلميح اللغز: خطوة."; }
+            else if(i===26) { m.uiType = 'HEATMAP'; m.desc="شرح اللعبة: البصمة الحرارية. أدخل الأرقام بالتسلسل من الأشد حرارة إلى الأبرد."; m.ans=[8,4,9,1]; m.hint="💡 تلميح النظام: ابدأ بالأحمر الغامق ثم البرتقالي. | 📝 تلميح اللغز: مطر."; }
+            else if(i===27) { m.uiType = 'MATRIX'; m.desc="شرح اللعبة: المصفوفة. اصطد الكلمة المطلوبة (SOLAR) وهي تتساقط كالشفرات."; m.ans='SOLAR'; m.hint="💡 تلميح النظام: ركز على الشفرات التي تلمع بالأبيض. | 📝 تلميح اللغز: سمسم."; }
+            else if(i===28) { m.uiType = 'ELEVATOR'; m.desc="شرح اللعبة: لوحة المصعد. اضغط تسلسل الأدوار الصحيح للوصول للمنطقة السرية."; m.ans=[3,1,5]; m.hint="💡 تلميح النظام: الدور 3 ثم 1 ثم 5. | 📝 تلميح اللغز: العلا."; }
+            else if(i===29) { m.uiType = 'MATH_HACK'; m.desc="شرح اللعبة: جدار الحماية الرياضي. حل المعادلة (10 * 5) + 50 وأدخل الناتج."; m.ans='100'; m.hint="💡 تلميح النظام: الناتج هو مائة. | 📝 تلميح اللغز: شمعة."; }
+            else if(i===30) { m.uiType = 'BOSS'; m.desc="شرح اللعبة: الاختراق النهائي (MASTER BREACH). شغل مفاتيح الطاقة وأدخل كود التأكيد."; m.ans='GOLDEN'; m.hint="💡 تلميح النظام: الكود النهائي هو GOLDEN. | 📝 تلميح اللغز: معدن نفيس."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -131,9 +131,10 @@ class SolarGamesEngine {
         return mechanics;
     }
 
+    // المؤقت العام والعملات
     toggleGlobalTimer() { 
         this.playSound('click'); this.isTimerRunning = !this.isTimerRunning; 
-        this.showToast(this.isTimerRunning ? "تم تشغيل العداد" : "تم إيقاف العداد");
+        this.showToast(this.isTimerRunning ? "تم تشغيل العداد العام" : "تم إيقاف العداد العام");
     }
     modifyGlobalTimer(secs) { 
         this.playSound('click'); this.globalTime = Math.max(0, this.globalTime + secs); this.updateGlobalTimerUI(); 
@@ -144,6 +145,7 @@ class SolarGamesEngine {
         let s = (this.globalTime % 60).toString().padStart(2,'0');
         document.getElementById('global-timer-display').innerText = `${h}:${m}:${s}`;
         document.getElementById('market-time').innerText = `${h}:${m}:${s}`;
+        document.getElementById('puzzle-global-timer').innerText = `${h}:${m}:${s}`;
         document.getElementById('global-timer-display').style.color = this.timeFrozen ? '#00ccff' : '#fff';
     }
 
@@ -235,7 +237,7 @@ class SolarGamesEngine {
         this.setupStage(); this.switchScreen('puzzle');
     }
 
-    // المُولد البصري المفصول لكل لغز من الـ 30 لمنع التداخل (Block Scoping)
+    // المعالج البصري المعزول للمنع من التداخل البرمجي
     setupStage() {
         const p = this.activeGate;
         document.getElementById('int-desc').innerText = p.desc;
@@ -263,7 +265,7 @@ class SolarGamesEngine {
                 p.data.forEach((c, i) => {
                     let w = document.createElement('div'); w.className = 'wire-lux'; w.style.backgroundColor = c;
                     w.onclick = () => {
-                        w.classList.add('wire-cut');
+                        w.classList.add('wire-cut'); w.style.pointerEvents = 'none';
                         if(p.ans[this.stageState.clicks] === i) {
                             this.stageState.clicks++;
                             if(this.stageState.clicks === p.ans.length) this.winInteractive();
@@ -282,11 +284,11 @@ class SolarGamesEngine {
                     b.onclick = () => {
                         if(!this.stageState.playing) return;
                         if(this.stageState.sequence[this.stageState.clicks] === i) {
-                            b.classList.add('pulse'); setTimeout(()=>b.classList.remove('pulse'), 200);
+                            b.classList.add('pulse'); setTimeout(()=>b.classList.remove('pulse'), 150);
                             this.stageState.clicks++;
                             if(this.stageState.clicks === this.stageState.sequence.length) {
                                 this.stageState.round++;
-                                if(this.stageState.round > 3) this.winInteractive(); else setTimeout(()=>playRound(), 1000);
+                                if(this.stageState.round > 3) this.winInteractive(); else setTimeout(()=>playRound(), 800);
                             }
                         } else { this.failRoom(); this.setupStage(); }
                     };
@@ -296,16 +298,16 @@ class SolarGamesEngine {
                 this.stageState.round = 1;
                 const playRound = () => {
                     this.stageState.playing = false; this.stageState.clicks = 0;
-                    let count = this.stageState.round === 1 ? 4 : (this.stageState.round === 2 ? 6 : 8);
+                    let count = this.stageState.round === 1 ? 5 : (this.stageState.round === 2 ? 7 : 10);
                     this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * p.data));
                     let step = 0;
                     let iv = setInterval(() => {
                         if(step < count) {
                             boxes[this.stageState.sequence[step]].classList.add('pulse'); this.playSound('click');
-                            setTimeout(()=>boxes[this.stageState.sequence[step-1]].classList.remove('pulse'), 400);
+                            setTimeout(()=>boxes[this.stageState.sequence[step-1]].classList.remove('pulse'), 300);
                             step++;
                         } else { clearInterval(iv); this.stageState.playing = true; }
-                    }, 600);
+                    }, 500);
                 };
                 setTimeout(()=>playRound(), 500);
                 break;
@@ -320,7 +322,6 @@ class SolarGamesEngine {
                 btn.onclick = () => {
                     let guess = mboxes.map(b => parseInt(b.value));
                     if(guess.some(isNaN)) return;
-                    if(JSON.stringify(guess) === JSON.stringify(p.ans)) { this.winInteractive(); return; }
                     this.stageState.attempts++;
                     if(this.stageState.attempts > 8) { this.failRoom(); this.setupStage(); return; }
                     
@@ -335,6 +336,7 @@ class SolarGamesEngine {
                     
                     pegs.forEach(c => { let peg = document.createElement('div'); peg.className='mm-peg'; peg.style.background=c; pegsContainer.appendChild(peg); });
                     row.append(txt, pegsContainer); history.prepend(row); mboxes.forEach(b => b.value = '');
+                    if(pegs.every(c=>c==='#00ff66')) this.winInteractive();
                 };
                 container.append(inputs, btn, history); innerStage.appendChild(container);
                 break;
@@ -354,7 +356,7 @@ class SolarGamesEngine {
                                 if(flipped[0].s === flipped[1].s) { this.stageState.clicks+=2; if(this.stageState.clicks === 20) this.winInteractive(); }
                                 else { flipped[0].c.classList.remove('flipped'); flipped[1].c.classList.remove('flipped'); }
                                 flipped = [];
-                            }, 600);
+                            }, 500);
                         }
                     };
                     crdGrid.appendChild(card);
@@ -362,38 +364,43 @@ class SolarGamesEngine {
                 innerStage.appendChild(crdGrid);
                 break;
             }
-            case 'COMPASS': {
+            case 'ASTROLABE': {
                 let astWrap = document.createElement('div'); astWrap.style.cssText = 'position: relative; width: 250px; height: 250px; display:flex; justify-content:center; align-items:center;';
-                let cmp = document.createElement('div');
-                cmp.style.cssText = 'width: 220px; height: 220px; border-radius: 50%; border: 8px solid var(--gold); background: radial-gradient(circle, #222, #000); box-shadow: 0 0 30px rgba(212,175,55,0.3), inset 0 0 30px #000; position: relative; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; display:flex; justify-content:center; align-items:center;';
-                let ndl = document.createElement('div');
-                ndl.style.cssText = 'width: 6px; height: 90px; background: linear-gradient(to top, transparent 50%, var(--red) 50%); position: absolute; top: 20px; border-radius: 3px;';
-                cmp.appendChild(ndl);
-                astWrap.appendChild(cmp);
-                let angle = 0;
-                cmp.onclick = () => {
-                    angle = (angle + 45) % 360; cmp.style.transform = `rotate(${angle}deg)`;
-                    if(angle === p.ans) setTimeout(()=>this.winInteractive(), 500);
-                };
-                innerStage.appendChild(astWrap);
+                let r1 = document.createElement('div'); r1.className = 'astro-ring astro-r1'; let m1=document.createElement('div'); m1.className='astro-marker'; r1.appendChild(m1);
+                let r2 = document.createElement('div'); r2.className = 'astro-ring astro-r2'; let m2=document.createElement('div'); m2.className='astro-marker'; r2.appendChild(m2);
+                let r3 = document.createElement('div'); r3.className = 'astro-ring astro-r3'; let m3=document.createElement('div'); m3.className='astro-marker'; r3.appendChild(m3);
+                astWrap.append(r1, r2, r3); innerStage.appendChild(astWrap);
+                let angles = [90, 180, 270];
+                [r1, r2, r3].forEach((r, i) => {
+                    r.style.transform = `rotate(${angles[i]}deg)`;
+                    r.onclick = () => {
+                        angles[i] = (angles[i] + 45) % 360;
+                        r.style.transform = `rotate(${angles[i]}deg)`;
+                        if(angles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 500);
+                    };
+                });
                 break;
             }
-            case 'STONE_RUNES': {
-                let stnWrap = document.createElement('div'); stnWrap.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center; max-width:400px;';
-                p.data.forEach((r, i) => {
-                    let btn = document.createElement('div');
-                    btn.style.cssText = 'background: #3d3b38; border: 3px solid #5a5752; color: #d4d0c9; width: 70px; height: 70px; border-radius: 10px; font-size: 1.5rem; cursor: pointer; transition: 0.2s; display:flex; justify-content:center; align-items:center; box-shadow: 0 5px 10px #000;';
-                    btn.innerText = r;
-                    btn.onclick = () => {
-                        btn.style.background = 'var(--gold)'; btn.style.color = '#000';
-                        if(p.ans.includes(i)) {
-                            this.stageState.clicks++;
+            case 'RUNES':
+            case 'ANOMALY': {
+                let rnWrap = document.createElement('div'); rnWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 60px); gap:10px;';
+                let isAnomaly = p.uiType === 'ANOMALY';
+                let rCount = isAnomaly ? 36 : 16;
+                if(!isAnomaly) rnWrap.style.gridTemplateColumns = 'repeat(4, 70px)';
+                for(let i=0; i<rCount; i++) {
+                    let b = document.createElement('div'); b.className = 'stone-btn'; 
+                    if(isAnomaly) { b.style.width='60px'; b.style.height='60px'; b.style.fontSize='2rem'; b.innerText = (i === p.ans) ? '𖤌' : '𖤍'; }
+                    else { b.innerText = 'Ⱄ'; }
+                    b.onclick = () => { 
+                        if(isAnomaly && i === p.ans) this.winInteractive();
+                        else if(!isAnomaly && p.ans.includes(i)) {
+                            b.classList.add('active'); this.stageState.clicks++;
                             if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
                         } else { this.failRoom(); this.setupStage(); }
                     };
-                    stnWrap.appendChild(btn);
-                });
-                innerStage.appendChild(stnWrap);
+                    rnWrap.appendChild(b);
+                }
+                innerStage.appendChild(rnWrap);
                 break;
             }
             case 'SCALES': {
@@ -402,8 +409,7 @@ class SolarGamesEngine {
                 p.data.forEach((w) => {
                     let btn = document.createElement('div');
                     btn.style.cssText = 'width: 60px; background: linear-gradient(135deg, #eee, #888); border: 2px solid #555; text-align: center; font-weight: bold; color: #000; cursor: pointer; transition: 0.3s; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; box-shadow: 0 10px 15px #000;';
-                    btn.innerText = w;
-                    btn.style.height = (w + 40) + 'px';
+                    btn.innerText = w; btn.style.height = (w + 40) + 'px';
                     btn.onclick = () => {
                         btn.classList.toggle('active');
                         btn.style.background = btn.classList.contains('active') ? 'linear-gradient(135deg, var(--gold), #8a7322)' : 'linear-gradient(135deg, #eee, #888)';
@@ -436,7 +442,7 @@ class SolarGamesEngine {
                         };
                         rdWrap.appendChild(c); cells.push(c);
                     }
-                    let speed = this.stageState.round === 1 ? 1500 : (this.stageState.round === 2 ? 1000 : 500);
+                    let speed = this.stageState.round === 1 ? 1200 : (this.stageState.round === 2 ? 800 : 400);
                     this.stageState.timer = setInterval(() => {
                         cells[targetIdx].style.background = '#00ff66';
                         setTimeout(() => cells[targetIdx].style.background = 'transparent', speed/2);
@@ -476,8 +482,7 @@ class SolarGamesEngine {
                     d.innerText = '⚙️';
                     d.style.cssText = `font-size: 6rem; line-height: 1; color: #555; cursor: pointer; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-shadow: 0 10px 20px #000; user-select: none; transform: rotate(${angles[i]}deg);`;
                     d.onclick = () => {
-                        angles[i] = (angles[i] + 45) % 360;
-                        d.style.transform = `rotate(${angles[i]}deg)`;
+                        angles[i] = (angles[i] + 45) % 360; d.style.transform = `rotate(${angles[i]}deg)`;
                         if(angles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 300);
                     };
                     gWrap.appendChild(d);
@@ -505,7 +510,7 @@ class SolarGamesEngine {
             case 'HEX': {
                 let hexWrap = document.createElement('div');
                 hexWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 70px); gap:15px;';
-                for(let i=0; i<p.data; i++) {
+                for(let i=0; i<9; i++) {
                     let n = document.createElement('div');
                     n.style.cssText = 'width:70px; height:70px; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); background: #111; display:flex; justify-content:center; align-items:center; cursor:pointer; color:#555; font-weight:bold; transition:0.3s;';
                     n.innerText = i;
@@ -519,24 +524,6 @@ class SolarGamesEngine {
                     hexWrap.appendChild(n);
                 }
                 innerStage.appendChild(hexWrap);
-                break;
-            }
-            case 'WEIGHTS': {
-                let wgtWrap = document.createElement('div'); wgtWrap.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center;';
-                p.data.forEach((w) => {
-                    let box = document.createElement('div'); 
-                    box.style.cssText = 'width: 80px; height: 80px; background: #111; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #666; cursor: pointer; clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%); transition: 0.3s;';
-                    box.innerText = w+'g';
-                    box.onclick = () => {
-                        box.classList.toggle('active');
-                        box.style.background = box.classList.contains('active') ? 'var(--gold)' : '#111';
-                        box.style.color = box.classList.contains('active') ? '#000' : '#666';
-                        let sum = Array.from(wgtWrap.children).reduce((acc, el, idx) => acc + (el.classList.contains('active') ? p.data[idx] : 0), 0);
-                        if(sum === p.target) { setTimeout(()=>this.winInteractive(), 300); }
-                    };
-                    wgtWrap.appendChild(box);
-                });
-                innerStage.appendChild(wgtWrap);
                 break;
             }
             case 'SLIDERS': {
@@ -575,28 +562,26 @@ class SolarGamesEngine {
                 break;
             }
             case 'CRYPTEX':
-            case 'CAESAR': {
+            case 'PAPYRUS': {
                 let papy = document.createElement('div');
                 papy.style.cssText = "font-family: 'Rajdhani', monospace; font-size: 3rem; color: #3e3124; background: #e3d2b2; padding: 20px 40px; border: 4px solid #a68962; border-radius: 5px; font-weight:bold; letter-spacing:10px; margin-bottom:30px;";
-                papy.innerText = p.desc.split(':')[1] || 'DECODE';
+                papy.innerText = p.uiType==='PAPYRUS' ? 'AMUN' : 'CDE';
                 innerStage.appendChild(papy);
-                createInputBlock('أدخل الكلمة المترجمة...', p.ans);
+                createInputBlock('DECODE SCRIPT...', p.ans);
                 break;
             }
             case 'SHELLS': {
-                let shWrap = document.createElement('div'); shWrap.style.cssText = 'display:flex; gap:30px; margin-bottom:30px; position:relative; width: 300px; height: 120px; justify-content:center; align-items:center;';
+                let shWrap = document.createElement('div'); shWrap.className = 'balls-container';
                 innerStage.appendChild(shWrap);
                 this.stageState.round = 1;
-                
                 const playShells = () => {
                     shWrap.innerHTML = '';
                     let ballCount = this.stageState.round === 1 ? 3 : (this.stageState.round === 2 ? 4 : 5);
                     let balls = [];
                     let targetIdx = Math.floor(Math.random() * ballCount);
-                    
                     for(let i=0; i<ballCount; i++) {
                         let b = document.createElement('div'); 
-                        b.style.cssText = `position: absolute; width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #554000); box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset -5px -5px 15px rgba(0,0,0,0.5); cursor: pointer; transition: left 0.4s ease-in-out; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#000; font-weight:bold; left: ${(i * 70)}px;`;
+                        b.className = 'shell-ball'; b.style.left = (i * 70) + 'px';
                         if(i === targetIdx) b.innerText = '⭐';
                         b.onclick = () => {
                             if(this.stageState.playing) return;
@@ -608,24 +593,18 @@ class SolarGamesEngine {
                         };
                         shWrap.appendChild(b); balls.push(b);
                     }
-                    
                     this.stageState.playing = true;
                     setTimeout(() => {
                         balls.forEach(b => b.innerText = '');
-                        let shuffles = 0;
-                        let maxShuffles = this.stageState.round * 5 + 5;
+                        let shuffles = 0; let maxShuffles = this.stageState.round * 5 + 5;
                         let speed = 400 - (this.stageState.round * 50);
-                        
                         this.stageState.timer = setInterval(() => {
-                            let i1 = Math.floor(Math.random() * ballCount);
-                            let i2 = Math.floor(Math.random() * ballCount);
+                            let i1 = Math.floor(Math.random() * ballCount), i2 = Math.floor(Math.random() * ballCount);
                             let tempLeft = balls[i1].style.left;
-                            balls[i1].style.left = balls[i2].style.left;
-                            balls[i2].style.left = tempLeft;
-                            shuffles++;
-                            if(shuffles > maxShuffles) { clearInterval(this.stageState.timer); this.stageState.playing = false; }
+                            balls[i1].style.left = balls[i2].style.left; balls[i2].style.left = tempLeft;
+                            shuffles++; if(shuffles > maxShuffles) { clearInterval(this.stageState.timer); this.stageState.playing = false; }
                         }, speed);
-                    }, 2000);
+                    }, 1500);
                 };
                 playShells();
                 break;
@@ -653,12 +632,11 @@ class SolarGamesEngine {
                 break;
             }
             case 'RADIO': {
-                let rdWrap = document.createElement('div'); rdWrap.style.cssText='width:100%; display:flex; flex-direction:column; alignItems:center;';
-                let rWave = document.createElement('div'); rWave.style.cssText='width: 100%; max-width:400px; height: 80px; background: #000; border: 2px solid var(--gold); margin-bottom: 20px; border-radius: 4px; overflow: hidden; position: relative;';
-                let rLine = document.createElement('div'); rLine.style.cssText='position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(90deg, transparent, transparent 10px, var(--gold) 10px, var(--gold) 12px); opacity: 0.3; transition: 0.3s;';
-                rWave.appendChild(rLine);
-                let rKnob = document.createElement('div'); rKnob.style.cssText='width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#333, #111, #333, #111, #333); border: 4px solid #555; box-shadow: 0 10px 20px #000; cursor: pointer; display:flex; justify-content:center; align-items:flex-start; transition: transform 0.1s;';
-                let rTick = document.createElement('div'); rTick.style.cssText='width: 6px; height: 20px; background: var(--gold); margin-top: 5px; border-radius: 3px;'; rKnob.appendChild(rTick);
+                let rdWrap = document.createElement('div'); rdWrap.style.cssText='width:100%; display:flex; flex-direction:column; align-items:center;';
+                let rWave = document.createElement('div'); rWave.className = 'radio-wave';
+                let rLine = document.createElement('div'); rLine.className = 'wave-line'; rWave.appendChild(rLine);
+                let rKnob = document.createElement('div'); rKnob.className = 'radio-knob';
+                let rTick = document.createElement('div'); rTick.className = 'radio-tick'; rKnob.appendChild(rTick);
                 let rDisp = document.createElement('div'); rDisp.className = 'cyber-display'; rDisp.innerText = '000.0'; rDisp.style.marginTop='20px';
                 
                 let angle = 0;
@@ -689,49 +667,32 @@ class SolarGamesEngine {
                 innerStage.appendChild(loWrap);
                 break;
             }
-            case 'ANOMALY': {
-                let anWrap = document.createElement('div'); anWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 60px); gap:10px;';
-                for(let i=0; i<p.data; i++) {
-                    let b = document.createElement('div'); b.style.cssText='width:60px; height:60px; font-size:2rem; background: #3d3b38; border: 3px solid #5a5752; color: #d4d0c9; border-radius: 10px; cursor: pointer; display:flex; justify-content:center; align-items:center;';
-                    b.innerText = (i === p.ans) ? '𖤌' : '𖤍';
-                    b.onclick = () => { if(i === p.ans) this.winInteractive(); else this.failRoom(); };
-                    anWrap.appendChild(b);
-                }
-                innerStage.appendChild(anWrap);
-                break;
-            }
             case 'DNA': {
-                let dnaWrap = document.createElement('div'); dnaWrap.style.cssText = 'display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; margin-bottom:20px;';
-                let bases = ['A','C','G','T'];
-                this.stageState.arr = ['A','A','A','A'];
+                let dnaWrap = document.createElement('div'); dnaWrap.className = 'dna-wrap';
+                let bases = ['A','C','G','T']; this.stageState.arr = ['A','A','A','A'];
                 ['T','G','A','C'].forEach((target, i) => {
-                    let row = document.createElement('div'); row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; position: relative;';
-                    let line = document.createElement('div'); line.style.cssText='position:absolute; top:50%; left:20%; right:20%; height:2px; background:#444; z-index:-1;';
-                    let left = document.createElement('div'); left.style.cssText = 'width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.5rem; border: 2px solid #222; background: #111; color: #888;';
-                    left.innerText = (target==='T'?'A':(target==='G'?'C':(target==='A'?'T':'G')));
-                    let right = document.createElement('div'); right.style.cssText = 'width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.5rem; border: 2px solid var(--gold); background: #000; color: var(--gold); cursor: pointer; box-shadow: inset 0 0 10px var(--gold);';
-                    right.innerText = 'A';
+                    let row = document.createElement('div'); row.className = 'dna-row';
+                    let left = document.createElement('div'); left.className = 'dna-base dna-fixed'; left.innerText = (target==='T'?'A':(target==='G'?'C':(target==='A'?'T':'G')));
+                    let right = document.createElement('div'); right.className = 'dna-base dna-clickable'; right.innerText = 'A';
                     right.onclick = () => {
                         let idx = bases.indexOf(right.innerText);
                         idx = (idx + 1) % 4; right.innerText = bases[idx];
                         this.stageState.arr[i] = bases[idx];
                     };
-                    row.append(line, left, right); dnaWrap.appendChild(row);
+                    row.append(left, right); dnaWrap.appendChild(row);
                 });
                 innerStage.appendChild(dnaWrap);
                 innerStage.appendChild(generateSubmitButton(() => {
-                    if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans.split(''))) this.winInteractive(); else this.failRoom();
+                    if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive(); else this.failRoom();
                 }));
                 break;
             }
             case 'PIPES': {
-                let pipeWrap = document.createElement('div'); pipeWrap.style.cssText = 'display: grid; grid-template-columns: repeat(3, 80px); gap: 5px; background:#111; padding:10px; border:2px solid #333;';
+                let pipeWrap = document.createElement('div'); pipeWrap.className = 'pipes-grid';
                 let pipeChars = ['┗','━','┛','┃','╋','┃','┏','━','┓'];
                 this.stageState.arr = [0,90,0, 90,0,90, 0,90,0];
                 for(let i=0; i<9; i++) {
-                    let cell = document.createElement('div'); 
-                    cell.style.cssText = 'width: 80px; height: 80px; background: #050505; border: 1px solid #222; display: flex; justify-content: center; align-items: center; font-size: 3rem; color: var(--gold); cursor: pointer; transition: transform 0.2s; user-select: none;';
-                    cell.innerText = pipeChars[i];
+                    let cell = document.createElement('div'); cell.className = 'pipe-cell'; cell.innerText = pipeChars[i];
                     cell.style.transform = `rotate(${this.stageState.arr[i]}deg)`;
                     cell.onclick = () => {
                         this.stageState.arr[i] = (this.stageState.arr[i] + 90) % 360;
@@ -744,15 +705,13 @@ class SolarGamesEngine {
                 break;
             }
             case 'SLIDING': {
-                let pzWrap = document.createElement('div'); pzWrap.style.cssText = 'display: grid; grid-template-columns: repeat(3, 80px); gap: 2px; background: #222; padding: 5px; border: 4px solid var(--gold);';
+                let pzWrap = document.createElement('div'); pzWrap.className = 'sliding-puzzle';
                 let tiles = [1,2,3,4,5,6,7,0,8]; 
                 const renderPuzzle = () => {
                     pzWrap.innerHTML = '';
                     tiles.forEach((t, i) => {
-                        let cell = document.createElement('div'); 
-                        cell.style.cssText = 'width: 80px; height: 80px; background: #111; border: 1px solid #000; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:var(--gold); cursor:pointer; transition:0.2s;';
-                        if(t === 0) { cell.style.background='transparent'; cell.style.border='none'; cell.style.cursor='default'; } 
-                        else { cell.innerText = t; }
+                        let cell = document.createElement('div'); cell.className = 'slide-tile';
+                        if(t === 0) { cell.classList.add('empty'); } else { cell.innerText = t; }
                         cell.onclick = () => {
                             let emptyIdx = tiles.indexOf(0);
                             let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
@@ -774,41 +733,42 @@ class SolarGamesEngine {
                 let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:5px; margin-bottom:20px;';
                 let msGrid = [8,1,6, 3,0,7, 4,9,2];
                 for(let i=0; i<9; i++) {
-                    let cell = document.createElement('div'); cell.className = 'box-lux'; 
+                    let cell = document.createElement('div'); cell.className = 'box-lux'; cell.style.width='80px'; cell.style.height='80px';
                     cell.innerText = msGrid[i];
                     if(i===4) {
                         cell.style.color='var(--gold)'; cell.style.borderColor='var(--gold)';
-                        cell.onclick = () => {
-                            msGrid[i] = msGrid[i] >= 9 ? 1 : msGrid[i]+1; cell.innerText = msGrid[i];
-                        };
+                        cell.onclick = () => { msGrid[i] = msGrid[i] >= 9 ? 1 : msGrid[i]+1; cell.innerText = msGrid[i]; };
                     }
                     msWrap.appendChild(cell);
                 }
                 innerStage.appendChild(msWrap);
-                innerStage.appendChild(generateSubmitButton(() => {
-                    if(msGrid[4] == p.ans) this.winInteractive(); else this.failRoom();
-                }));
+                innerStage.appendChild(generateSubmitButton(() => { if(msGrid[4] == p.ans[4] || msGrid[4] == p.ans) this.winInteractive(); else this.failRoom(); }));
                 break;
             }
             case 'HEATMAP': {
-                let htWrap = document.createElement('div'); htWrap.style.cssText = 'display: grid; grid-template-columns: repeat(3, 80px); gap: 10px; background: #111; padding: 20px; border-radius: 8px; margin-bottom:20px;';
+                let htWrap = document.createElement('div'); htWrap.className = 'heat-grid';
                 let hmColors = {8:'#ff0000', 4:'#ff8800', 9:'#ffcc00', 1:'#ffff66'}; 
                 [1,2,3,4,5,6,7,8,9].forEach(n => {
-                    let b = document.createElement('button'); b.style.cssText='width: 80px; height: 80px; border: none; border-radius: 6px; font-size: 2rem; font-weight: bold; color: #fff; text-shadow: 0 0 5px #000; cursor: pointer;';
-                    b.innerText = n;
+                    let b = document.createElement('button'); b.className = 'heat-btn'; b.innerText = n;
                     b.style.background = hmColors[n] ? hmColors[n] : '#333';
                     if(hmColors[n]) b.style.boxShadow = `inset 0 0 30px ${hmColors[n]}`;
+                    b.onclick = () => {
+                        this.stageState.arr.push(n);
+                        if(this.stageState.arr.length === p.ans.length) {
+                            if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive();
+                            else { this.failRoom(); this.setupStage(); }
+                        }
+                    };
                     htWrap.appendChild(b);
                 });
                 innerStage.appendChild(htWrap);
-                createInputBlock('ENTER SEQUENCE...', p.ans.join(''));
                 break;
             }
             case 'MATRIX': {
-                let mxWrap = document.createElement('div'); mxWrap.style.cssText = 'width: 100%; max-width: 500px; height: 250px; background: #000; border: 2px solid #00ff66; overflow: hidden; position: relative; box-shadow: inset 0 0 20px #00ff66; margin-bottom:20px;';
+                let mxWrap = document.createElement('div'); mxWrap.className = 'matrix-screen';
                 innerStage.appendChild(mxWrap);
                 this.stageState.timer = setInterval(() => {
-                    let word = document.createElement('div'); word.style.cssText = 'position: absolute; color: #00ff66; font-family: monospace; font-size: 1.5rem; cursor: pointer; user-select: none; font-weight: bold;';
+                    let word = document.createElement('div'); word.className = 'matrix-word';
                     let isTarget = Math.random() > 0.8;
                     word.innerText = isTarget ? p.ans : (Math.random().toString(36).substring(2, 7).toUpperCase());
                     word.style.left = Math.random() * 80 + '%'; word.style.top = '-20px';
@@ -816,21 +776,16 @@ class SolarGamesEngine {
                     word.onclick = () => { if(isTarget) this.winInteractive(); else this.failRoom(); };
                     mxWrap.appendChild(word);
                     let pos = -20;
-                    let fall = setInterval(() => {
-                        pos += 5; word.style.top = pos + 'px';
-                        if(pos > 250) { clearInterval(fall); word.remove(); }
-                    }, 50);
+                    let fall = setInterval(() => { pos += 5; word.style.top = pos + 'px'; if(pos > 250) { clearInterval(fall); word.remove(); } }, 50);
                 }, 800);
                 break;
             }
             case 'ELEVATOR': {
-                let elWrap = document.createElement('div'); elWrap.style.cssText = 'display: grid; grid-template-columns: repeat(2, 70px); gap: 15px; background: #ddd; padding: 20px; border-radius: 10px; border: 4px solid #aaa;';
+                let elWrap = document.createElement('div'); elWrap.className = 'elevator-panel';
                 [1,2,3,4,5,6].forEach(n => {
-                    let b = document.createElement('div'); b.style.cssText = 'width: 70px; height: 70px; border-radius: 50%; background: radial-gradient(circle, #eee, #ccc); border: 2px solid #999; box-shadow: 0 5px 5px rgba(0,0,0,0.5), inset 0 0 5px #fff; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: bold; color: #333; cursor: pointer;';
-                    b.innerText = n;
+                    let b = document.createElement('div'); b.className = 'elevator-btn'; b.innerText = n;
                     b.onclick = () => {
-                        b.style.boxShadow='inset 0 5px 10px rgba(0,0,0,0.5)'; b.style.color='var(--gold)'; b.style.borderColor='var(--gold)';
-                        setTimeout(()=> { b.style.boxShadow='0 5px 5px rgba(0,0,0,0.5), inset 0 0 5px #fff'; b.style.color='#333'; b.style.borderColor='#999'; }, 300);
+                        b.classList.add('active'); setTimeout(()=>b.classList.remove('active'), 300);
                         if(p.ans[this.stageState.clicks] === n) {
                             this.stageState.clicks++;
                             if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
@@ -841,31 +796,21 @@ class SolarGamesEngine {
                 innerStage.appendChild(elWrap);
                 break;
             }
-            case 'MATH_HACK':
-            case 'PAPYRUS': {
-                let txtDisp = document.createElement('div'); txtDisp.className='cyber-display'; txtDisp.innerText = p.desc.split(':')[0];
-                innerStage.appendChild(txtDisp);
-                createInputBlock('ENTER DECODE SEQUENCE...', p.ans);
-                break;
-            }
             case 'BOSS': {
-                let bWrap = document.createElement('div'); bWrap.style.display='flex'; bWrap.style.gap='20px'; bWrap.style.marginBottom='30px';
+                let bWrap = document.createElement('div'); bWrap.style.cssText='display:flex; gap:20px; margin-bottom:30px;';
                 for(let i=0; i<3; i++) { 
-                    let sw = document.createElement('div'); sw.style.cssText='width: 90px; height: 140px; background: #111; border: 3px solid #222; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.9); transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; color: #555; font-weight: bold; font-size: 1.2rem;';
-                    sw.innerHTML = `<div style="position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s;"></div>OFF`;
+                    let sw = document.createElement('div'); sw.className='switch-lux'; sw.innerHTML = `<div style="position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s;"></div>OFF`;
                     sw.onclick = () => {
                         sw.classList.toggle('active'); 
                         if(sw.classList.contains('active')){
-                            sw.style.borderColor='var(--gold)'; sw.style.color='var(--gold)'; sw.style.textShadow='0 0 10px var(--gold)';
                             sw.innerHTML = `<div style="position: absolute; top: 65px; width: 70px; height: 55px; background: var(--gold); border-radius: 4px; box-shadow: 0 0 20px var(--gold); transition: 0.3s;"></div>ON`;
                         } else {
-                            sw.style.borderColor='#222'; sw.style.color='#555'; sw.style.textShadow='none';
                             sw.innerHTML = `<div style="position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s;"></div>OFF`;
                         }
                     };
                     bWrap.appendChild(sw); 
                 }
-                let bInp = document.createElement('input'); bInp.type='text'; bInp.className='cyber-input'; bInp.placeholder='MASTER PASSWORD';
+                let bInp = document.createElement('input'); bInp.type='text'; bInp.className='cyber-input-lg'; bInp.placeholder='MASTER PASSWORD';
                 let bBtn = document.createElement('button'); bBtn.className='btn-execute'; bBtn.innerText='🔥 INITIATE MASTER HACK 🔥'; bBtn.style.background='#ff0000'; bBtn.style.color='#fff'; bBtn.style.borderColor='#fff';
                 bBtn.onclick = () => {
                     let allSwitchesOn = Array.from(bWrap.children).every(s=>s.classList.contains('active'));
@@ -874,6 +819,9 @@ class SolarGamesEngine {
                 innerStage.append(bWrap, bInp, bBtn);
                 break;
             }
+            default:
+                createInputBlock('ENTER DECODE SEQUENCE...', p.ans || '');
+                break;
         }
     }
 
