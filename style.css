@@ -11,10 +11,10 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .mt-10 { margin-top: 15px; }
 .solar-txt { color: var(--gold); font-weight: 800; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
 
-#main-nav { position: fixed; top: 0; width: 100%; height: 75px; padding: 10px 40px; z-index: 100; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--dark-gold); box-shadow: 0 5px 20px rgba(0,0,0,0.9);}
+#main-nav { position: fixed; top: 0; width: 100%; height: 75px; padding: 10px 40px; z-index: 100; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--dark-gold); box-shadow: 0 5px 20px rgba(0,0,0,0.8);}
 .nav-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
 .stat-box { display: flex; flex-direction: column; align-items: center; background: #0a0a0a; padding: 5px 20px; border-radius: 4px; border: 1px solid #222;}
-.stat-box .label { font-size: 0.75rem; color: #888; font-weight: bold; }
+.stat-box .label { font-size: 0.75rem; color: #888; font-weight: bold; letter-spacing: 1px; }
 .action-btn { background: #0a0a0a; border: 1px solid var(--gold); color: var(--gold); padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s;}
 .action-btn:hover { background: var(--gold); color: #000; }
 
@@ -63,15 +63,13 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .timer-txt { color: #fff; font-weight: 800; font-size: 1.5rem; font-family: monospace; background: #000; padding: 5px 15px; border-radius: 4px; border: 1px solid var(--dark-gold);}
 .track-title { font-size: 1.1rem; color: #ccc; margin-bottom: 15px; background: #000; padding: 10px 15px; border-right: 4px solid var(--gold); }
 
-/* الألعاب التفاعلية (ستايلات الـ 30 لعبة) */
+/* الألعاب التفاعلية البصرية الجديدة */
 #interactive-stage { margin: 20px 0; display: flex; justify-content: center; align-items: center; min-height: 300px; background: #000; border: 1px solid #1f1f1f; padding: 20px; border-radius: 4px; overflow: hidden; position: relative;}
 
-/* لعبة الأسلاك (8 أسلاك) */
 .cyber-wire { height: 18px; margin: 10px 0; width: 100%; border-radius: 4px; cursor: pointer; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); border: 1px solid #333; transition: 0.3s; position: relative; overflow: hidden; }
 .cyber-wire::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.2); }
 .cyber-wire:hover { filter: brightness(1.5); box-shadow: 0 0 15px currentColor; }
 
-/* لعبة تطابق الأشكال (20 مربع) */
 .card-grid { display: grid; grid-template-columns: repeat(5, 60px); gap: 10px; }
 .flip-card { width: 60px; height: 60px; perspective: 1000px; cursor: pointer; }
 .flip-card-inner { width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
@@ -80,7 +78,6 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .flip-front { background: #111; }
 .flip-back { background: var(--dark-gold); color: #000; transform: rotateY(180deg); box-shadow: 0 0 15px var(--gold); }
 
-/* لعبة الخزنة (Mastermind) */
 .mm-container { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
 .mm-inputs { display: flex; gap: 10px; }
 .mm-input { width: 60px; height: 60px; background: #111; border: 2px solid var(--gold); color: var(--gold); font-size: 2rem; text-align: center; border-radius: 4px; outline: none; }
@@ -88,21 +85,27 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .mm-row { display: flex; gap: 10px; background: #0a0a0a; padding: 10px; border: 1px solid #222; }
 .mm-peg { width: 25px; height: 25px; border-radius: 50%; background: #222; border: 1px solid #444; }
 
-/* لعبة السايمون (16 مربع) */
 .simon-grid { display: grid; grid-template-columns: repeat(4, 70px); gap: 10px; }
-.simon-box { width: 70px; height: 70px; background: #050505; border: 2px solid #222; cursor: pointer; transition: 0.1s; border-radius: 6px; box-shadow: inset 0 0 10px #000;}
-.simon-box.pulse { background: var(--gold); box-shadow: 0 0 25px var(--gold); border-color: #fff; }
+.simon-box { width: 70px; height: 70px; background: #050505; border: 2px solid #222; cursor: pointer; transition: 0.1s; border-radius: 6px; box-shadow: inset 0 0 10px #000; display:flex; justify-content:center; align-items:center; font-size: 1.5rem; color:transparent;}
+.simon-box.pulse { background: var(--gold); box-shadow: 0 0 25px var(--gold); border-color: #fff; color:#000; }
 
-/* أدوات عامة لباقي الألعاب */
 .cyber-switch { width: 70px; height: 90px; background: #0a0a0a; border: 2px solid #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555; font-weight: bold; font-size: 1.2rem; transition: 0.3s; }
 .cyber-switch.active { border-color: var(--gold); color: #000; background: var(--dark-gold); box-shadow: 0 0 20px var(--gold); }
 .cyber-slider-box { width: 100%; display: flex; align-items: center; gap: 15px; margin: 10px 0; }
 .cyber-slider { -webkit-appearance: none; width: 100%; height: 10px; background: #222; outline: none; border-radius: 5px; }
 .cyber-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 30px; background: var(--gold); cursor: pointer; }
 .cyber-valve { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, #222, #000); border: 4px solid #444; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #aaa; font-weight: bold; font-size: 1.2rem; transition: 0.2s; }
-.cyber-valve:hover { border-color: var(--gold); color: var(--gold); }
+.cyber-valve:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 15px var(--gold); }
 .cyber-input-box { width: 100%; display: flex; flex-direction: column; gap: 15px; align-items: center; }
 .cyber-input-lg { background: rgba(0,0,0,0.8); border: 2px solid var(--gold); color: var(--gold); padding: 15px 20px; font-size: 1.5rem; text-align: center; width: 80%; outline: none; box-shadow: inset 0 0 15px rgba(212,175,55,0.2); letter-spacing: 5px; font-family: monospace; border-radius: 4px; }
+.dial-base { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, #111, #000); border: 5px solid #222; display: flex; justify-content: center; align-items: flex-start; cursor: pointer; transition: transform 0.3s; box-shadow: 0 0 15px rgba(0,0,0,0.9);}
+.dial-tick { width: 4px; height: 25px; background: var(--gold); margin-top: 4px; box-shadow: 0 0 8px var(--gold); }
+.radar-grid-cell { border: 1px solid #111; cursor: pointer; background: rgba(0,255,100,0.05); transition: 0.2s; display:flex; justify-content:center; align-items:center; font-size: 1.5rem;}
+.radar-grid-cell:hover { background: rgba(0,255,100,0.3); box-shadow: inset 0 0 10px rgba(0,255,100,0.5); }
+.cyber-node { width: 50px; height: 50px; border-radius: 50%; background: #000; border: 2px solid #555; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px #000; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#555;}
+.cyber-node.active { background: var(--gold); border-color: #fff; box-shadow: 0 0 20px var(--gold); color:#000;}
+.cyber-weight { width: 80px; height: 80px; background: #111; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #666; cursor: pointer; clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%); transition: 0.3s; }
+.cyber-weight.active { border-color: var(--gold); color: #000; background: var(--gold); }
 
 .bot-message { background: #000; border-radius: 4px; padding: 20px; margin-top: 20px; border: 1px solid #222; text-align: right;}
 .bot-header { font-family: 'Rajdhani', sans-serif; font-weight: bold; color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: flex-start; flex-direction: row-reverse;}
