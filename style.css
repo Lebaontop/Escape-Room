@@ -14,7 +14,7 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 #main-nav { position: fixed; top: 0; width: 100%; height: 75px; padding: 10px 40px; z-index: 100; background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--dark-gold); box-shadow: 0 5px 20px rgba(0,0,0,0.8);}
 .nav-content { display: flex; justify-content: space-between; align-items: center; height: 100%; }
 .stat-box { display: flex; flex-direction: column; align-items: center; background: #0a0a0a; padding: 5px 20px; border-radius: 4px; border: 1px solid #222;}
-.stat-box .label { font-size: 0.75rem; color: #888; font-weight: bold; letter-spacing: 1px; }
+.stat-box .label { font-size: 0.75rem; color: #888; font-weight: bold; }
 .action-btn { background: #0a0a0a; border: 1px solid var(--gold); color: var(--gold); padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s;}
 .action-btn:hover { background: var(--gold); color: #000; }
 
@@ -28,6 +28,7 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .btn-prime { background: transparent; color: var(--gold); border: 2px solid var(--gold); padding: 15px 40px; font-size: 1.3rem; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; border-radius: 4px; transition: 0.3s; letter-spacing: 1px; }
 .btn-prime:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px var(--gold);}
 
+/* Modal & Sidebar */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; justify-content: center; align-items: center; }
 .modal-content { background: #0a0a0a; padding: 40px; border-radius: 8px; width: 800px; text-align: center; }
 .luxury-border { border: 2px solid var(--dark-gold); box-shadow: 0 0 40px rgba(212,175,55,0.2); }
@@ -41,6 +42,21 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .btn-market.freeze-cost { border-color: #00ccff; color: #00ccff; }
 .btn-market.freeze-cost:hover { background: #00ccff; color: #000; }
 
+.sidebar { position: fixed; top: 0; right: 0; width: 350px; height: 100vh; background: #050505; border-left: 1px solid var(--dark-gold); transform: translateX(100%); transition: 0.3s; z-index: 2000; padding: 20px; box-shadow: -5px 0 20px rgba(0,0,0,0.9);}
+.sidebar.open { transform: translateX(0); }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #222; color: var(--gold); }
+.close-sidebar-btn { background: transparent; border: none; color: #666; font-size: 2rem; cursor: pointer; }
+.sidebar-section { background: #0a0a0a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #111;}
+.sidebar-section h4 { font-size: 0.9rem; color: #888; margin-bottom: 10px; text-transform: uppercase; }
+.btn-admin-action { width: 100%; padding: 10px; border: 1px solid #333; background: #000; color: #ccc; border-radius: 2px; font-weight: bold; cursor: pointer; margin-bottom: 8px; transition: 0.2s;}
+.btn-admin-action:hover { background: #111; color: #fff;}
+.btn-prime-style { border-color: var(--gold); color: var(--gold); }
+.btn-prime-style:hover { background: var(--gold); color: #000; }
+.admin-input-group .row { display: flex; gap: 5px; }
+.admin-input-group .row button { flex: 1; padding: 8px; background: #000; border: 1px solid #333; color: #fff; cursor: pointer; border-radius: 2px; transition: 0.2s;}
+.admin-input-group .row button:hover { background: #222; }
+
+/* اللوبي ديسكورد */
 .lobby-wrapper { padding: 100px 20px 50px; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
 .server-header { width: 100%; max-width: 1200px; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 5px; }
 .category-title { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; color: #888; font-weight: bold; text-align: left;}
@@ -57,45 +73,47 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .channel-card.solved { border-left-color: var(--green); color: #ccc; opacity: 0.6; }
 .channel-card.solved::before { content: '✅'; filter: none; opacity: 1; }
 
+/* شاشة اللغز */
 .puzzle-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
-.puzzle-card { width: 950px; padding: 30px; border-radius: 4px; background: rgba(5,5,5,0.95); border: 1px solid var(--dark-gold); box-shadow: 0 10px 50px rgba(0,0,0,0.9); }
+.puzzle-card { width: 950px; padding: 30px; border-radius: 8px; background: rgba(5,5,5,0.95); border: 1px solid var(--dark-gold); box-shadow: 0 10px 50px rgba(0,0,0,0.9); max-height: 95vh; overflow-y: auto;}
 .puzzle-header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #222; }
 .timer-txt { color: #fff; font-weight: 800; font-size: 1.5rem; font-family: monospace; background: #000; padding: 5px 15px; border-radius: 4px; border: 1px solid var(--dark-gold);}
 .track-title { font-size: 1.1rem; color: #ccc; margin-bottom: 15px; background: #000; padding: 10px 15px; border-right: 4px solid var(--gold); }
 
-/* محرك رسم الألعاب الفاخر */
-#interactive-stage { width: 100%; min-height: 350px; display: flex; justify-content: center; align-items: center; }
-.lux-panel { width: 100%; min-height: 350px; background: linear-gradient(145deg, #111, #050505); border: 2px solid #222; border-radius: 12px; padding: 40px; box-shadow: inset 0 0 30px #000, 0 10px 30px rgba(0,0,0,0.8); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-.lux-panel::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px); pointer-events: none; }
-.cyber-display { font-family: 'Rajdhani', monospace; font-size: 3.5rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); background: #000; border: 2px solid #333; padding: 15px 40px; border-radius: 8px; margin-bottom: 30px; letter-spacing: 5px; box-shadow: inset 0 0 20px #000; z-index: 2;}
-.btn-lux { background: linear-gradient(180deg, #222, #000); color: var(--gold); border: 2px solid var(--gold); padding: 15px 30px; font-size: 1.3rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.8); width: 100%; max-width: 400px; z-index: 2; font-family: 'Changa', sans-serif; margin-top:20px;}
-.btn-lux:hover { background: var(--gold); color: #000; box-shadow: 0 0 25px var(--gold); }
+/* ==== المحرك الجبار للألعاب التاريخية والفخمة ==== */
+#interactive-stage { width: 100%; min-height: 400px; display: flex; justify-content: center; align-items: center; }
+.lux-panel { width: 100%; min-height: 400px; background: linear-gradient(145deg, #111, #050505); border: 2px solid #222; border-radius: 12px; padding: 30px; box-shadow: inset 0 0 30px #000, 0 10px 30px rgba(0,0,0,0.8); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
 
-/* الأسلاك */
-.wire-lux { width: 100%; max-width: 600px; height: 35px; margin: 12px 0; border-radius: 18px; cursor: pointer; border: 2px solid #111; box-shadow: 0 8px 15px rgba(0,0,0,0.9), inset 0 3px 8px rgba(255,255,255,0.4); transition: 0.3s; z-index: 2; position: relative; }
+/* ستايلات الـ 30 لعبة */
+.btn-execute { background: linear-gradient(180deg, #222, #000); color: var(--gold); border: 2px solid var(--gold); padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.8); width: 100%; max-width: 400px; z-index: 2; margin-top:20px; font-family: 'Changa', sans-serif;}
+.btn-execute:hover { background: var(--gold); color: #000; box-shadow: 0 0 25px var(--gold); }
+.cyber-display { font-family: 'Rajdhani', monospace; font-size: 3rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); background: #000; border: 2px solid #333; padding: 10px 30px; border-radius: 8px; margin-bottom: 20px; letter-spacing: 5px; box-shadow: inset 0 0 20px #000; z-index: 2; text-align: center;}
+.cyber-input { background: #000; border: 2px solid var(--gold); color: var(--gold); padding: 15px; font-size: 1.8rem; text-align: center; width: 100%; max-width: 400px; outline: none; box-shadow: inset 0 0 20px rgba(212,175,55,0.2); letter-spacing: 5px; font-family: monospace; border-radius: 8px; z-index: 2; text-transform: uppercase;}
+
+/* 1. الأسلاك */
+.wire-lux { width: 100%; max-width: 500px; height: 35px; margin: 10px 0; border-radius: 18px; cursor: pointer; border: 2px solid #111; box-shadow: 0 8px 15px rgba(0,0,0,0.9), inset 0 3px 8px rgba(255,255,255,0.4); transition: 0.3s; z-index: 2; position: relative; }
 .wire-lux::before, .wire-lux::after { content: ''; position: absolute; width: 15px; height: 15px; background: #555; border-radius: 50%; top: 8px; box-shadow: inset 0 0 5px #000; }
 .wire-lux::before { left: 15px; } .wire-lux::after { right: 15px; }
 .wire-lux:hover { filter: brightness(1.3); transform: scale(1.02); }
 .wire-cut { opacity: 0.2; pointer-events: none; border-style: dashed; }
 
-/* المربعات والنبض (Simon بدون أرقام) */
-.grid-lux { display: grid; gap: 15px; z-index: 2; }
-.box-lux { background: #050505; border: 2px solid #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: inset 0 0 15px #000, 0 5px 10px rgba(0,0,0,0.8); transition: 0.1s; }
-.box-lux:hover { border-color: #555; }
-.box-lux.pulse { background: var(--gold); border-color: #fff; box-shadow: 0 0 30px var(--gold); }
+/* 2. النبض (بدون أرقام) */
+.simon-grid { display: grid; gap: 15px; z-index: 2; grid-template-columns: repeat(4, 80px);}
+.simon-box { width: 80px; height: 80px; background: #050505; border: 2px solid #222; border-radius: 8px; cursor: pointer; box-shadow: inset 0 0 15px #000, 0 5px 10px rgba(0,0,0,0.8); transition: 0.1s; }
+.simon-box:hover { border-color: #555; }
+.simon-box.pulse { background: var(--gold); border-color: #fff; box-shadow: 0 0 30px var(--gold); }
 
-/* خزنة الألوان (Mastermind) */
-.mm-container { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; z-index: 2;}
-.mm-inputs { display: flex; gap: 15px; }
+/* 3. الخزنة (الألوان) */
+.mm-inputs { display: flex; gap: 15px; z-index: 2;}
 .mm-input { width: 70px; height: 80px; background: #000; border: 2px solid #444; color: var(--gold); font-size: 2.5rem; text-align: center; border-radius: 8px; outline: none; font-family: monospace; box-shadow: inset 0 0 15px #000; transition: 0.3s;}
 .mm-input:focus { border-color: var(--gold); box-shadow: inset 0 0 20px rgba(212,175,55,0.3); }
-.mm-history { display: flex; flex-direction: column; gap: 10px; width: 100%; max-height: 200px; overflow-y: auto; align-items: center; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid #222;}
+.mm-history { display: flex; flex-direction: column; gap: 10px; width: 100%; max-height: 180px; overflow-y: auto; align-items: center; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid #222; z-index: 2; margin-top: 15px;}
 .mm-row { display: flex; align-items: center; gap: 20px; background: #0a0a0a; padding: 10px 20px; border: 1px solid #333; border-radius: 6px; width: 80%; justify-content: space-between;}
 .mm-guess-txt { font-family: monospace; font-size: 1.5rem; color: #fff; letter-spacing: 5px; }
 .mm-pegs { display: flex; gap: 8px; }
 .mm-peg { width: 20px; height: 20px; border-radius: 50%; background: #222; border: 1px solid #555; box-shadow: inset 0 0 5px #000;}
 
-/* تطابق الإيموجي (20 بطاقة) */
+/* 4. تطابق الإيموجي */
 .card-grid { display: grid; grid-template-columns: repeat(5, 70px); gap: 12px; z-index: 2;}
 .flip-card { width: 70px; height: 70px; perspective: 1000px; cursor: pointer; }
 .flip-card-inner { width: 100%; height: 100%; transition: transform 0.5s; transform-style: preserve-3d; }
@@ -104,30 +122,53 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .flip-front { background: #111; background-image: repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #111 25%, #111 75%, #000 75%, #000); background-position: 0 0, 10px 10px; background-size: 20px 20px;}
 .flip-back { background: var(--dark-gold); transform: rotateY(180deg); box-shadow: 0 0 20px var(--gold); border-color: var(--gold); }
 
+/* 5. البوصلة الذهبية (Compass) */
+.compass-dial { width: 220px; height: 220px; border-radius: 50%; border: 8px solid var(--gold); background: radial-gradient(circle, #222, #000); box-shadow: 0 0 30px rgba(212,175,55,0.3), inset 0 0 30px #000; position: relative; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; z-index: 2; display:flex; justify-content:center; align-items:center;}
+.compass-needle { width: 6px; height: 90px; background: linear-gradient(to top, transparent 50%, var(--red) 50%); position: absolute; top: 20px; border-radius: 3px; }
+.compass-center { width: 20px; height: 20px; background: var(--gold); border-radius: 50%; position: absolute; box-shadow: 0 0 10px #000; }
+
+/* 8. رادار الدمار (3 راوندات تصاعدية) */
+.radar-grid { display: grid; gap: 3px; z-index: 2; background: rgba(0,255,100,0.05); padding: 10px; border: 2px solid #00ff66; border-radius: 8px; box-shadow: inset 0 0 20px rgba(0,255,100,0.2);}
+.radar-cell { background: #000; border: 1px solid #111; cursor: pointer; transition: 0.1s; display:flex; justify-content:center; align-items:center; }
+.radar-cell:hover { background: rgba(0,255,100,0.3); }
+
+/* 10. الساعة الفلكية (Astro Clock) */
+.astro-container { position: relative; width: 250px; height: 250px; z-index: 2; }
+.astro-ring { border-radius: 50%; position: absolute; border: 4px dashed var(--gold); display:flex; justify-content:center; align-items:flex-start; cursor: pointer; transition: transform 0.5s; box-shadow: inset 0 0 15px rgba(212,175,55,0.2); background: rgba(0,0,0,0.5);}
+.astro-ring-1 { width: 250px; height: 250px; top: 0; left: 0; }
+.astro-ring-2 { width: 180px; height: 180px; top: 35px; left: 35px; border-color: #888; }
+.astro-ring-3 { width: 110px; height: 110px; top: 70px; left: 70px; border-color: #a68962; }
+.astro-icon { font-size: 1.5rem; margin-top: -10px; text-shadow: 0 0 10px #fff; }
+
+/* التاريخيات والمنوعات (12-30) */
+.papyrus-panel { background: #e3d2b2; border: 4px solid #a68962; border-radius: 5px; padding: 20px; color: #3e3124; font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; text-align: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); z-index: 2; font-weight:bold;}
+.stone-btn { background: #3d3b38; border: 3px solid #5a5752; color: #d4d0c9; width: 70px; height: 70px; border-radius: 10px; font-size: 1.5rem; cursor: pointer; transition: 0.2s; display:flex; justify-content:center; align-items:center; box-shadow: 0 5px 10px #000;}
+.stone-btn:hover { background: #5a5752; border-color: var(--gold); }
+.stone-btn.active { background: var(--dark-gold); color: #000; border-color: var(--gold); box-shadow: inset 0 0 10px #000;}
+
+.wood-barrel { width: 80px; height: 120px; background: linear-gradient(to right, #4a3320, #6b4c31, #4a3320); border: 4px solid #2a1d12; border-radius: 10px 10px 30px 30px; display: flex; flex-direction:column; justify-content:flex-end; overflow:hidden; position:relative; cursor:pointer;}
+.water-fill { width: 100%; background: rgba(0,200,255,0.6); transition: height 0.3s; border-top: 2px solid rgba(255,255,255,0.5);}
+
+.neon-board { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; z-index:2;}
+.neon-node { width: 50px; height: 50px; border-radius: 50%; background: #000; border: 2px solid #00ffcc; cursor: pointer; box-shadow: 0 0 10px #00ffcc; transition: 0.3s; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#00ffcc;}
+.neon-node.active { background: #00ffcc; color: #000; box-shadow: 0 0 30px #00ffcc; }
+
+.roman-scale { display:flex; gap:20px; align-items:flex-end; z-index:2; height:150px; border-bottom: 4px solid var(--gold); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center;}
+.scale-weight { width: 60px; background: linear-gradient(135deg, #eee, #888); border: 2px solid #555; text-align: center; font-weight: bold; color: #000; cursor: pointer; transition: 0.3s; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; box-shadow: 0 10px 15px #000;}
+.scale-weight:hover { filter: brightness(1.2); transform: translateY(-10px); }
+.scale-weight.active { background: linear-gradient(135deg, var(--gold), var(--dark-gold)); }
+
+.sliding-puzzle { display: grid; grid-template-columns: repeat(4, 70px); gap: 2px; background: #222; padding: 5px; border: 4px solid var(--gold); z-index:2;}
+.slide-tile { width: 70px; height: 70px; background: url('logo.png') center/cover; border: 1px solid #000; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:#fff; text-shadow:0 0 5px #000; cursor:pointer; transition:0.2s;}
+.slide-tile.empty { background: transparent; cursor: default; border:none;}
+
 /* أشرطة الترددات (Sliders) */
-.cyber-slider-wrap { width: 100%; max-width: 600px; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; background: #0a0a0a; padding: 15px 25px; border-radius: 8px; border: 1px solid #333; z-index: 2; box-shadow: inset 0 0 10px #000;}
-.cyber-slider-label { color: #888; font-weight: bold; font-family: monospace; font-size: 1.1rem; width: 100px; text-align: left;}
-.cyber-slider-lux { -webkit-appearance: none; flex-grow: 1; height: 10px; background: #000; border: 1px solid #444; border-radius: 5px; outline: none; box-shadow: inset 0 0 5px #000; }
-.cyber-slider-lux::-webkit-slider-thumb { -webkit-appearance: none; width: 25px; height: 40px; background: linear-gradient(to bottom, var(--gold), var(--dark-gold)); border: 2px solid #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 0 15px var(--gold); }
+.cyber-slider-wrap { width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 15px; background: #0a0a0a; padding: 15px; border-radius: 8px; border: 1px solid #333; z-index: 2;}
+.cyber-slider-label { color: #888; font-weight: bold; font-family: monospace; font-size: 1.1rem; width: 80px; text-align: left;}
+.cyber-slider-lux { -webkit-appearance: none; flex-grow: 1; height: 8px; background: #000; border: 1px solid #444; border-radius: 4px; outline: none; }
+.cyber-slider-lux::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 35px; background: linear-gradient(to bottom, var(--gold), var(--dark-gold)); border: 2px solid #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 0 15px var(--gold); }
 
-/* المفاتيح والقواطع */
-.switch-lux { width: 90px; height: 140px; background: #111; border: 3px solid #222; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.9); transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; color: #555; font-weight: bold; font-size: 1.2rem; z-index: 2;}
-.switch-lux::before { content: ''; position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s; }
-.switch-lux.active { border-color: var(--gold); color: var(--gold); text-shadow: 0 0 10px var(--gold); }
-.switch-lux.active::before { top: 65px; background: var(--gold); box-shadow: 0 0 20px var(--gold); }
-
-/* التروس الدوارة (Gears) */
-.gear-lux { font-size: 5rem; line-height: 1; color: #555; cursor: pointer; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-shadow: 0 10px 20px #000; z-index: 2; user-select: none;}
-.gear-lux:hover { color: var(--gold); filter: drop-shadow(0 0 10px var(--gold)); }
-
-/* لمبة مورس (Bulb) */
-.bulb-lux { width: 100px; height: 100px; border-radius: 50%; background: #111; border: 4px solid #333; margin: 20px auto; box-shadow: inset 0 0 20px #000; transition: 0.1s; z-index: 2;}
-.bulb-lux.flash { background: #fff; border-color: #fff; box-shadow: 0 0 50px #fff, inset 0 0 20px #fff; }
-
-/* شاشات الإدخال (Inputs) */
-.cyber-input-lg { background: #000; border: 2px solid var(--gold); color: var(--gold); padding: 15px 30px; font-size: 2rem; text-align: center; width: 100%; max-width: 500px; outline: none; box-shadow: inset 0 0 20px rgba(212,175,55,0.2); letter-spacing: 10px; font-family: monospace; border-radius: 8px; margin-bottom: 20px; z-index: 2; text-transform: uppercase;}
-.cyber-input-lg:focus { box-shadow: inset 0 0 30px var(--gold), 0 0 15px var(--gold); }
-
+/* الـ Bot والرسائل السفلية */
 .bot-message { background: #000; border-radius: 4px; padding: 20px; margin-top: 20px; border: 1px solid #222; text-align: right;}
 .bot-header { font-family: 'Rajdhani', sans-serif; font-weight: bold; color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: flex-start; flex-direction: row-reverse;}
 #puzzle-desc { font-size: 1.2rem; line-height: 1.6; color: #fff; font-weight: bold;}
@@ -139,20 +180,7 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .btn-cancel { background: transparent; color: #666; padding: 10px 15px; border: 1px solid #333; cursor: pointer; border-radius: 2px; font-weight: bold; width: 100%; transition: 0.2s;}
 .btn-cancel:hover { background: #222; color: #fff; }
 
-.sidebar { position: fixed; top: 0; right: 0; width: 350px; height: 100vh; background: #050505; border-left: 1px solid var(--dark-gold); transform: translateX(100%); transition: 0.3s; z-index: 2000; padding: 20px; box-shadow: -5px 0 20px rgba(0,0,0,0.9);}
-.sidebar.open { transform: translateX(0); }
-.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #222; color: var(--gold); }
-.close-sidebar-btn { background: transparent; border: none; color: #666; font-size: 2rem; cursor: pointer; }
-.sidebar-section { background: #0a0a0a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #111;}
-.sidebar-section h4 { font-size: 0.9rem; color: #888; margin-bottom: 10px; text-transform: uppercase; }
-.btn-admin-action { width: 100%; padding: 10px; border: 1px solid #333; background: #000; color: #ccc; border-radius: 2px; font-weight: bold; cursor: pointer; margin-bottom: 8px; transition: 0.2s;}
-.btn-admin-action:hover { background: #111; color: #fff;}
-.btn-prime-style { border-color: var(--gold); color: var(--gold); }
-.btn-prime-style:hover { background: var(--gold); color: #000; }
-.admin-input-group .row { display: flex; gap: 5px; }
-.admin-input-group .row button { flex: 1; padding: 8px; background: #000; border: 1px solid #333; color: #fff; cursor: pointer; border-radius: 2px; transition: 0.2s;}
-.admin-input-group .row button:hover { background: #222; }
-
+/* الآدمن والتوست */
 #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 4000; }
 .toast { background: #0a0a0a; border-right: 4px solid var(--gold); color: #fff; padding: 15px 25px; border-radius: 2px; margin-top: 10px; animation: slideIn 0.3s forwards; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
