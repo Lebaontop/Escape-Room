@@ -1,7 +1,7 @@
 class SolarGamesEngine {
     constructor() {
         this.coins = 0; 
-        this.globalTime = 90 * 60; // 1:30:00
+        this.globalTime = 90 * 60; 
         this.isTimerRunning = false;
         this.timeFrozen = false;
         
@@ -64,7 +64,7 @@ class SolarGamesEngine {
     
     setupClickListeners() { 
         document.addEventListener('click', (e) => { 
-            if(e.target.tagName==='BUTTON' || e.target.classList.contains('box-lux') || e.target.classList.contains('stone-btn') || e.target.classList.contains('neon-node') || e.target.classList.contains('scale-weight') || e.target.classList.contains('flip-card') || e.target.closest('.channel-card')){ 
+            if(e.target.tagName==='BUTTON' || e.target.classList.contains('box-lux') || e.target.classList.contains('stone-btn') || e.target.classList.contains('flip-card') || e.target.closest('.channel-card') || e.target.classList.contains('wire-lux') || e.target.classList.contains('simon-box') || e.target.classList.contains('astro-ring') || e.target.classList.contains('cryp-btn') || e.target.classList.contains('bc-bar') || e.target.classList.contains('dna-clickable') || e.target.classList.contains('pipe-cell') || e.target.classList.contains('slide-tile') || e.target.classList.contains('heat-btn') || e.target.classList.contains('elevator-btn') || e.target.classList.contains('matrix-word')){ 
                 this.initAudio(); this.playSound('click'); 
             } 
         }); 
@@ -94,35 +94,35 @@ class SolarGamesEngine {
             let m = { id: i, type: `GAME_${i}` };
             
             if(i===1) { m.uiType = 'WIRES'; m.desc="اقطع 3 أسلاك محددة. (الأول ذهبي؟ اقطع الثالث الأسود)."; m.data=['#D4AF37','#ff3333','#333','#fff','#D4AF37','#00ccff','#333','#ff3333']; m.ans=[2,5,7]; m.hint="💡 تفاعلي: الأسود الأول، الأزرق، ثم الأحمر الأخير. | 📝 كتابي: يعتم كلما زاد."; }
-            else if(i===2) { m.uiType = 'SIMON'; m.desc="تتبع الأنماط: 3 جولات متتالية."; m.data=16; m.hint="💡 تفاعلي: ركز ووجهني بالترتيب الصحيح فوراً. | 📝 كتابي: يذوب في الحرارة."; }
-            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="خزنة الألوان: أدخل 4 أرقام (أخضر=صح، برتقالي=مكان غلط)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3719. | 📝 كتابي: لا يمكنك البوح به."; }
-            else if(i===4) { m.uiType = 'MATCH'; m.desc="تطابق الأشكال: 20 شريحة، طابق 10 أزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تفاعلي: احفظ الأماكن ووجهني. | 📝 كتابي: يزيد ولا ينقص."; }
-            else if(i===5) { m.uiType = 'COMPASS'; m.desc="البوصلة الفلكية: وجه الإبرة للزاوية الدقيقة 135."; m.ans=135; m.hint="💡 تفاعلي: أسفل اليمين (135 درجة). | 📝 كتابي: يرتد لك من الجدار."; }
-            else if(i===6) { m.uiType = 'STONE_RUNES'; m.desc="المعبد القديم: اضغط الرموز الحجرية المتطابقة."; m.data=['𐤀','𐤁','𐤂','𐤃','𐤄','𐤅']; m.ans=[1,4]; m.hint="💡 تفاعلي: الرمز الثاني والخامس. | 📝 كتابي: يمتص السوائل."; }
+            else if(i===2) { m.uiType = 'SIMON'; m.desc="النبض: 3 جولات متتالية."; m.data=16; m.hint="💡 تفاعلي: ركز ووجهني للأنماط بدون أرقام. | 📝 كتابي: يذوب في الحرارة."; }
+            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="خزنة الألوان: 4 أرقام (أخضر=مكانه صح، برتقالي=موجود لكن مكانه غلط)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3719. | 📝 كتابي: لا يمكنك البوح به."; }
+            else if(i===4) { m.uiType = 'MATCH'; m.desc="تطابق الأشكال: 20 شريحة فلكية."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تفاعلي: احفظ الأماكن ووجهني. | 📝 كتابي: يزيد ولا ينقص."; }
+            else if(i===5) { m.uiType = 'ASTROLABE'; m.desc="الأسطرلاب الفلكي: طابق الـ 3 حلقات لزاوية 0."; m.hint="💡 تفاعلي: خل المؤشرات كلها متجهة للأعلى. | 📝 كتابي: يرتد لك من الجدار."; }
+            else if(i===6) { m.uiType = 'RUNES'; m.desc="الرموز الحجرية: ابحث عن الرمز الصحيح."; m.data=16; m.ans=7; m.hint="💡 تفاعلي: الصف الثاني، الرمز الأخير مختلف بشعرة. | 📝 كتابي: يمتص السوائل."; }
             else if(i===7) { m.uiType = 'SCALES'; m.desc="الميزان الروماني: اختر أوزان مجموعها 150."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تفاعلي: 70 + 80. | 📝 كتابي: يأتي غداً."; }
-            else if(i===8) { m.uiType = 'RADAR_ROUNDS'; m.desc="الرادار المعتم (3 راوندات): تصاعدي (5x5, 7x7, 9x9)."; m.hint="💡 تفاعلي: ركز في المنتصف دايماً. | 📝 كتابي: تقطعه لتفي به."; }
-            else if(i===9) { m.uiType = 'PAPYRUS'; m.desc="لفافة البردي: اقرأ النص السري."; m.ans='AMUN'; m.hint="💡 تفاعلي: الكلمة AMUN. | 📝 كتابي: لغته السكوت."; }
-            else if(i===10) { m.uiType = 'ASTRO_CLOCK'; m.desc="الساعة الفلكية: قم بتسوية الحلقات الثلاث (شمس، قمر، نجم) للأعلى."; m.ans=[0,0,0]; m.hint="💡 تفاعلي: دورها كلها لفوق (الساعة 12). | 📝 كتابي: قشرتها هشة."; }
-            else if(i===11) { m.uiType = 'NEON_NODES'; m.desc="الشبكة السيبرانية: اربط الأطراف العلوية فقط."; m.data=12; m.ans=[0,1,2,3]; m.hint="💡 تفاعلي: الصف الأول كامل. | 📝 كتابي: تنشفك وتتبلل."; }
-            else if(i===12) { m.uiType = 'JUGS'; m.desc="دوارق الخيمياء: احصل على 4 لتر من (8, 5, 3)."; m.hint="💡 تفاعلي: املأ الـ 5، صب في 3، يبقى 2.. | 📝 كتابي: ترسم العالم."; }
-            else if(i===13) { m.uiType = 'SLIDERS'; m.desc="اللوحة الصناعية: اضبط التردد (75, 40, 90)."; m.data=[{label:'FREQ',max:100},{label:'AMP',max:100},{label:'PITCH',max:100}]; m.ans=[75,40,90]; m.hint="💡 تفاعلي: 75، 40، 90. | 📝 كتابي: تعرف بها الوقت."; }
-            else if(i===14) { m.uiType = 'SLIDING_PUZZLE'; m.desc="الجدارية المكسورة: رتب القطع (1-8)."; m.hint="💡 تفاعلي: رتبها تصاعدياً 1 لـ 8. | 📝 كتابي: يمطر."; }
-            else if(i===15) { m.uiType = 'BLIND_MAZE'; m.desc="متاهة المينوتور: 6x6 معتمة. خطوة غلط ترجعك للصفر."; m.data=36; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تفاعلي: تحت 3 مرات، يمين مرتين... | 📝 كتابي: صيفي ولذيذ."; }
-            else if(i===16) { m.uiType = 'CAESAR'; m.desc="تشفير دافنشي: أزح كلمة ABC بمقدار +3."; m.ans='DEF'; m.hint="💡 تفاعلي: الكلمة DEF. | 📝 كتابي: يثبت الأشياء."; }
-            else if(i===17) { m.uiType = 'SHELLS'; m.desc="الخفة: تتبع الكوب الذهبي."; m.data=3; m.ans=1; m.hint="💡 تفاعلي: الكوب اللي بالمنتصف. | 📝 كتابي: أداة الكتابة."; }
-            else if(i===18) { m.uiType = 'BARCODE'; m.desc="الباركود الممزق: 2, 4, 8, ؟"; m.ans='16'; m.hint="💡 تفاعلي: 16. | 📝 كتابي: يتبعك بالشمس."; }
-            else if(i===19) { m.uiType = 'RADIO'; m.desc="جهاز الإرسال العسكري: أوجد التردد الصافي."; m.ans=199; m.hint="💡 تفاعلي: التردد 199. | 📝 كتابي: تدل على الشمال."; }
-            else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="معبد الشعلات: أطفئ جميع النيران (3x3)."; m.data=9; m.hint="💡 تفاعلي: الأطراف ثم المنتصف. | 📝 كتابي: لا تُرى."; }
-            else if(i===21) { m.uiType = 'ANOMALY_RUNES'; m.desc="الشذوذ الأثري: ابحث عن الرمز المقلوب."; m.data=25; m.ans=18; m.hint="💡 تفاعلي: الصف الرابع، الثالث. | 📝 كتابي: تخاف من الماء."; }
-            else if(i===22) { m.uiType = 'DNA'; m.desc="فك شفرة الحمض: A=T, C=G."; m.ans='TGCA'; m.hint="💡 تفاعلي: TGCA. | 📝 كتابي: تكبر كلما أخذت منها."; }
-            else if(i===23) { m.uiType = 'PIPES'; m.desc="الأنابيب القديمة: صل البداية بالنهاية."; m.hint="💡 تفاعلي: دور الأنابيب لتكون خط مستقيم. | 📝 كتابي: يقرصك ببطنك."; }
-            else if(i===24) { m.uiType = 'KEYPAD'; m.desc="خزنة الكيبورد: أدخل 4321."; m.ans='4321'; m.hint="💡 تفاعلي: 4321. | 📝 كتابي: ينادونك به."; }
-            else if(i===25) { m.uiType = 'MAGIC_SQUARE'; m.desc="الرياضيات الإسلامية: المجموع 15 بكل الاتجاهات."; m.ans='5'; m.hint="💡 تفاعلي: المنتصف 5. | 📝 كتابي: تتركها وراءك."; }
-            else if(i===26) { m.uiType = 'HEATMAP'; m.desc="البصمة الحرارية: من الأسخن للأبرد."; m.ans='8491'; m.hint="💡 تفاعلي: 8491. | 📝 كتابي: قطرات من السماء."; }
-            else if(i===27) { m.uiType = 'MATRIX'; m.desc="النص المنسدل: أوقف الشاشة عند الكلمة."; m.ans='SOLAR'; m.hint="💡 تفاعلي: SOLAR. | 📝 كتابي: افتح يا..."; }
-            else if(i===28) { m.uiType = 'ELEVATOR'; m.desc="المصعد: انزل للدور السفلي (B3)."; m.ans='B3'; m.hint="💡 تفاعلي: B3. | 📝 كتابي: مدينة تاريخية."; }
-            else if(i===29) { m.uiType = 'MATH_HACK'; m.desc="معادلة الجدار الناري: (10 * 5) + 50."; m.ans='100'; m.hint="💡 تفاعلي: 100. | 📝 كتابي: تذوب لتضيء."; }
-            else if(i===30) { m.uiType = 'BOSS'; m.desc="العرش الذهبي: فعل الـ 3 مفاتيح واكتب GOLDEN."; m.ans='GOLDEN'; m.hint="💡 تفاعلي: GOLDEN | 📝 كتابي: معدن أصفر نفيس."; }
+            else if(i===8) { m.uiType = 'RADAR_ROUNDS'; m.desc="الرادار المعتم: 3 راوندات تصاعدية (الوميض يصير أسرع)."; m.hint="💡 تفاعلي: ركز في مكان الوميض الخاطف. | 📝 كتابي: تقطعه لتفي به."; }
+            else if(i===9) { m.uiType = 'KEYPAD'; m.desc="لوحة الأرقام: أدخل التسلسل 7-3-9."; m.ans='739'; m.hint="💡 تفاعلي: 739. | 📝 كتابي: لغته السكوت."; }
+            else if(i===10) { m.uiType = 'GEARS'; m.desc="التروس الميكانيكية: طابق الأسنان للأعلى."; m.ans=[0,0,0]; m.hint="💡 تفاعلي: دورها كلها لين تصير بوضع عمودي. | 📝 كتابي: قشرتها هشة."; }
+            else if(i===11) { m.uiType = 'MORSE'; m.desc="شفرة مورس: ترجم الومضات واكتب الكود."; m.ans='SOS'; m.hint="💡 تفاعلي: SOS. | 📝 كتابي: تنشفك وتتبلل."; }
+            else if(i===12) { m.uiType = 'HEX'; m.desc="صل الخلايا السداسية لتكوين مسار مستقيم."; m.ans=[3,4,5]; m.hint="💡 تفاعلي: المسار الأوسط بالكامل. | 📝 كتابي: ترسم العالم."; }
+            else if(i===13) { m.uiType = 'WEIGHTS'; m.desc="أوزان الخيمياء: مجموع 140g."; m.data=[40,60,80,20,50]; m.target=140; m.hint="💡 تفاعلي: 60 + 80. | 📝 كتابي: تعرف بها الوقت."; }
+            else if(i===14) { m.uiType = 'SLIDERS'; m.desc="لوحة الألوان: ادمج الأحمر 212 والأخضر 175."; m.data=[{label:'RED',max:255},{label:'GRN',max:255}]; m.ans=[212, 175]; m.hint="💡 تفاعلي: الأحمر 212 والأخضر 175. | 📝 كتابي: يمطر."; }
+            else if(i===15) { m.uiType = 'MAZE'; m.desc="المتاهة العمياء: خطوة غلط ترجعك للصفر."; m.data=36; m.ans=[0,6,12,13,14,20,26]; m.hint="💡 تفاعلي: تحت مرتين، يمين مرتين، تحت مرتين. | 📝 كتابي: صيفي ولذيذ."; }
+            else if(i===16) { m.uiType = 'CRYPTEX'; m.desc="الكريبتكس الأسطواني: فك شفرة كلمة CDE (+2 إزاحة)."; m.ans='EFG'; m.hint="💡 تفاعلي: EFG. | 📝 كتابي: يثبت الأشياء."; }
+            else if(i===17) { m.uiType = 'SHELLS'; m.desc="خفة اليد: 3 راوندات، الكور تزيد وتسرع."; m.hint="💡 تفاعلي: ركز على الكورة اللي تطلع فيها النجمة. | 📝 كتابي: أداة الكتابة."; }
+            else if(i===18) { m.uiType = 'BARCODE'; m.desc="الباركود البصري: ارسم الخطوط الناقصة."; m.ans=[2,5,7]; m.hint="💡 تفاعلي: اضغط العمود الثالث والسادس والثامن. | 📝 كتابي: يتبعك بالشمس."; }
+            else if(i===19) { m.uiType = 'RADIO'; m.desc="موجة التردد: دور البكرة لين تصير الموجة ناعمة (199)."; m.ans=199; m.hint="💡 تفاعلي: التردد 199. | 📝 كتابي: تدل على الشمال."; }
+            else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="إطفاء الأنوار: أطفئ جميع المصابيح الـ 9."; m.data=9; m.hint="💡 تفاعلي: انقر على الزوايا ثم المنتصف. | 📝 كتابي: لا تُرى."; }
+            else if(i===21) { m.uiType = 'ANOMALY'; m.desc="الشذوذ الدقيق: 36 رمز متشابه، واحد فقط يختلف."; m.ans=22; m.hint="💡 تفاعلي: الرمز (𖤌) في الصف الرابع، العمود الخامس. | 📝 كتابي: تخاف من الماء."; }
+            else if(i===22) { m.uiType = 'DNA'; m.desc="شريط DNA: طابق الروابط (A=T, C=G)."; m.ans=['T','G','A','C']; m.hint="💡 تفاعلي: T ثم G ثم A ثم C. | 📝 كتابي: تكبر كلما أخذت منها."; }
+            else if(i===23) { m.uiType = 'PIPES'; m.desc="شبكة الأنابيب: دورها لربط البداية بالنهاية."; m.hint="💡 تفاعلي: خلها كلها خطوط أفقية (━). | 📝 كتابي: يقرصك ببطنك."; }
+            else if(i===24) { m.uiType = 'SLIDING'; m.desc="اللوحة المنزلقة: رتب الأرقام 1-8."; m.ans='123456780'; m.hint="💡 تفاعلي: رتبها تصاعدياً 1 لـ 8 والفراغ بالاخير. | 📝 كتابي: ينادونك به."; }
+            else if(i===25) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: غير الأرقام ليصبح المجموع 15 بكل اتجاه."; m.ans=[8,1,6,3,5,7,4,9,2]; m.hint="💡 تفاعلي: 8-1-6 بالصف الأول، 3-5-7 بالثاني، 4-9-2 بالثالث. | 📝 كتابي: تتركها وراءك."; }
+            else if(i===26) { m.uiType = 'HEATMAP'; m.desc="البصمة الحرارية: أدخل من الأسخن للأبرد."; m.ans=[8,4,9,1]; m.hint="💡 تفاعلي: 8، 4، 9، 1. | 📝 كتابي: قطرات من السماء."; }
+            else if(i===27) { m.uiType = 'MATRIX'; m.desc="النص الساقط: التقط كلمة SOLAR وهي تسقط."; m.hint="💡 تفاعلي: اضغط على كلمة SOLAR الخضراء. | 📝 كتابي: افتح يا..."; }
+            else if(i===28) { m.uiType = 'ELEVATOR'; m.desc="لوحة المصعد: اصعد للأدوار 3، 1، 5."; m.ans=[3,1,5]; m.hint="💡 تفاعلي: اضغط 3 ثم 1 ثم 5. | 📝 كتابي: مدينة تاريخية."; }
+            else if(i===29) { m.uiType = 'INPUT'; m.desc="معادلة جدار الحماية: (10 * 5) + 50."; m.ans='100'; m.hint="💡 تفاعلي: اكتب 100. | 📝 كتابي: تذوب لتضيء."; }
+            else if(i===30) { m.uiType = 'BOSS'; m.desc="MASTER BREACH: فعل المفاتيح واكتب GOLDEN."; m.ans='GOLDEN'; m.hint="💡 تفاعلي: فعل القواطع واكتب GOLDEN | 📝 كتابي: معدن أصفر نفيس."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -235,7 +235,7 @@ class SolarGamesEngine {
         this.setupStage(); this.switchScreen('puzzle');
     }
 
-    // ==== الماستر كود لرسم الـ 30 لعبة بالتفصيل التاريخي ====
+    // المُولد البصري الجبار (يغطي جميع الحالات بدون أي أزرار ميتة)
     setupStage() {
         const p = this.activeGate;
         document.getElementById('int-desc').innerText = p.desc;
@@ -246,7 +246,7 @@ class SolarGamesEngine {
         this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true };
 
         const generateSubmitButton = (callback) => {
-            let btn = document.createElement('button'); btn.className = 'btn-execute'; btn.innerText = 'تأكيد الاختراق'; 
+            let btn = document.createElement('button'); btn.className = 'btn-execute'; btn.innerText = 'تأكيد (Execute)'; 
             btn.onclick = callback; return btn;
         };
 
@@ -334,8 +334,7 @@ class SolarGamesEngine {
                     while(pegs.length < 4) pegs.push('#ff3333'); 
                     
                     pegs.forEach(c => { let peg = document.createElement('div'); peg.className='mm-peg'; peg.style.background=c; pegsContainer.appendChild(peg); });
-                    row.append(txt, pegsContainer);
-                    history.prepend(row); mboxes.forEach(b => b.value = '');
+                    row.append(txt, pegsContainer); history.prepend(row); mboxes.forEach(b => b.value = '');
                 };
                 container.append(inputs, btn, history); innerStage.appendChild(container);
                 break;
@@ -363,52 +362,286 @@ class SolarGamesEngine {
                 innerStage.appendChild(crdGrid);
                 break;
 
-            case 'COMPASS':
-                let cmp = document.createElement('div'); cmp.className = 'compass-dial';
-                let ndl = document.createElement('div'); ndl.className = 'compass-needle';
-                let cnt = document.createElement('div'); cnt.className = 'compass-center';
-                cmp.append(ndl, cnt);
-                let angle = 0;
-                cmp.onclick = () => {
-                    angle = (angle + 45) % 360; cmp.style.transform = `rotate(${angle}deg)`;
-                    if(angle === p.ans) setTimeout(()=>this.winInteractive(), 500);
-                };
-                innerStage.appendChild(cmp);
+            case 'ASTROLABE':
+                let astro = document.createElement('div'); astro.className = 'astrolabe';
+                let r1 = document.createElement('div'); r1.className = 'astro-ring astro-r1'; let m1=document.createElement('div'); m1.className='astro-marker'; r1.appendChild(m1);
+                let r2 = document.createElement('div'); r2.className = 'astro-ring astro-r2'; let m2=document.createElement('div'); m2.className='astro-marker'; r2.appendChild(m2);
+                let r3 = document.createElement('div'); r3.className = 'astro-ring astro-r3'; let m3=document.createElement('div'); m3.className='astro-marker'; r3.appendChild(m3);
+                astro.append(r1, r2, r3); innerStage.appendChild(astro);
+                let angles = [90, 180, 270];
+                [r1, r2, r3].forEach((r, i) => {
+                    r.style.transform = `rotate(${angles[i]}deg)`;
+                    r.onclick = () => {
+                        angles[i] = (angles[i] + 45) % 360;
+                        r.style.transform = `rotate(${angles[i]}deg)`;
+                        if(angles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 500);
+                    };
+                });
                 break;
 
-            case 'STONE_RUNES':
-                let stnWrap = document.createElement('div'); stnWrap.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center;';
-                p.data.forEach((r, i) => {
-                    let btn = document.createElement('div'); btn.className = 'stone-btn'; btn.innerText = r;
-                    btn.onclick = () => {
-                        btn.classList.add('active');
-                        if(p.ans.includes(i)) {
+            case 'RUNES':
+            case 'ANOMALY':
+                let rnWrap = document.createElement('div'); rnWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 60px); gap:10px;';
+                let isAnomaly = p.uiType === 'ANOMALY';
+                let rCount = isAnomaly ? 36 : 16;
+                if(!isAnomaly) rnWrap.style.gridTemplateColumns = 'repeat(4, 70px)';
+                for(let i=0; i<rCount; i++) {
+                    let b = document.createElement('div'); b.className = 'stone-btn'; 
+                    if(isAnomaly) { b.style.width='60px'; b.style.height='60px'; b.style.fontSize='2rem'; b.innerText = (i === p.ans) ? '𖤌' : '𖤍'; }
+                    else { b.innerText = 'Ⱄ'; }
+                    b.onclick = () => { 
+                        if(i === p.ans) this.winInteractive(); else this.failRoom(); 
+                    };
+                    rnWrap.appendChild(b);
+                }
+                innerStage.appendChild(rnWrap);
+                break;
+
+            case 'CRYPTEX':
+                let cryWrap = document.createElement('div'); cryWrap.className = 'cryptex-wrap';
+                this.stageState.chars = ['A','B','C'];
+                for(let i=0; i<3; i++) {
+                    let col = document.createElement('div'); col.className = 'cryptex-col';
+                    let btnUp = document.createElement('div'); btnUp.className='cryp-btn'; btnUp.innerText='▲';
+                    let charBox = document.createElement('div'); charBox.className='cryp-char'; charBox.innerText=this.stageState.chars[i];
+                    let btnDn = document.createElement('div'); btnDn.className='cryp-btn'; btnDn.innerText='▼';
+                    
+                    const updateChar = (dir) => {
+                        let code = this.stageState.chars[i].charCodeAt(0) + dir;
+                        if(code > 90) code = 65; if(code < 65) code = 90;
+                        this.stageState.chars[i] = String.fromCharCode(code);
+                        charBox.innerText = this.stageState.chars[i];
+                    };
+                    btnUp.onclick = () => updateChar(1); btnDn.onclick = () => updateChar(-1);
+                    col.append(btnUp, charBox, btnDn); cryWrap.appendChild(col);
+                }
+                innerStage.appendChild(cryWrap);
+                innerStage.appendChild(generateSubmitButton(() => {
+                    if(this.stageState.chars.join('') === p.ans) this.winInteractive(); else this.failRoom();
+                }));
+                break;
+
+            case 'SHELLS':
+                let shWrap = document.createElement('div'); shWrap.className = 'balls-container';
+                innerStage.appendChild(shWrap);
+                this.stageState.round = 1;
+                
+                const playShells = () => {
+                    shWrap.innerHTML = '';
+                    let ballCount = this.stageState.round === 1 ? 3 : (this.stageState.round === 2 ? 4 : 5);
+                    let balls = [];
+                    let targetIdx = Math.floor(Math.random() * ballCount);
+                    
+                    for(let i=0; i<ballCount; i++) {
+                        let b = document.createElement('div'); b.className = 'shell-ball'; b.style.left = (i * 80) + 'px';
+                        b.dataset.pos = i;
+                        if(i === targetIdx) b.innerText = '⭐';
+                        b.onclick = () => {
+                            if(this.stageState.playing) return;
+                            if(i === targetIdx) {
+                                b.innerText = '⭐'; this.playSound('success'); this.stageState.round++;
+                                if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500);
+                                else setTimeout(()=>playShells(), 1000);
+                            } else { b.innerText = '❌'; this.failRoom(); setTimeout(()=>this.setupStage(), 500); }
+                        };
+                        shWrap.appendChild(b); balls.push(b);
+                    }
+                    
+                    // إخفاء النجمة ثم الخلط
+                    this.stageState.playing = true;
+                    setTimeout(() => {
+                        balls.forEach(b => b.innerText = '');
+                        let shuffles = 0;
+                        let maxShuffles = this.stageState.round * 5 + 5;
+                        let speed = 400 - (this.stageState.round * 50);
+                        
+                        let iv = setInterval(() => {
+                            let i1 = Math.floor(Math.random() * ballCount);
+                            let i2 = Math.floor(Math.random() * ballCount);
+                            let tempLeft = balls[i1].style.left;
+                            balls[i1].style.left = balls[i2].style.left;
+                            balls[i2].style.left = tempLeft;
+                            shuffles++;
+                            if(shuffles > maxShuffles) { clearInterval(iv); this.stageState.playing = false; }
+                        }, speed);
+                    }, 2000);
+                };
+                playShells();
+                break;
+
+            case 'BARCODE':
+                let bcWrap = document.createElement('div'); bcWrap.className = 'barcode-visual';
+                let pattern = [1,0,1,0,0,1,0,1,0,1];
+                this.stageState.arr = [1,0,0,0,0,0,0,0,0,1]; // الحالة الحالية
+                for(let i=0; i<10; i++) {
+                    let bar = document.createElement('div'); bar.className = 'bc-bar';
+                    if(this.stageState.arr[i] === 0) bar.classList.add('missing');
+                    bar.onclick = () => {
+                        bar.classList.toggle('missing');
+                        this.stageState.arr[i] = bar.classList.contains('missing') ? 0 : 1;
+                    };
+                    bcWrap.appendChild(bar);
+                }
+                innerStage.appendChild(bcWrap);
+                innerStage.appendChild(generateSubmitButton(() => {
+                    if(JSON.stringify(this.stageState.arr) === JSON.stringify(pattern)) this.winInteractive(); else this.failRoom();
+                }));
+                break;
+
+            case 'RADIO':
+                let rdWrap = document.createElement('div'); rdWrap.style.width='100%'; rdWrap.style.display='flex'; rdWrap.style.flexDirection='column'; rdWrap.style.alignItems='center';
+                let rWave = document.createElement('div'); rWave.className = 'radio-wave';
+                let rLine = document.createElement('div'); rLine.className = 'wave-line'; rWave.appendChild(rLine);
+                let rKnob = document.createElement('div'); rKnob.className = 'radio-knob';
+                let rTick = document.createElement('div'); rTick.className = 'radio-tick'; rKnob.appendChild(rTick);
+                let rDisp = document.createElement('div'); rDisp.className = 'cyber-display'; rDisp.innerText = '000.0'; rDisp.style.marginTop='20px';
+                
+                let angle = 0;
+                rKnob.onclick = () => {
+                    angle += 15; rKnob.style.transform = `rotate(${angle}deg)`;
+                    let freq = (angle % 360); rDisp.innerText = freq + '.0';
+                    let diff = Math.abs(freq - p.ans);
+                    rLine.style.background = `repeating-linear-gradient(90deg, transparent, transparent ${diff/2}px, var(--gold) ${diff/2}px, var(--gold) ${diff/2 + 2}px)`;
+                    if(freq === p.ans) { rLine.style.background = 'var(--gold)'; setTimeout(()=>this.winInteractive(), 500); }
+                };
+                rdWrap.append(rWave, rKnob, rDisp); innerStage.appendChild(rdWrap);
+                break;
+
+            case 'DNA':
+                let dnaWrap = document.createElement('div'); dnaWrap.className = 'dna-wrap';
+                let bases = ['A','C','G','T'];
+                this.stageState.arr = ['A','A','A','A'];
+                ['T','G','A','C'].forEach((target, i) => {
+                    let row = document.createElement('div'); row.className = 'dna-row';
+                    let left = document.createElement('div'); left.className = 'dna-base dna-fixed'; left.innerText = (target==='T'?'A':(target==='G'?'C':(target==='A'?'T':'G')));
+                    let right = document.createElement('div'); right.className = 'dna-base dna-clickable'; right.innerText = 'A';
+                    right.onclick = () => {
+                        let idx = bases.indexOf(right.innerText);
+                        idx = (idx + 1) % 4; right.innerText = bases[idx];
+                        this.stageState.arr[i] = bases[idx];
+                        if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 300);
+                    };
+                    row.append(left, right); dnaWrap.appendChild(row);
+                });
+                innerStage.appendChild(dnaWrap);
+                break;
+
+            case 'PIPES':
+                let pipeWrap = document.createElement('div'); pipeWrap.className = 'pipes-grid';
+                let pipeChars = ['┗','━','┛','┃','╋','┃','┏','━','┓'];
+                this.stageState.arr = [0,90,0, 90,0,90, 0,90,0];
+                for(let i=0; i<9; i++) {
+                    let cell = document.createElement('div'); cell.className = 'pipe-cell'; cell.innerText = pipeChars[i];
+                    cell.style.transform = `rotate(${this.stageState.arr[i]}deg)`;
+                    cell.onclick = () => {
+                        this.stageState.arr[i] = (this.stageState.arr[i] + 90) % 360;
+                        cell.style.transform = `rotate(${this.stageState.arr[i]}deg)`;
+                        if(this.stageState.arr.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 500);
+                    };
+                    pipeWrap.appendChild(cell);
+                }
+                innerStage.appendChild(pipeWrap);
+                break;
+
+            case 'SLIDING':
+                let pzWrap = document.createElement('div'); pzWrap.className = 'sliding-puzzle';
+                let tiles = [1,2,3,4,5,6,7,0,8]; 
+                const renderPuzzle = () => {
+                    pzWrap.innerHTML = '';
+                    tiles.forEach((t, i) => {
+                        let cell = document.createElement('div'); cell.className = 'slide-tile';
+                        if(t === 0) cell.classList.add('empty'); else cell.innerText = t;
+                        cell.onclick = () => {
+                            let emptyIdx = tiles.indexOf(0);
+                            let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
+                            // Prevent crossing rows
+                            if(emptyIdx%3 === 0 && i === emptyIdx-1) return;
+                            if(emptyIdx%3 === 2 && i === emptyIdx+1) return;
+                            
+                            if(validMoves.includes(i)) {
+                                tiles[emptyIdx] = t; tiles[i] = 0; renderPuzzle();
+                                if(tiles.join('') === p.ans) setTimeout(()=>this.winInteractive(), 300);
+                            }
+                        };
+                        pzWrap.appendChild(cell);
+                    });
+                };
+                renderPuzzle(); innerStage.appendChild(pzWrap);
+                break;
+
+            case 'MAGIC_SQUARE':
+                let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:5px;';
+                let msGrid = [8,1,6, 3,0,7, 4,9,2];
+                for(let i=0; i<9; i++) {
+                    let cell = document.createElement('div'); cell.className = 'box-lux'; 
+                    cell.innerText = msGrid[i];
+                    if(i===4) {
+                        cell.style.color='var(--gold)'; cell.style.borderColor='var(--gold)';
+                        cell.onclick = () => {
+                            msGrid[i] = msGrid[i] >= 9 ? 1 : msGrid[i]+1; cell.innerText = msGrid[i];
+                            if(msGrid[i] == p.ans) setTimeout(()=>this.winInteractive(), 300);
+                        };
+                    }
+                    msWrap.appendChild(cell);
+                }
+                innerStage.appendChild(msWrap);
+                break;
+
+            case 'HEATMAP':
+                let htWrap = document.createElement('div'); htWrap.className = 'heat-grid';
+                let hmColors = {8:'#ff0000', 4:'#ff8800', 9:'#ffcc00', 1:'#ffff66'}; 
+                [1,2,3,4,5,6,7,8,9].forEach(n => {
+                    let b = document.createElement('button'); b.className = 'heat-btn'; b.innerText = n;
+                    b.style.background = hmColors[n] ? hmColors[n] : '#333';
+                    b.onclick = () => {
+                        this.stageState.arr.push(n);
+                        if(this.stageState.arr.length === p.ans.length) {
+                            if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive();
+                            else { this.failRoom(); this.setupStage(); }
+                        }
+                    };
+                    htWrap.appendChild(b);
+                });
+                innerStage.appendChild(htWrap);
+                break;
+
+            case 'MATRIX':
+                let mxWrap = document.createElement('div'); mxWrap.className = 'matrix-screen';
+                innerStage.appendChild(mxWrap);
+                this.stageState.timer = setInterval(() => {
+                    let word = document.createElement('div'); word.className = 'matrix-word';
+                    let isTarget = Math.random() > 0.8;
+                    word.innerText = isTarget ? p.ans : (Math.random().toString(36).substring(2, 7).toUpperCase());
+                    word.style.left = Math.random() * 90 + '%'; word.style.top = '-20px';
+                    if(isTarget) word.style.color = '#fff'; // تلميح بسيط للعين
+                    word.onclick = () => { if(isTarget) this.winInteractive(); else this.failRoom(); };
+                    mxWrap.appendChild(word);
+                    let pos = -20;
+                    let fall = setInterval(() => {
+                        pos += 5; word.style.top = pos + 'px';
+                        if(pos > 200) { clearInterval(fall); word.remove(); }
+                    }, 50);
+                }, 1000);
+                break;
+
+            case 'ELEVATOR':
+                let elWrap = document.createElement('div'); elWrap.className = 'elevator-panel';
+                [1,2,3,4,5,6].forEach(n => {
+                    let b = document.createElement('div'); b.className = 'elevator-btn'; b.innerText = n;
+                    b.onclick = () => {
+                        b.classList.add('active'); setTimeout(()=>b.classList.remove('active'), 300);
+                        if(p.ans[this.stageState.clicks] === n) {
                             this.stageState.clicks++;
                             if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
                         } else { this.failRoom(); this.setupStage(); }
                     };
-                    stnWrap.appendChild(btn);
+                    elWrap.appendChild(b);
                 });
-                innerStage.appendChild(stnWrap);
-                break;
-
-            case 'SCALES':
-                let sclWrap = document.createElement('div'); sclWrap.className = 'roman-scale';
-                p.data.forEach((w) => {
-                    let btn = document.createElement('div'); btn.className = 'scale-weight'; btn.innerText = w;
-                    btn.style.height = (w + 40) + 'px';
-                    btn.onclick = () => {
-                        btn.classList.toggle('active');
-                        let sum = Array.from(sclWrap.children).reduce((acc, el, idx) => acc + (el.classList.contains('active') ? p.data[idx] : 0), 0);
-                        if(sum === p.target) setTimeout(()=>this.winInteractive(), 300);
-                    };
-                    sclWrap.appendChild(btn);
-                });
-                innerStage.appendChild(sclWrap);
+                innerStage.appendChild(elWrap);
                 break;
 
             case 'RADAR_ROUNDS':
-                let rdWrap = document.createElement('div'); rdWrap.style.cssText = 'display:grid; gap:2px; background:rgba(0,255,100,0.1); border:2px solid #00ff66; padding:5px; border-radius:50%; width:300px; height:300px; overflow:hidden; position:relative;';
+                let rdWrap = document.createElement('div'); rdWrap.style.cssText = 'display:grid; gap:2px; background:rgba(0,255,100,0.1); border:2px solid #00ff66; padding:5px; border-radius:50%; width:300px; height:300px; overflow:hidden; position:relative; box-shadow:inset 0 0 20px rgba(0,255,100,0.2);';
                 innerStage.appendChild(rdWrap);
                 this.stageState.round = 1;
                 const startRadarRound = () => {
@@ -421,9 +654,7 @@ class SolarGamesEngine {
                         let c = document.createElement('div'); c.style.border='1px solid rgba(0,255,100,0.2)'; c.style.cursor='pointer';
                         c.onclick = () => {
                             if(i === targetIdx) {
-                                clearInterval(this.stageState.timer);
-                                this.playSound('click');
-                                this.stageState.round++;
+                                clearInterval(this.stageState.timer); this.playSound('click'); this.stageState.round++;
                                 if(this.stageState.round > 3) this.winInteractive(); else startRadarRound();
                             } else { clearInterval(this.stageState.timer); this.failRoom(); this.setupStage(); }
                         };
@@ -438,228 +669,8 @@ class SolarGamesEngine {
                 startRadarRound();
                 break;
 
-            case 'ASTRO_CLOCK':
-                let astWrap = document.createElement('div'); astWrap.className = 'astro-container';
-                let r1 = document.createElement('div'); r1.className = 'astro-ring astro-ring-1'; r1.innerHTML = '<div class="astro-icon">☀️</div>';
-                let r2 = document.createElement('div'); r2.className = 'astro-ring astro-ring-2'; r2.innerHTML = '<div class="astro-icon">🌙</div>';
-                let r3 = document.createElement('div'); r3.className = 'astro-ring astro-ring-3'; r3.innerHTML = '<div class="astro-icon">⭐</div>';
-                astWrap.append(r1, r2, r3); innerStage.appendChild(astWrap);
-                let angles = [90, 180, 270];
-                [r1, r2, r3].forEach((r, i) => {
-                    r.style.transform = `rotate(${angles[i]}deg)`;
-                    r.onclick = () => {
-                        angles[i] = (angles[i] + 45) % 360;
-                        r.style.transform = `rotate(${angles[i]}deg)`;
-                        if(angles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 300);
-                    };
-                });
-                break;
-
-            case 'PAPYRUS':
-                let papy = document.createElement('div'); papy.className = 'papyrus-panel'; papy.innerText = '𓂀 𓁹 𓋹 𓍹 𓎬 𓏤';
-                innerStage.appendChild(papy);
-                createInputBlock('Translate Hieroglyphs...', p.ans);
-                break;
-
-            case 'NEON_NODES':
-                let neonWrap = document.createElement('div'); neonWrap.className = 'neon-board';
-                for(let i=0; i<p.data; i++) {
-                    let n = document.createElement('div'); n.className = 'neon-node'; n.innerText = i;
-                    n.onclick = () => {
-                        n.classList.toggle('active');
-                        let actives = Array.from(neonWrap.children).map((x,idx)=>x.classList.contains('active')?idx:-1).filter(x=>x!==-1);
-                        if(actives.length === p.ans.length && p.ans.every(a=>actives.includes(a))) setTimeout(()=>this.winInteractive(), 300);
-                    };
-                    neonWrap.appendChild(n);
-                }
-                innerStage.appendChild(neonWrap);
-                break;
-
-            case 'JUGS':
-                let jugWrap = document.createElement('div'); jugWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px;';
-                let caps = [8, 5, 3];
-                let vols = [8, 0, 0];
-                let selected = -1;
-                const renderJugs = () => {
-                    jugWrap.innerHTML = '';
-                    caps.forEach((cap, i) => {
-                        let j = document.createElement('div'); j.className = 'wood-barrel'; j.style.height = (cap * 20 + 40) + 'px';
-                        if(i === selected) j.style.borderColor = 'var(--gold)';
-                        let w = document.createElement('div'); w.className = 'water-fill'; w.style.height = (vols[i] / cap * 100) + '%';
-                        j.appendChild(w);
-                        let lbl = document.createElement('div'); lbl.style.cssText = 'position:absolute; width:100%; text-align:center; color:#fff; font-weight:bold; top:10px;'; lbl.innerText = `${vols[i]}/${cap}`;
-                        j.appendChild(lbl);
-                        j.onclick = () => {
-                            if(selected === -1) { if(vols[i] > 0) selected = i; renderJugs(); }
-                            else {
-                                if(selected !== i) {
-                                    let transfer = Math.min(vols[selected], caps[i] - vols[i]);
-                                    vols[selected] -= transfer; vols[i] += transfer;
-                                }
-                                selected = -1; renderJugs();
-                                if(vols.includes(4)) setTimeout(()=>this.winInteractive(), 300);
-                            }
-                        };
-                        jugWrap.appendChild(j);
-                    });
-                };
-                renderJugs(); innerStage.appendChild(jugWrap);
-                break;
-
-            case 'SLIDERS':
-                let slWrap = document.createElement('div'); slWrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap:10px;';
-                let slDisplay = document.createElement('div'); slDisplay.className = 'cyber-display'; slDisplay.innerText = '000'; slWrap.appendChild(slDisplay);
-                let sls = [];
-                p.data.forEach(d => {
-                    let r = document.createElement('div'); r.className = 'cyber-slider-wrap';
-                    r.innerHTML = `<span class="cyber-slider-label">${d.label}</span>`;
-                    let s = document.createElement('input'); s.type = 'range'; s.min = 0; s.max = d.max; s.value = 0; s.className = 'cyber-slider-lux';
-                    s.oninput = () => { slDisplay.innerText = Math.floor(sls.reduce((a,b)=>a+parseInt(b.value),0)/sls.length).toString().padStart(3,'0'); };
-                    r.appendChild(s); slWrap.appendChild(r); sls.push(s);
-                });
-                slWrap.appendChild(generateSubmitButton(() => {
-                    let vals = sls.map(i => parseInt(i.value));
-                    let correct = vals.every((v, idx) => Math.abs(v - p.ans[idx]) <= (p.data[idx].max * 0.05));
-                    if(correct) this.winInteractive(); else this.failRoom();
-                }));
-                innerStage.appendChild(slWrap);
-                break;
-
-            case 'SLIDING_PUZZLE':
-                let pzWrap = document.createElement('div'); pzWrap.className = 'sliding-puzzle';
-                let tiles = [1,2,3,4,5,6,7,0,8]; // 0 هو الفراغ
-                const renderPuzzle = () => {
-                    pzWrap.innerHTML = '';
-                    tiles.forEach((t, i) => {
-                        let cell = document.createElement('div'); cell.className = 'slide-tile';
-                        if(t === 0) cell.classList.add('empty'); else cell.innerText = t;
-                        cell.onclick = () => {
-                            let emptyIdx = tiles.indexOf(0);
-                            let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
-                            if(validMoves.includes(i)) {
-                                tiles[emptyIdx] = t; tiles[i] = 0; renderPuzzle();
-                                if(tiles.join('') === '123456780') setTimeout(()=>this.winInteractive(), 300);
-                            }
-                        };
-                        pzWrap.appendChild(cell);
-                    });
-                };
-                renderPuzzle(); innerStage.appendChild(pzWrap);
-                break;
-
-            case 'BLIND_MAZE':
-                let bmWrap = document.createElement('div'); bmWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 50px); gap:2px; background:#111; padding:5px; border:2px solid #444;';
-                for(let i=0; i<p.data; i++) {
-                    let c = document.createElement('div'); c.style.cssText = 'height:50px; background:#050505; cursor:pointer;';
-                    c.onclick = () => {
-                        if(p.ans[this.stageState.clicks] === i) {
-                            c.style.background = 'var(--gold)'; this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    bmWrap.appendChild(c);
-                }
-                innerStage.appendChild(bmWrap);
-                break;
-
-            case 'SHELLS':
-                let shWrap = document.createElement('div'); shWrap.style.cssText = 'display:flex; gap:30px; margin-bottom:30px;';
-                let shells = [];
-                for(let i=0; i<p.data; i++) {
-                    let s = document.createElement('div'); s.style.cssText = 'width:80px; height:100px; background:linear-gradient(#D4AF37, #8a7322); border-radius: 10px 10px 0 0; cursor:pointer; display:flex; justify-content:center; align-items:flex-end; padding-bottom:10px; font-size:2rem; transition:0.3s; box-shadow:0 10px 20px #000;';
-                    s.innerText = '?';
-                    s.onclick = () => {
-                        if(i === p.ans) { s.innerText = '🔑'; setTimeout(()=>this.winInteractive(), 500); }
-                        else { s.innerText = '❌'; setTimeout(()=> {this.failRoom(); this.setupStage();}, 500); }
-                    };
-                    shWrap.appendChild(s); shells.push(s);
-                }
-                innerStage.appendChild(shWrap);
-                // وهم حركة سريعة
-                let moveCount = 0;
-                let iv = setInterval(() => {
-                    shells.forEach(s => s.style.transform = `translateY(${Math.random() * -20}px)`);
-                    moveCount++; if(moveCount > 10) { clearInterval(iv); shells.forEach(s => s.style.transform = 'translateY(0)'); }
-                }, 200);
-                break;
-
-            case 'LIGHTS_OUT':
-                let loWrap = document.createElement('div'); loWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:5px;';
-                let cells = [];
-                for(let i=0; i<p.data; i++) {
-                    let c = document.createElement('div'); c.className = 'simon-box pulse'; 
-                    c.onclick = () => {
-                        c.classList.toggle('pulse');
-                        let r = Math.floor(i/3), cl = i%3;
-                        if(r > 0) cells[i-3].classList.toggle('pulse'); if(r < 2) cells[i+3].classList.toggle('pulse');
-                        if(cl > 0) cells[i-1].classList.toggle('pulse'); if(cl < 2) cells[i+1].classList.toggle('pulse');
-                        if(cells.every(cell => !cell.classList.contains('pulse'))) setTimeout(() => this.winInteractive(), 300);
-                    };
-                    cells.push(c); loWrap.appendChild(c);
-                }
-                innerStage.appendChild(loWrap);
-                break;
-
-            case 'ANOMALY_RUNES':
-                let anWrap = document.createElement('div'); anWrap.style.cssText = 'display:grid; grid-template-columns:repeat(5, 60px); gap:10px;';
-                for(let i=0; i<p.data; i++) {
-                    let b = document.createElement('div'); b.className = 'stone-btn'; b.style.width='60px'; b.style.height='60px'; b.style.fontSize='1.5rem';
-                    b.innerText = (i === p.ans) ? 'Ⱄ' : 'Ⱃ';
-                    b.onclick = () => { if(i === p.ans) this.winInteractive(); else this.failRoom(); };
-                    anWrap.appendChild(b);
-                }
-                innerStage.appendChild(anWrap);
-                break;
-
-            case 'DPAD_MAZE':
-                let dpWrap = document.createElement('div'); dpWrap.style.cssText = 'display:grid; grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px 60px; gap:5px;';
-                let btnUp = document.createElement('div'); btnUp.className='stone-btn'; btnUp.innerText='⬆️'; btnUp.style.gridColumn='2';
-                let btnL = document.createElement('div'); btnL.className='stone-btn'; btnL.innerText='⬅️'; btnL.style.gridRow='2'; btnL.style.gridColumn='1';
-                let btnR = document.createElement('div'); btnR.className='stone-btn'; btnR.innerText='➡️'; btnR.style.gridRow='2'; btnR.style.gridColumn='3';
-                let btnD = document.createElement('div'); btnD.className='stone-btn'; btnD.innerText='⬇️'; btnD.style.gridRow='3'; btnD.style.gridColumn='2';
-                let btns = [btnUp, btnD, btnL, btnR];
-                btns.forEach((b, i) => {
-                    b.onclick = () => {
-                        if(p.ans[this.stageState.clicks] === i) {
-                            b.style.background = 'var(--gold)'; setTimeout(()=>b.style.background='#3d3b38', 200);
-                            this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    dpWrap.appendChild(b);
-                });
-                innerStage.appendChild(dpWrap);
-                break;
-
-            case 'HEATMAP':
-                let hmWrap = document.createElement('div'); hmWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:10px;';
-                let hmColors = {8:'#ff0000', 4:'#ff8800', 9:'#ffcc00', 1:'#ffff66'}; // ترتيب الحرارة
-                [1,2,3,4,5,6,7,8,9].forEach(n => {
-                    let b = document.createElement('div'); b.className = 'box-lux'; b.innerText = n;
-                    if(hmColors[n]) b.style.boxShadow = `inset 0 0 30px ${hmColors[n]}`;
-                    b.onclick = () => { /* للزينة، الإجابة في الـ Input */ };
-                    hmWrap.appendChild(b);
-                });
-                innerStage.appendChild(hmWrap);
-                createInputBlock('أدخل الرمز...', p.ans);
-                break;
-
-            case 'CAESAR':
-            case 'RADIO':
-            case 'BARCODE':
-            case 'DNA':
-            case 'KEYPAD':
-            case 'MAGIC_SQUARE':
-            case 'MATRIX':
-            case 'ELEVATOR':
-            case 'MATH_HACK':
-                let txtDisp = document.createElement('div'); txtDisp.className='cyber-display'; txtDisp.innerText = p.desc.split(':')[0];
-                innerStage.appendChild(txtDisp);
-                createInputBlock('ENTER DECODE SEQUENCE...', p.ans);
-                break;
-
             case 'BOSS':
-                let bWrap = document.createElement('div'); bWrap.style.display='flex'; bWrap.style.gap='20px'; bWrap.style.marginBottom='30px';
+                let bWrap = document.createElement('div'); bWrap.style.cssText='display:flex; gap:20px; margin-bottom:30px;';
                 for(let i=0; i<3; i++) { let sw = document.createElement('div'); sw.className='switch-lux'; sw.innerText='OFF'; sw.onclick=()=> { sw.classList.toggle('active'); sw.innerText = sw.classList.contains('active')?'ON':'OFF'; }; bWrap.appendChild(sw); }
                 let bInp = document.createElement('input'); bInp.type='text'; bInp.className='cyber-input'; bInp.placeholder='MASTER PASSWORD';
                 let bBtn = document.createElement('button'); bBtn.className='btn-execute'; bBtn.innerText='🔥 INITIATE MASTER HACK 🔥'; bBtn.style.background='#ff0000'; bBtn.style.color='#fff'; bBtn.style.borderColor='#fff';
@@ -668,6 +679,10 @@ class SolarGamesEngine {
                     if(allSwitchesOn && bInp.value.trim().toUpperCase() === p.ans) this.winInteractive(); else this.failRoom();
                 };
                 innerStage.append(bWrap, bInp, bBtn);
+                break;
+
+            default:
+                createInputBlock('ENTER DECODE SEQUENCE...', p.ans || '');
                 break;
         }
     }
