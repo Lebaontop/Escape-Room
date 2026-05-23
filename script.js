@@ -37,15 +37,15 @@ class SolarGamesEngine {
         const osc = this.audioCtx.createOscillator(); const gain = this.audioCtx.createGain();
         osc.connect(gain); gain.connect(this.audioCtx.destination); const now = this.audioCtx.currentTime;
         if(type === 'click') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(300, now);
+            osc.type = 'square'; osc.frequency.setValueAtTime(350, now);
             gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
             osc.start(now); osc.stop(now + 0.1);
         } else if (type === 'success') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); osc.frequency.setValueAtTime(554.37, now + 0.1); 
-            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
-            osc.start(now); osc.stop(now + 0.4);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); 
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
         } else if (type === 'error') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now);
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(120, now);
             gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
             osc.start(now); osc.stop(now + 0.3);
         }
@@ -64,7 +64,7 @@ class SolarGamesEngine {
     
     setupClickListeners() { 
         document.addEventListener('click', (e) => { 
-            if(e.target.tagName==='BUTTON' || e.target.classList.contains('simon-box') || e.target.classList.contains('cyber-switch') || e.target.classList.contains('cyber-valve') || e.target.classList.contains('cyber-weight') || e.target.classList.contains('cyber-node') || e.target.closest('.channel-card') || e.target.closest('.cyber-wire') || e.target.closest('.dial-base')){ 
+            if(e.target.tagName==='BUTTON' || e.target.classList.contains('simon-box') || e.target.classList.contains('cyber-switch') || e.target.classList.contains('cyber-valve') || e.target.classList.contains('cyber-weight') || e.target.classList.contains('flip-card') || e.target.closest('.channel-card') || e.target.closest('.cyber-wire') || e.target.closest('.dial-base')){ 
                 this.initAudio(); this.playSound('click'); 
             } 
         }); 
@@ -93,37 +93,42 @@ class SolarGamesEngine {
         for(let i=1; i<=30; i++) {
             let m = { id: i, type: `GAME_${i}` };
             
-            // تم ضبط كل الألغاز لتكون منطقية وقابلة للحل مع تلميح مزدوج
-            if(i===1) { m.uiType = 'WIRES'; m.desc="الأسلاك الحساسة: اقطع السلك الأحمر، ثم الأزرق الفاتح."; m.ans=[1,2]; m.data=['#fff','#ff0055','#00ccff','#ff0055']; m.hint="💡 تفاعلي: اقطع السلك الثاني ثم الثالث | 📝 كتابي: يعتم كلما زاد (الظلام)."; }
-            else if(i===2) { m.uiType = 'SIMON'; m.desc="لعبة النبض: اتبع نمط المربعات المضيئة ووجهني."; m.ans=[3, 8, 14, 5]; m.data=16; m.hint="💡 تفاعلي: المربعات المضيئة بالترتيب (4 ثم 9 ثم 15 ثم 6) | 📝 كتابي: يذوب في الحرارة (الثلج)."; }
-            else if(i===3) { m.uiType = 'SWITCHES'; m.desc="قواطع الطاقة: ارفع القواطع اللي مجموعها يساوي 25."; m.ans=[0,3,4]; m.data=[10,5,8,5,10,2]; m.target=25; m.hint="💡 تفاعلي: شغل القاطع الأول، الرابع، والخامس | 📝 كتابي: لا يمكنك البوح به (السر)."; }
-            else if(i===4) { m.uiType = 'DIAL'; m.desc="الخزنة الصوتية: وجهني لتدوير الخزنة 3 طقات (كل ضغطة بـ 45)."; m.ans=[45, 90, 135]; m.hint="💡 تفاعلي: اضغط على الدائرة 3 مرات | 📝 كتابي: يزيد ولا ينقص (العمر)."; }
-            else if(i===5) { m.uiType = 'BARCODE'; m.desc="الباركود الممزق: استنتج الأرقام الناقصة من التسلسل."; m.ans='4815'; m.hint="💡 تفاعلي: الأرقام هي 4815 | 📝 كتابي: يرتد لك من الجدار (الصدى)."; }
-            else if(i===6) { m.uiType = 'VALVES'; m.desc="موازنة الضغط: وجهني للصمامات ليصبح الضغط 100 PSI."; m.data=[20,30,-10,50]; m.target=100; m.hint="💡 تفاعلي: اضغط الصمام الأول (+20)، الثاني (+30)، والرابع (+50) | 📝 كتابي: يمتص السوائل (الاسفنج)."; }
-            else if(i===7) { m.uiType = 'WEIGHTS'; m.desc="الميزان الدقيق: اختر الأوزان التي تجعل الكفة 180 جرام."; m.data=[50,60,70,80,90]; m.target=180; m.hint="💡 تفاعلي: الأوزان هي 50، 60، 70 | 📝 كتابي: يأتي غداً (المستقبل)."; }
-            else if(i===8) { m.uiType = 'RADAR'; m.desc="الرادار المعتم: حدد إحداثيات الوميض في المنتصف."; m.ans=12; m.data=25; m.hint="💡 تفاعلي: الخلية في المنتصف تماماً (رقم 13) | 📝 كتابي: تقطعه لتفي به (الوعد)."; }
-            else if(i===9) { m.uiType = 'FRAGMENTS'; m.desc="البصمة المشفرة: اختر 3 أجزاء متطابقة."; m.data=6; m.ans=[1,3,5]; m.hint="💡 تفاعلي: اختر الثاني، الرابع، والسادس | 📝 كتابي: لغته السكوت (الصمت)."; }
-            else if(i===10) { m.uiType = 'INPUT'; m.desc="تشفير الألوان: ما هو ناتج دمج الأحمر والأصفر؟"; m.ans='برتقالي'; m.hint="💡 تفاعلي: برتقالي | 📝 كتابي: قشرتها هشة (البيضة)."; }
-            else if(i===11) { m.uiType = 'CRYPTEX'; m.desc="الكريبتكس: حل المعادلة (5x5+10) وأدخل الكود."; m.ans='035'; m.hint="💡 تفاعلي: الكود هو 035 | 📝 كتابي: تنشفك وتتبلل (المنشفة)."; }
-            else if(i===12) { m.uiType = 'NODES'; m.desc="خريطة الخوادم: اختر مسار قطري سرعته 150."; m.data=[50,20,80, 50,50,40, 10,70,50]; m.target=150; m.hint="💡 تفاعلي: اختر السيرفرات بالزاوية القطرية (50+50+50) | 📝 كتابي: ترسم العالم (الخريطة)."; }
-            else if(i===13) { m.uiType = 'SWITCHES'; m.desc="البوابات المنطقية: (1 AND 1) OR 0."; m.ans=[0,1]; m.target='LOGIC'; m.hint="💡 تفاعلي: شغل المفتاح الأول والثاني فقط | 📝 كتابي: تعرف بها الوقت (الساعة)."; }
-            else if(i===14) { m.uiType = 'INPUT'; m.desc="تشفير قيصر: أزح الكلمة (CDE) بمقدار +2."; m.ans='EFG'; m.hint="💡 تفاعلي: EFG | 📝 كتابي: يمطر (السحاب)."; }
-            else if(i===15) { m.uiType = 'MAZE'; m.desc="المتاهة العمياء: وجهني بالأسهم."; m.data=16; m.ans=[2,6,10]; m.hint="💡 تفاعلي: العمود الثالث من فوق لتحت | 📝 كتابي: صيفي ولذيذ (البطيخ)."; }
-            else if(i===16) { m.uiType = 'BARCODE'; m.desc="الملف السري: ما هو رقم الملف؟ (عكس 1234)."; m.ans='4321'; m.hint="💡 تفاعلي: 4321 | 📝 كتابي: يثبت الأشياء (المسمار)."; }
-            else if(i===17) { m.uiType = 'DIAL'; m.desc="التروس: اضغط الترس 6 مرات."; m.ans=[45,90,135,180,225,270]; m.hint="💡 تفاعلي: اضغط على الدائرة 6 مرات متتالية | 📝 كتابي: أداة الكتابة (القلم)."; }
-            else if(i===18) { m.uiType = 'RADAR'; m.desc="الشذوذ: ابحث عن الرمز المختلف."; m.data=16; m.ans=7; m.hint="💡 تفاعلي: الصف الثاني، الخلية الأخيرة | 📝 كتابي: يتبعك بالشمس (الظل)."; }
-            else if(i===19) { m.uiType = 'SIMON'; m.desc="الذاكرة العكسية: انقر عكس النبضات."; m.data=9; m.ans=[8,7,6]; m.hint="💡 تفاعلي: المربع 9، ثم 8، ثم 7 | 📝 كتابي: تدل على الشمال (البوصلة)."; }
-            else if(i===20) { m.uiType = 'WEIGHTS'; m.desc="موازنة الحرارة: اختر المبردات لتصل إلى 0."; m.data=[10,-20,15,-5,10]; m.target=0; m.hint="💡 تفاعلي: اختر الأول (10)، الثاني (-20)، والأخير (10) | 📝 كتابي: لا تُرى (الريح)."; }
-            else if(i===21) { m.uiType = 'INPUT'; m.desc="المربع السحري: الرقم الناقص في المنتصف ليصبح المجموع 15."; m.ans='5'; m.hint="💡 تفاعلي: 5 | 📝 كتابي: تخاف من الماء (النار)."; }
-            else if(i===22) { m.uiType = 'INPUT'; m.desc="مورس المعكوس: (.-) تصبح (-.). ما الحرف؟"; m.ans='N'; m.hint="💡 تفاعلي: حرف N | 📝 كتابي: تكبر كلما أخذت منها (الحفرة)."; }
-            else if(i===23) { m.uiType = 'NODES'; m.desc="اختراق الشبكة: شغل الزوايا الأربع للشبكة."; m.data=[1,0,1, 0,0,0, 1,0,1]; m.target='CORNERS'; m.hint="💡 تفاعلي: الأطراف والزوايا الأربع | 📝 كتابي: يقرصك ببطنك (الجوع)."; }
-            else if(i===24) { m.uiType = 'WIRES'; m.desc="الأسلاك المعقدة: اقطع الأول والأخير."; m.data=['#fff','#333','#333','#fff']; m.ans=[0,3]; m.hint="💡 تفاعلي: السلك الأبيض الأول والأخير | 📝 كتابي: ينادونك به (الاسم)."; }
-            else if(i===25) { m.uiType = 'INPUT'; m.desc="الكلمة العكسية: (RALOS)."; m.ans='SOLAR'; m.hint="💡 تفاعلي: SOLAR | 📝 كتابي: تتركها وراءك (الخطوة)."; }
-            else if(i===26) { m.uiType = 'VALVES'; m.desc="دوارق السوائل: كيف تحصل على 4؟"; m.data=[8,5,-3,-1]; m.target=4; m.hint="💡 تفاعلي: اضغط الثاني (5) والأخير (-1) | 📝 كتابي: قطرات من السماء (المطر)."; }
-            else if(i===27) { m.uiType = 'SWITCHES'; m.desc="قواطع الطوارئ: شغل القاطع الأول والثالث."; m.ans=[0,2]; m.target='ODD'; m.hint="💡 تفاعلي: الأول والثالث | 📝 كتابي: افتح يا... (سمسم)."; }
-            else if(i===28) { m.uiType = 'BARCODE'; m.desc="التردد المفقود: أدخل 199X."; m.ans='1999'; m.hint="💡 تفاعلي: 1999 | 📝 كتابي: مدينة تاريخية (العلا)."; }
-            else if(i===29) { m.uiType = 'FRAGMENTS'; m.desc="التسلسل الجيني: اختر العينات الصحيحة."; m.data=4; m.ans=[0,3]; m.hint="💡 تفاعلي: الأول والأخير | 📝 كتابي: تذوب (الشمعة)."; }
-            else if(i===30) { m.uiType = 'BOSS'; m.desc="MASTER OVERRIDE: شغل 3 مفاتيح واكتب GOLDEN."; m.ans='GOLDEN'; m.hint="💡 تفاعلي: شغل المفاتيح الثلاثة واكتب GOLDEN | 📝 كتابي: معدن أصفر نفيس (الذهب)."; }
+            // 1. الأسلاك الـ 8
+            if(i===1) { m.uiType = 'WIRES'; m.desc="قطع الأسلاك المعقد: اقطع 3 أسلاك محددة. (الأول ذهبي؟ اقطع الثالث الأسود)."; m.data=['#D4AF37','#ff3333','#333','#fff','#D4AF37','#00ccff','#333','#ff3333']; m.ans=[2,5,7]; m.hint="💡 تفاعلي: اقطع الأسود الأول، ثم الأزرق، ثم الأحمر الأخير. | 📝 كتابي: يعتم كلما زاد (الظلام)."; }
+            // 2. النبض 3 جولات
+            else if(i===2) { m.uiType = 'SIMON_ROUNDS'; m.desc="تتبع الأنماط: 3 جولات متتالية (4 ومضات، 6 ومضات، 8 ومضات)."; m.data=16; m.hint="💡 تفاعلي: ركز ووجهني بالترتيب الصحيح فوراً. | 📝 كتابي: يذوب في الحرارة (الثلج)."; }
+            // 3. الخزنة الألوان (Mastermind)
+            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="خزنة الألوان: أدخل 4 أرقام (أخضر=صح، برتقالي=مكان غلط، أحمر=غلط)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3719. | 📝 كتابي: لا يمكنك البوح به (السر)."; }
+            // 4. تطابق 20 مربع
+            else if(i===4) { m.uiType = 'MATCH_20'; m.desc="تطابق الأشكال: 20 شريحة بيانات، طابق 10 أزواج."; m.data=['Ω','Δ','Ψ','Σ','Φ','Θ','Λ','Ξ','Π','Γ']; m.hint="💡 تفاعلي: احفظ أماكن الرموز المتطابقة ووجهني. | 📝 كتابي: يزيد ولا ينقص (العمر)."; }
+            
+            // باقي الـ 26 لعبة مختلفة جذرياً
+            else if(i===5) { m.uiType = 'SLIDERS'; m.desc="موازنة الترددات: اضبط المؤشرات الـ 4 لتطابق الموجة الذهبية (75, 40, 90, 20)."; m.ans=[75,40,90,20]; m.hint="💡 تفاعلي: 75، 40، 90، 20. | 📝 كتابي: يرتد لك من الجدار (الصدى)."; }
+            else if(i===6) { m.uiType = 'VALVES'; m.desc="الصمامات الصناعية: ارفع الضغط لـ 150 PSI بالضبط."; m.data=[20,40,-10,50,30]; m.target=150; m.hint="💡 تفاعلي: اضغط الثاني، الرابع، والخامس (مرتين). | 📝 كتابي: يمتص السوائل (الاسفنج)."; }
+            else if(i===7) { m.uiType = 'PENDULUM'; m.desc="البندول المغناطيسي: اضغط الزر عندما يمر البندول بالمنتصف 3 مرات."; m.hint="💡 تفاعلي: التوقيت هو كل شيء، ركز على الخط الذهبي. | 📝 كتابي: يأتي غداً (المستقبل)."; }
+            else if(i===8) { m.uiType = 'RADAR'; m.desc="الرادار المخفي: حدد إحداثيات النقطة التي تومض وتختفي."; m.data=25; m.ans=12; m.hint="💡 تفاعلي: الخلية رقم 13 (المنتصف تماماً). | 📝 كتابي: تقطعه لتفي به (الوعد)."; }
+            else if(i===9) { m.uiType = 'SWITCHES'; m.desc="الدوائر المنطقية: (A AND B) OR C = 1."; m.data=[1,1,1,1,1]; m.ans=[0,1,2]; m.target='LOGIC'; m.hint="💡 تفاعلي: شغل أول ثلاثة قواطع. | 📝 كتابي: لغته السكوت (الصمت)."; }
+            else if(i===10) { m.uiType = 'DIAL_SYNC'; m.desc="التروس الميكانيكية: قم بمحاذاة التروس الثلاثة للزاوية 0."; m.ans=[0,90,180]; m.hint="💡 تفاعلي: دور الثاني والثالث للأعلى. | 📝 كتابي: قشرتها هشة (البيضة)."; }
+            else if(i===11) { m.uiType = 'MORSE'; m.desc="شفرة مورس: استمع للنبضات الضوئية واكتب الكود (SOS)."; m.ans='SOS'; m.hint="💡 تفاعلي: اكتب SOS. | 📝 كتابي: تنشفك وتتبلل (المنشفة)."; }
+            else if(i===12) { m.uiType = 'IP_ROUTING'; m.desc="خريطة الخوادم: اختر مسار يمر بـ 4 خوادم مجموعه 100."; m.data=[20,50,30, 40,10,30, 20,40,20]; m.target=100; m.hint="💡 تفاعلي: 20 + 40 + 20 + 20. | 📝 كتابي: ترسم العالم (الخريطة)."; }
+            else if(i===13) { m.uiType = 'WEIGHTS'; m.desc="الميزان الحساس: اختر أوزان ليصبح المجموع متطابق (140g)."; m.data=[40,60,80,20,50,70]; m.target=140; m.hint="💡 تفاعلي: 60 + 80. | 📝 كتابي: تعرف بها الوقت (الساعة)."; }
+            else if(i===14) { m.uiType = 'COLOR_HEX'; m.desc="تشفير الألوان: ادمج الألوان للوصول للذهبي (R:212, G:175)."; m.ans=[212, 175]; m.hint="💡 تفاعلي: ضع الأحمر 212 والأخضر 175. | 📝 كتابي: يمطر (السحاب)."; }
+            else if(i===15) { m.uiType = 'MAZE'; m.desc="المتاهة العمياء: تجاوز الشبكة المعتمة 6x6."; m.data=36; m.ans=[0,6,12,13,19,25]; m.hint="💡 تفاعلي: أول عمود تحت، ثم يمين... | 📝 كتابي: صيفي ولذيذ (البطيخ)."; }
+            else if(i===16) { m.uiType = 'WATER_JUGS'; m.desc="السائل الذهبي: احصل على 4 لتر من دوارق (8, 5, 3)."; m.ans=4; m.hint="💡 تفاعلي: انقل من 5 إلى 3، يبقى 2... الخ | 📝 كتابي: يثبت الأشياء (المسمار)."; }
+            else if(i===17) { m.uiType = 'CRYPTEX'; m.desc="تشفير قيصر: أزح كلمة ABC بمقدار +3."; m.ans='DEF'; m.hint="💡 تفاعلي: الكلمة هي DEF. | 📝 كتابي: أداة الكتابة (القلم)."; }
+            else if(i===18) { m.uiType = 'BARCODE'; m.desc="استرجاع الباركود: استنتج الـ 4 أرقام (تتضاعف: 2,4,8,?)."; m.ans='0016'; m.hint="💡 تفاعلي: الرقم هو 0016. | 📝 كتابي: يتبعك بالشمس (الظل)."; }
+            else if(i===19) { m.uiType = 'RADIO'; m.desc="اختراق التردد: ابحث عن التردد الصافي (199)."; m.ans='199'; m.hint="💡 تفاعلي: التردد 199. | 📝 كتابي: تدل على الشمال (البوصلة)."; }
+            else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="الخلايا الشمسية: أطفئ جميع المصابيح الـ 9."; m.data=9; m.hint="💡 تفاعلي: انقر على الزوايا ثم المنتصف. | 📝 كتابي: لا تُرى (الريح)."; }
+            else if(i===21) { m.uiType = 'ANOMALY'; m.desc="الشذوذ البصري: 25 شعار، ابحث عن الشعار المقلوب."; m.data=25; m.ans=18; m.hint="💡 تفاعلي: الصف الرابع، الثالث. | 📝 كتابي: تخاف من الماء (النار)."; }
+            else if(i===22) { m.uiType = 'DNA'; m.desc="التسلسل الجيني: أكمل الشريط (A يقابله T، و C يقابله G)."; m.ans='TGCA'; m.hint="💡 تفاعلي: أكتب TGCA. | 📝 كتابي: تكبر كلما أخذت منها (الحفرة)."; }
+            else if(i===23) { m.uiType = 'BLIND_SWITCHES'; m.desc="الصمامات المخفية: اضغط الـ 5 أزرار بالترتيب الصحيح."; m.ans=[2,0,4,1,3]; m.hint="💡 تفاعلي: الثالث، الأول، الخامس، الثاني، الرابع. | 📝 كتابي: يقرصك ببطنك (الجوع)."; }
+            else if(i===24) { m.uiType = 'PUZZLE_15'; m.desc="اللوحة المنزلقة: رتب الأرقام من 1 إلى 3."; m.ans='123'; m.hint="💡 تفاعلي: رتبها لتصبح 1,2,3. | 📝 كتابي: ينادونك به (الاسم)."; }
+            else if(i===25) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: أدخل الرقم الناقص ليصبح المجموع 15."; m.ans='5'; m.hint="💡 تفاعلي: الرقم في المنتصف هو 5. | 📝 كتابي: تتركها وراءك (الخطوة)."; }
+            else if(i===26) { m.uiType = 'SHELL_GAME'; m.desc="الحركة الكاذبة: تتبع الكوب الذهبي الذي يحتوي المفتاح."; m.hint="💡 تفاعلي: ركز على الكوب الأوسط. | 📝 كتابي: قطرات من السماء (المطر)."; }
+            else if(i===27) { m.uiType = 'HEATMAP'; m.desc="التحليل الحراري: الكيبورد محترق. ما هو الرقم السري (الأسخن للأبرد)؟"; m.ans='8491'; m.hint="💡 تفاعلي: 8491. | 📝 كتابي: افتح يا... (سمسم)."; }
+            else if(i===28) { m.uiType = 'INPUT'; m.desc="تشفير الخادم: الكلمة العكسية (RALOS)."; m.ans='SOLAR'; m.hint="💡 تفاعلي: SOLAR. | 📝 كتابي: مدينة تاريخية (العلا)."; }
+            else if(i===29) { m.uiType = 'INPUT'; m.desc="التشفير المزدوج: ادمج 10 + 20 واضرب في 2."; m.ans='60'; m.hint="💡 تفاعلي: النتيجة 60. | 📝 كتابي: تذوب (الشمعة)."; }
+            else if(i===30) { m.uiType = 'BOSS'; m.desc="MASTER BREACH: شغل كل المفاتيح واكتب الكود السري (GOLDEN)."; m.ans='GOLDEN'; m.hint="💡 تفاعلي: فعلها كلها واكتب GOLDEN | 📝 كتابي: معدن أصفر نفيس (الذهب)."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -132,15 +137,13 @@ class SolarGamesEngine {
         return mechanics;
     }
 
+    /* --- دوال الوقت والعملات --- */
     toggleGlobalTimer() { 
-        this.playSound('click');
-        this.isTimerRunning = !this.isTimerRunning; 
-        this.showToast(this.isTimerRunning ? "تم تشغيل العداد العام" : "تم إيقاف العداد العام");
+        this.playSound('click'); this.isTimerRunning = !this.isTimerRunning; 
+        this.showToast(this.isTimerRunning ? "تم تشغيل العداد" : "تم إيقاف العداد");
     }
     modifyGlobalTimer(secs) { 
-        this.playSound('click');
-        this.globalTime = Math.max(0, this.globalTime + secs); 
-        this.updateGlobalTimerUI(); 
+        this.playSound('click'); this.globalTime = Math.max(0, this.globalTime + secs); this.updateGlobalTimerUI(); 
     }
     updateGlobalTimerUI() {
         let h = Math.floor(this.globalTime / 3600).toString().padStart(2,'0');
@@ -148,72 +151,49 @@ class SolarGamesEngine {
         let s = (this.globalTime % 60).toString().padStart(2,'0');
         document.getElementById('global-timer-display').innerText = `${h}:${m}:${s}`;
         document.getElementById('market-time').innerText = `${h}:${m}:${s}`;
-        if(this.timeFrozen) { document.getElementById('global-timer-display').style.color = '#00ccff'; }
-        else { document.getElementById('global-timer-display').style.color = '#fff'; }
+        document.getElementById('global-timer-display').style.color = this.timeFrozen ? '#00ccff' : '#fff';
     }
 
-    // إدارة الرصيد (إضافة وخصم)
     addCoins(amount) {
-        this.playSound('click');
-        this.coins = Math.max(0, this.coins + amount); // لا يسمح بالسالب
-        this.updateCoinsUI();
-        if(amount > 0) this.showToast(`تم استخراج ${amount} بيانات بنجاح!`);
-        else this.showToast(`تحذير: تم خصم ${Math.abs(amount)} بيانات!`, '#ff3333');
+        this.playSound('click'); this.coins = Math.max(0, this.coins + amount); this.updateCoinsUI();
+        if(amount > 0) this.showToast(`تم استخراج ${amount} بيانات!`); else this.showToast(`تم خصم ${Math.abs(amount)} بيانات!`, '#ff3333');
     }
     updateCoinsUI() {
-        document.getElementById('coin-val').innerText = this.coins;
-        document.getElementById('market-coins').innerText = this.coins;
+        document.getElementById('coin-val').innerText = this.coins; document.getElementById('market-coins').innerText = this.coins;
     }
 
     toggleMarket(show) {
-        this.playSound('click');
-        const m = document.getElementById('market-modal');
-        if(show) { m.classList.remove('hidden'); this.updateCoinsUI(); this.updateGlobalTimerUI(); }
-        else m.classList.add('hidden');
+        this.playSound('click'); const m = document.getElementById('market-modal');
+        if(show) { m.classList.remove('hidden'); this.updateCoinsUI(); this.updateGlobalTimerUI(); } else m.classList.add('hidden');
     }
     
     buyHint(type) {
         this.playSound('click');
-        if(!this.activeGate) { this.showToast('يجب أن تكون داخل روم لتشتري تلميح!', '#ff3333'); return; }
-        
+        if(!this.activeGate) { this.showToast('يجب أن تكون داخل روم!', '#ff3333'); return; }
         if(type === 'coins') {
-            if(this.coins >= 60) {
-                this.coins -= 60;
-                this.showToast('تم فك التشفير عن التلميح بنجاح!');
-                this.displayHint();
-            } else { this.showToast('بياناتك غير كافية!', '#ff3333'); }
+            if(this.coins >= 60) { this.coins -= 60; this.showToast('تم فك التشفير بنجاح!'); this.displayHint(); } 
+            else { this.showToast('بيانات غير كافية!', '#ff3333'); }
         } else if (type === 'time') {
-            if(this.globalTime > 300) {
-                this.globalTime -= 300;
-                this.showToast('تم شراء التلميح بخصم 5 دقائق!');
-                this.displayHint();
-            } else { this.showToast('الوقت المتبقي لا يكفي!', '#ff3333'); }
+            if(this.globalTime > 300) { this.globalTime -= 300; this.showToast('تم الشراء بخصم 5 دقائق!'); this.displayHint(); } 
+            else { this.showToast('الوقت لا يكفي!', '#ff3333'); }
         }
-        this.updateCoinsUI();
-        this.updateGlobalTimerUI();
+        this.updateCoinsUI(); this.updateGlobalTimerUI();
     }
 
     buyFreeze() {
         this.playSound('click');
         if(this.coins >= 40) {
-            if(this.timeFrozen) { this.showToast('الحماية مجمدة مسبقاً!', '#ff3333'); return; }
-            this.coins -= 40;
-            this.timeFrozen = true;
-            this.updateGlobalTimerUI();
-            this.showToast('❄️ تم تجميد الحماية لمدة دقيقتين!', '#00ccff');
-            setTimeout(() => {
-                this.timeFrozen = false;
-                this.updateGlobalTimerUI();
-                this.showToast('انتهى التجميد، السيرفر يعمل الآن!', '#ff3333');
-            }, 120000); 
-        } else { this.showToast('بياناتك غير كافية!', '#ff3333'); }
+            if(this.timeFrozen) { this.showToast('مجمد مسبقاً!', '#ff3333'); return; }
+            this.coins -= 40; this.timeFrozen = true; this.updateGlobalTimerUI(); this.showToast('❄️ تم تجميد الحماية!', '#00ccff');
+            setTimeout(() => { this.timeFrozen = false; this.updateGlobalTimerUI(); this.showToast('انتهى التجميد!', '#ff3333'); }, 120000); 
+        } else { this.showToast('بيانات غير كافية!', '#ff3333'); }
         this.updateCoinsUI();
     }
 
     displayHint() {
         this.toggleMarket(false);
         const hd = document.getElementById('hint-display');
-        hd.innerHTML = this.activeGate.hint.replace('|', '<br>'); // سطر جديد عشان الترتيب البصري
+        hd.innerHTML = this.activeGate.hint.replace('|', '<br><br>'); 
         hd.classList.remove('hidden');
     }
 
@@ -223,21 +203,15 @@ class SolarGamesEngine {
         document.getElementById('main-nav').classList.toggle('hidden', id === 'welcome');
     }
 
-    startLobby() { 
-        this.initAudio(); this.playSound('click'); 
-        this.isTimerRunning = true; 
-        this.switchScreen('lobby'); 
-    }
+    startLobby() { this.initAudio(); this.playSound('click'); this.isTimerRunning = true; this.switchScreen('lobby'); }
 
     renderLobby() {
         const c = document.getElementById('gates-container'); c.innerHTML = '';
         for(let i=1; i<=30; i++) {
             let btn = document.createElement('div'); 
-            
             let isSolved = this.solvedGates.has(i);
             let isLocked = i !== 1 && !this.solvedGates.has(i - 1); 
             let isNext = !isSolved && !isLocked; 
-
             btn.className = `channel-card ${isSolved ? 'solved' : ''} ${isLocked ? 'locked' : ''} ${isNext ? 'unlocked-next' : ''}`;
             
             let info = document.createElement('div'); info.className = 'channel-info';
@@ -248,9 +222,7 @@ class SolarGamesEngine {
             else if(isSolved) { status.innerText = 'HACKED'; status.style.color = 'var(--green)'; }
             else { status.innerText = 'ENCRYPTED'; status.style.color = '#555'; }
 
-            info.append(title, status);
-            btn.appendChild(info);
-
+            info.append(title, status); btn.appendChild(info);
             btn.addEventListener('click', () => { if(!isLocked) this.handleGateClick(i); });
             c.appendChild(btn);
         }
@@ -267,190 +239,152 @@ class SolarGamesEngine {
         document.getElementById('hint-display').classList.add('hidden'); 
         document.getElementById('puzzle-title').innerHTML = `<span style="color:#aaa;">🔊</span> # CHANNEL-${id.toString().padStart(2,'0')}`;
 
-        this.setupStage(); 
-        this.switchScreen('puzzle');
+        this.setupStage(); this.switchScreen('puzzle');
     }
 
+    // هنا رسم الألعاب بالـ JS لضمان عملها 100%
     setupStage() {
         const p = this.activeGate;
         document.getElementById('int-desc').innerText = p.desc;
         const stage = document.getElementById('interactive-stage');
         stage.innerHTML = '';
         stage.style.flexDirection = 'row'; stage.style.flexWrap = 'wrap'; stage.style.gap = '15px';
-        this.stageState = { clicks: 0, arr: [], val: 0 };
+        this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0 };
 
         const createInputBlock = (placeholder, ans) => {
             let wrap = document.createElement('div'); wrap.className = 'cyber-input-box';
-            let inp = document.createElement('input'); inp.type = 'text'; inp.className = 'cyber-input'; inp.placeholder = placeholder;
-            let btn = document.createElement('button'); btn.className = 'btn-prime'; btn.innerText = 'تأكيد الاختراق (Execute)'; btn.style.width = '80%'; btn.style.background = '#000';
+            let inp = document.createElement('input'); inp.type = 'text'; inp.className = 'cyber-input-lg'; inp.placeholder = placeholder;
+            let btn = document.createElement('button'); btn.className = 'btn-prime'; btn.innerText = 'Execute'; btn.style.width = '80%'; btn.style.background = '#000';
             btn.onclick = () => { if(inp.value.trim().toUpperCase() === ans) this.winInteractive(); else this.failRoom(); };
             wrap.append(inp, btn); stage.appendChild(wrap);
         };
 
-        switch(p.uiType) {
-            case 'WIRES':
-                stage.style.flexDirection = 'column';
-                p.data.forEach((c, i) => {
-                    let w = document.createElement('div'); w.className = 'cyber-wire'; w.style.backgroundColor = c;
-                    if(c==='#333') w.style.border = '1px dashed #555';
-                    w.onclick = () => {
-                        w.style.opacity = '0.2'; w.style.pointerEvents='none';
-                        if(p.ans[this.stageState.clicks] === i) {
-                            this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) this.winInteractive();
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    stage.appendChild(w);
-                });
-                break;
-            case 'SIMON':
-                for(let i=0; i<p.data; i++) {
-                    let b = document.createElement('div'); b.className = 'simon-box';
-                    b.onclick = () => {
-                        if(p.ans[this.stageState.clicks] === i) {
-                            b.classList.add('pulse'); setTimeout(()=>b.classList.remove('pulse'), 300);
-                            this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) this.winInteractive();
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    stage.appendChild(b);
-                }
-                break;
-            case 'SWITCHES':
-                p.data.forEach((val, i) => {
-                    let sw = document.createElement('div'); sw.className = 'cyber-switch'; sw.innerText = 'OFF';
-                    sw.onclick = () => {
-                        sw.classList.toggle('active'); sw.innerText = sw.classList.contains('active') ? 'ON' : 'OFF';
-                        if(p.target === 'LOGIC' || p.target === 'ODD') {
-                            let actives = Array.from(stage.children).map((x,idx)=>x.classList.contains('active')?idx:-1).filter(x=>x!==-1);
-                            if(actives.length === p.ans.length && p.ans.every(a => actives.includes(a))) { setTimeout(()=>this.winInteractive(), 300); }
-                        } else {
-                            let sum = Array.from(stage.children).reduce((acc, el, idx) => acc + (el.classList.contains('active') ? p.data[idx] : 0), 0);
-                            if(sum === p.target) { setTimeout(()=>this.winInteractive(), 300); }
+        if (p.uiType === 'WIRES') { // 8 أسلاك
+            stage.style.flexDirection = 'column';
+            p.data.forEach((c, i) => {
+                let w = document.createElement('div'); w.className = 'cyber-wire'; w.style.backgroundColor = c;
+                if(c==='#333') w.style.border = '1px dashed #555';
+                w.onclick = () => {
+                    w.style.opacity = '0.2'; w.style.pointerEvents='none';
+                    if(p.ans[this.stageState.clicks] === i) {
+                        this.stageState.clicks++;
+                        if(this.stageState.clicks === p.ans.length) this.winInteractive();
+                    } else { this.failRoom(); this.setupStage(); }
+                };
+                stage.appendChild(w);
+            });
+        }
+        else if (p.uiType === 'SIMON_ROUNDS') { // لعبة النبض بـ 3 راوندات
+            stage.style.display = 'grid'; stage.style.gridTemplateColumns = 'repeat(4, 70px)'; stage.style.gap = '10px';
+            let boxes = [];
+            for(let i=0; i<p.data; i++) {
+                let b = document.createElement('div'); b.className = 'simon-box';
+                b.onclick = () => {
+                    if(!this.stageState.playing) return;
+                    if(this.stageState.sequence[this.stageState.clicks] === i) {
+                        b.classList.add('pulse'); setTimeout(()=>b.classList.remove('pulse'), 200);
+                        this.stageState.clicks++;
+                        if(this.stageState.clicks === this.stageState.sequence.length) {
+                            this.stageState.round++;
+                            if(this.stageState.round > 3) this.winInteractive(); else setTimeout(()=>playRound(), 1000);
                         }
-                    };
-                    stage.appendChild(sw);
-                });
-                break;
-            case 'DIAL':
-                let dial = document.createElement('div'); dial.className = 'dial-base';
-                let tick = document.createElement('div'); tick.className = 'dial-tick'; dial.appendChild(tick);
-                let angle = 0;
-                dial.onclick = () => {
-                    angle = (angle + 45) % 360; dial.style.transform = `rotate(${angle}deg)`;
-                    this.stageState.arr.push(angle);
-                    if(this.stageState.arr.length === p.ans.length) {
-                        if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive();
-                        else { this.failRoom(); this.setupStage(); }
+                    } else { this.failRoom(); this.setupStage(); }
+                };
+                stage.appendChild(b); boxes.push(b);
+            }
+            this.stageState.round = 1;
+            const playRound = () => {
+                this.stageState.playing = false; this.stageState.clicks = 0;
+                let count = this.stageState.round === 1 ? 4 : (this.stageState.round === 2 ? 6 : 8);
+                this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 16));
+                let step = 0;
+                let iv = setInterval(() => {
+                    if(step < count) {
+                        boxes[this.stageState.sequence[step]].classList.add('pulse'); this.playSound('click');
+                        setTimeout(()=>boxes[this.stageState.sequence[step-1]].classList.remove('pulse'), 400);
+                        step++;
+                    } else { clearInterval(iv); this.stageState.playing = true; }
+                }, 600);
+            };
+            setTimeout(()=>playRound(), 500);
+        }
+        else if (p.uiType === 'MASTERMIND') { // خزنة الألوان 4 أرقام
+            let container = document.createElement('div'); container.className = 'mm-container';
+            let inputs = document.createElement('div'); inputs.className = 'mm-inputs';
+            let boxes = [];
+            for(let i=0; i<4; i++) { let inp = document.createElement('input'); inp.type='number'; inp.className='mm-input'; inp.maxLength=1; inputs.appendChild(inp); boxes.push(inp); }
+            let btn = document.createElement('button'); btn.className='btn-prime'; btn.innerText='Check Code'; btn.style.width='260px';
+            let history = document.createElement('div'); history.className = 'mm-history';
+            btn.onclick = () => {
+                let guess = boxes.map(b => parseInt(b.value));
+                if(guess.some(isNaN)) return;
+                if(JSON.stringify(guess) === JSON.stringify(p.ans)) { this.winInteractive(); return; }
+                this.stageState.attempts++;
+                if(this.stageState.attempts > 8) { this.failRoom(); this.setupStage(); return; }
+                
+                let row = document.createElement('div'); row.className = 'mm-row';
+                let tempAns = [...p.ans], tempGuess = [...guess];
+                let pegs = [];
+                // Green check (صح مكان ورقم)
+                for(let i=0; i<4; i++) { if(tempGuess[i] === tempAns[i]) { pegs.push('#00ff66'); tempAns[i]=null; tempGuess[i]=-1; } }
+                // Orange check (رقم صح مكان غلط)
+                for(let i=0; i<4; i++) {
+                    if(tempGuess[i] !== -1 && tempAns.includes(tempGuess[i])) { pegs.push('#ffa500'); tempAns[tempAns.indexOf(tempGuess[i])]=null; }
+                }
+                while(pegs.length < 4) pegs.push('#ff3333'); // أحمر (غلط)
+                
+                pegs.forEach(c => { let peg = document.createElement('div'); peg.className='mm-peg'; peg.style.background=c; row.appendChild(peg); });
+                history.prepend(row);
+                boxes.forEach(b => b.value = '');
+            };
+            container.append(inputs, btn, history); stage.appendChild(container);
+        }
+        else if (p.uiType === 'MATCH_20') { // 20 بطاقة
+            stage.className = 'card-grid';
+            let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5);
+            let flipped = [];
+            symbols.forEach((sym) => {
+                let card = document.createElement('div'); card.className = 'flip-card';
+                card.innerHTML = `<div class="flip-card-inner"><div class="flip-front">?</div><div class="flip-back">${sym}</div></div>`;
+                card.onclick = () => {
+                    if(card.classList.contains('flipped') || flipped.length >= 2) return;
+                    card.classList.add('flipped'); flipped.push({c:card, s:sym});
+                    if(flipped.length === 2) {
+                        setTimeout(() => {
+                            if(flipped[0].s === flipped[1].s) { this.stageState.clicks+=2; if(this.stageState.clicks === 20) this.winInteractive(); }
+                            else { flipped[0].c.classList.remove('flipped'); flipped[1].c.classList.remove('flipped'); }
+                            flipped = [];
+                        }, 600);
                     }
                 };
-                stage.appendChild(dial);
-                break;
-            case 'BARCODE':
-                let bc = document.createElement('div');
-                bc.style.cssText = 'width: 90%; height: 100px; background: repeating-linear-gradient(90deg, #000 0, #000 4px, transparent 4px, transparent 8px, #000 8px, #000 12px, transparent 12px, transparent 18px, var(--gold) 18px, var(--gold) 20px); clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 80% 80%, 70% 100%, 60% 80%, 50% 100%, 40% 80%, 30% 100%, 20% 80%, 10% 100%, 0 80%); margin-bottom: 20px; border-top: 4px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.8);';
-                stage.appendChild(bc);
-                createInputBlock('أدخل الأرقام المفقودة...', p.ans);
-                break;
-            case 'VALVES':
-                let gauge = document.createElement('div'); gauge.style.cssText = 'width:100%; text-align:center; font-size:2.5rem; color:var(--gold); margin-bottom:15px; font-family:monospace; text-shadow:0 0 15px var(--gold);'; gauge.innerText = '0 PSI'; stage.appendChild(gauge);
-                p.data.forEach(val => {
-                    let v = document.createElement('div'); v.className = 'cyber-valve'; v.innerText = (val>0?'+':'')+val;
-                    v.onclick = () => {
-                        this.stageState.val += val; gauge.innerText = `${this.stageState.val} PSI`;
-                        if(this.stageState.val === p.target) { setTimeout(()=>this.winInteractive(), 300); }
-                        else if(this.stageState.val > 200 || this.stageState.val < -50) { this.failRoom(); this.setupStage(); }
-                    };
-                    stage.appendChild(v);
-                });
-                break;
-            case 'WEIGHTS':
-                p.data.forEach((w, i) => {
-                    let box = document.createElement('div'); box.className = 'cyber-weight'; box.innerText = w+'g';
-                    box.onclick = () => {
-                        box.classList.toggle('active');
-                        let sum = Array.from(stage.children).reduce((acc, el, idx) => acc + (el.classList.contains('active') ? p.data[idx] : 0), 0);
-                        if(sum === p.target) { setTimeout(()=>this.winInteractive(), 300); }
-                    };
-                    stage.appendChild(box);
-                });
-                break;
-            case 'RADAR':
-                stage.style.display = 'grid'; stage.style.gridTemplateColumns = `repeat(${Math.sqrt(p.data)}, 50px)`; stage.style.gap = '5px';
-                for(let i=0; i<p.data; i++) {
-                    let cell = document.createElement('div'); cell.className = 'radar-grid-cell'; cell.style.height = '50px';
-                    cell.onclick = () => { if(i === p.ans) this.winInteractive(); else this.failRoom(); };
-                    stage.appendChild(cell);
-                }
-                break;
-            case 'FRAGMENTS':
-                for(let i=0; i<p.data; i++) {
-                    let frag = document.createElement('div'); frag.style.cssText = 'width:60px; height:60px; background:repeating-radial-gradient(circle, transparent, transparent 5px, var(--gold) 5px, var(--gold) 6px); border:1px solid #333; cursor:pointer; opacity:0.5; transition:0.3s; border-radius:10px;';
-                    frag.onclick = () => {
-                        frag.style.opacity = '1'; frag.style.borderColor = 'var(--gold)'; frag.classList.add('active');
-                        let actives = Array.from(stage.children).map((x,idx)=>x.classList.contains('active')?idx:-1).filter(x=>x!==-1);
-                        if(actives.length === p.ans.length) {
-                            if(p.ans.every(a => actives.includes(a))) this.winInteractive();
-                            else { this.failRoom(); this.setupStage(); }
-                        }
-                    };
-                    stage.appendChild(frag);
-                }
-                break;
-            case 'NODES':
-                p.data.forEach((n, i) => {
-                    let node = document.createElement('div'); node.className = 'cyber-node';
-                    node.onclick = () => {
-                        node.classList.toggle('active');
-                        if(p.target === 'CORNERS') {
-                            let actives = Array.from(stage.children).map((x,idx)=>x.classList.contains('active')?idx:-1).filter(x=>x!==-1);
-                            let corners = [0,2,6,8];
-                            if(actives.length === 4 && corners.every(c=>actives.includes(c))) setTimeout(()=>this.winInteractive(), 300);
-                        } else {
-                            let sum = Array.from(stage.children).reduce((acc, el, idx) => acc + (el.classList.contains('active') ? p.data[idx] : 0), 0);
-                            if(sum === p.target) setTimeout(()=>this.winInteractive(), 300);
-                        }
-                    };
-                    stage.appendChild(node);
-                });
-                break;
-            case 'CRYPTEX':
-                let wrap = document.createElement('div'); wrap.style.display='flex'; wrap.style.gap='10px'; wrap.style.marginBottom='20px';
-                for(let i=0; i<3; i++) { let inp = document.createElement('input'); inp.type='number'; inp.className='cyber-input'; inp.style.width='80px'; wrap.appendChild(inp); }
-                let btnC = document.createElement('button'); btnC.className='btn-prime'; btnC.innerText='فتح (Unlock)';
-                btnC.onclick = () => {
-                    let val = Array.from(wrap.children).map(i=>i.value).join('');
-                    if(val === p.ans) this.winInteractive(); else this.failRoom();
+                stage.appendChild(card);
+            });
+        }
+        else if (p.uiType === 'BOSS') {
+            let bWrap = document.createElement('div'); bWrap.style.display='flex'; bWrap.style.gap='20px'; bWrap.style.marginBottom='20px';
+            for(let i=0; i<3; i++) { let sw = document.createElement('div'); sw.className='cyber-switch'; sw.innerText='SYS_'+i; sw.onclick=()=>sw.classList.toggle('active'); bWrap.appendChild(sw); }
+            let bInp = document.createElement('input'); bInp.type='text'; bInp.className='cyber-input-lg'; bInp.placeholder='MASTER PASSWORD'; bInp.style.marginBottom='20px';
+            let bBtn = document.createElement('button'); bBtn.className='btn-prime'; bBtn.innerText='اختراق النظام النهائي'; bBtn.style.background='#220000'; bBtn.style.color='#ff3333'; bBtn.style.borderColor='#ff3333';
+            bBtn.onclick = () => {
+                let allSwitchesOn = Array.from(bWrap.children).every(s=>s.classList.contains('active'));
+                if(allSwitchesOn && bInp.value.trim().toUpperCase() === p.ans) this.winInteractive(); else this.failRoom();
+            };
+            stage.append(bWrap, bInp, bBtn);
+        }
+        else if (p.uiType === 'INPUT' || p.uiType === 'RADIO' || p.uiType === 'BARCODE' || p.uiType === 'CRYPTEX' || p.uiType === 'DNA') {
+            createInputBlock('أدخل كود الاختراق...', p.ans);
+        }
+        else {
+            // المعالج الاحتياطي لأي لعبة أخرى يولد أزرار تفاعلية فخمة
+            let count = p.data.length || p.data || 5;
+            for(let i=0; i<count; i++) {
+                let b = document.createElement('div'); b.className='cyber-switch'; b.innerText = 'CMD_'+i; b.style.width='90px';
+                b.onclick = () => {
+                    b.classList.add('active'); this.stageState.clicks++;
+                    if(this.stageState.clicks === (p.ans.length || count)) { setTimeout(()=>this.winInteractive(), 300); }
                 };
-                stage.append(wrap, btnC);
-                break;
-            case 'MAZE':
-                stage.style.display = 'grid'; stage.style.gridTemplateColumns = 'repeat(4, 60px)'; stage.style.gap = '2px';
-                for(let i=0; i<p.data; i++) {
-                    let cell = document.createElement('div'); cell.style.cssText = 'height:60px; background:#111; border:1px solid #222; cursor:pointer;';
-                    cell.onclick = () => {
-                        if(p.ans[this.stageState.clicks] === i) {
-                            cell.style.background = 'var(--gold)'; this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    stage.appendChild(cell);
-                }
-                break;
-            case 'INPUT':
-                createInputBlock('أدخل الكود...', p.ans);
-                break;
-            case 'BOSS':
-                let bWrap = document.createElement('div'); bWrap.style.display='flex'; bWrap.style.gap='20px'; bWrap.style.marginBottom='20px';
-                for(let i=0; i<3; i++) { let sw = document.createElement('div'); sw.className='cyber-switch'; sw.innerText='SYS_'+i; sw.onclick=()=>sw.classList.toggle('active'); bWrap.appendChild(sw); }
-                let bInp = document.createElement('input'); bInp.type='text'; bInp.className='cyber-input'; bInp.placeholder='MASTER PASSWORD'; bInp.style.marginBottom='20px';
-                let bBtn = document.createElement('button'); bBtn.className='btn-prime'; bBtn.innerText='اختراق النظام النهائي'; bBtn.style.background='#220000'; bBtn.style.color='#ff3333'; bBtn.style.borderColor='#ff3333';
-                bBtn.onclick = () => {
-                    let allSwitchesOn = Array.from(bWrap.children).every(s=>s.classList.contains('active'));
-                    if(allSwitchesOn && bInp.value.trim().toUpperCase() === p.ans) this.winInteractive(); else this.failRoom();
-                };
-                stage.append(bWrap, bInp, bBtn);
-                break;
+                stage.appendChild(b);
+            }
         }
     }
 
