@@ -63,49 +63,60 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 .timer-txt { color: #fff; font-weight: 800; font-size: 1.5rem; font-family: monospace; background: #000; padding: 5px 15px; border-radius: 4px; border: 1px solid var(--dark-gold);}
 .track-title { font-size: 1.1rem; color: #ccc; margin-bottom: 15px; background: #000; padding: 10px 15px; border-right: 4px solid var(--gold); }
 
-/* الألعاب التفاعلية البصرية الجديدة */
-#interactive-stage { margin: 20px 0; display: flex; justify-content: center; align-items: center; min-height: 300px; background: #000; border: 1px solid #1f1f1f; padding: 20px; border-radius: 4px; overflow: hidden; position: relative;}
+/* --- تصميم الألعاب التفاعلية الفخمة (الـ UI Kit الجديد) --- */
+#interactive-stage { width: 100%; min-height: 350px; display: flex; justify-content: center; align-items: center; }
 
-.cyber-wire { height: 18px; margin: 10px 0; width: 100%; border-radius: 4px; cursor: pointer; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); border: 1px solid #333; transition: 0.3s; position: relative; overflow: hidden; }
-.cyber-wire::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.2); }
-.cyber-wire:hover { filter: brightness(1.5); box-shadow: 0 0 15px currentColor; }
+/* الإطار الخارجي الفخم للغز */
+.lux-panel { width: 100%; min-height: 350px; background: linear-gradient(145deg, #111, #050505); border: 2px solid #222; border-radius: 12px; padding: 40px; box-shadow: inset 0 0 30px #000, 0 10px 30px rgba(0,0,0,0.8); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+.lux-panel::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px); pointer-events: none; }
 
-.card-grid { display: grid; grid-template-columns: repeat(5, 60px); gap: 10px; }
-.flip-card { width: 60px; height: 60px; perspective: 1000px; cursor: pointer; }
+/* الشاشات الرقمية */
+.cyber-display { font-family: 'Rajdhani', monospace; font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); background: #000; border: 2px solid #333; padding: 15px 50px; border-radius: 8px; margin-bottom: 30px; letter-spacing: 5px; box-shadow: inset 0 0 20px #000; z-index: 2;}
+
+/* الأزرار الضخمة */
+.btn-lux { background: linear-gradient(180deg, #222, #000); color: var(--gold); border: 2px solid var(--gold); padding: 20px 40px; font-size: 1.5rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.8); width: 100%; max-width: 450px; z-index: 2; font-family: 'Changa', sans-serif;}
+.btn-lux:hover { background: var(--gold); color: #000; box-shadow: 0 0 25px var(--gold); }
+
+/* أشرطة السحب (Sliders) المحدثة */
+.cyber-slider-wrap { width: 100%; max-width: 600px; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 25px; background: #0a0a0a; padding: 20px 25px; border-radius: 8px; border: 1px solid #333; z-index: 2; box-shadow: inset 0 0 10px #000;}
+.cyber-slider-label { color: #888; font-weight: bold; font-family: monospace; font-size: 1.2rem; width: 100px; }
+.cyber-slider-lux { -webkit-appearance: none; flex-grow: 1; height: 12px; background: #000; border: 1px solid #444; border-radius: 6px; outline: none; box-shadow: inset 0 0 5px #000; }
+.cyber-slider-lux::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 45px; background: linear-gradient(to bottom, var(--gold), var(--dark-gold)); border: 2px solid #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 0 20px var(--gold); }
+
+/* الأسلاك السميكة والواقعية */
+.wire-lux { width: 100%; max-width: 600px; height: 30px; margin: 15px 0; border-radius: 15px; cursor: pointer; border: 2px solid #111; box-shadow: 0 8px 15px rgba(0,0,0,0.9), inset 0 3px 8px rgba(255,255,255,0.4); transition: 0.3s; z-index: 2; position: relative; }
+.wire-lux::before, .wire-lux::after { content: ''; position: absolute; width: 15px; height: 15px; background: #555; border-radius: 50%; top: 5px; box-shadow: inset 0 0 5px #000; }
+.wire-lux::before { left: 10px; } .wire-lux::after { right: 10px; }
+.wire-lux:hover { filter: brightness(1.3); transform: scale(1.02); }
+.wire-cut { opacity: 0.2; pointer-events: none; border-style: dashed; }
+
+/* الصمامات الصناعية (Valves) */
+.valve-lux { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#333, #111, #333, #111, #333); border: 6px solid #222; box-shadow: 0 10px 25px rgba(0,0,0,0.9), inset 0 0 20px #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; font-weight: bold; font-family: monospace; cursor: pointer; transition: 0.2s; z-index: 2; }
+.valve-lux:active { transform: scale(0.95); box-shadow: 0 5px 10px rgba(0,0,0,0.9), inset 0 0 25px #000; border-color: var(--gold); color: var(--gold); }
+
+/* قواطع الطاقة (Switches) */
+.switch-lux { width: 90px; height: 140px; background: #111; border: 3px solid #222; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.9); transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; color: #555; font-weight: bold; font-size: 1.2rem; z-index: 2;}
+.switch-lux::before { content: ''; position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s; }
+.switch-lux.active { border-color: var(--gold); color: var(--gold); text-shadow: 0 0 10px var(--gold); }
+.switch-lux.active::before { top: 65px; background: var(--gold); box-shadow: 0 0 20px var(--gold); }
+
+/* المربعات والنبض (Simon/Grid) */
+.grid-lux { display: grid; gap: 15px; z-index: 2; }
+.box-lux { background: #050505; border: 2px solid #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #555; cursor: pointer; box-shadow: inset 0 0 15px #000, 0 5px 10px rgba(0,0,0,0.8); transition: 0.2s; font-family: monospace; }
+.box-lux:hover { border-color: #555; color: #ccc; }
+.box-lux.pulse { background: var(--gold); border-color: #fff; color: #000; box-shadow: 0 0 30px var(--gold); }
+
+/* إدخال النصوص (Keypad) */
+.cyber-input-lg { background: #000; border: 2px solid var(--gold); color: var(--gold); padding: 20px 30px; font-size: 2rem; text-align: center; width: 100%; max-width: 500px; outline: none; box-shadow: inset 0 0 20px rgba(212,175,55,0.2); letter-spacing: 10px; font-family: monospace; border-radius: 8px; margin-bottom: 30px; z-index: 2;}
+.cyber-input-lg:focus { box-shadow: inset 0 0 30px var(--gold), 0 0 15px var(--gold); }
+
+/* البطاقات 3D */
+.flip-card { width: 80px; height: 80px; perspective: 1000px; cursor: pointer; z-index: 2; }
 .flip-card-inner { width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
 .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-.flip-front, .flip-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; font-size: 20px; border-radius: 4px; border: 1px solid #333; }
+.flip-front, .flip-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; font-size: 28px; border-radius: 8px; border: 2px solid #333; box-shadow: 0 5px 10px rgba(0,0,0,0.8); }
 .flip-front { background: #111; }
-.flip-back { background: var(--dark-gold); color: #000; transform: rotateY(180deg); box-shadow: 0 0 15px var(--gold); }
-
-.mm-container { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
-.mm-inputs { display: flex; gap: 10px; }
-.mm-input { width: 60px; height: 60px; background: #111; border: 2px solid var(--gold); color: var(--gold); font-size: 2rem; text-align: center; border-radius: 4px; outline: none; }
-.mm-history { display: flex; flex-direction: column; gap: 5px; width: 100%; max-height: 150px; overflow-y: auto; align-items: center; }
-.mm-row { display: flex; gap: 10px; background: #0a0a0a; padding: 10px; border: 1px solid #222; }
-.mm-peg { width: 25px; height: 25px; border-radius: 50%; background: #222; border: 1px solid #444; }
-
-.simon-grid { display: grid; grid-template-columns: repeat(4, 70px); gap: 10px; }
-.simon-box { width: 70px; height: 70px; background: #050505; border: 2px solid #222; cursor: pointer; transition: 0.1s; border-radius: 6px; box-shadow: inset 0 0 10px #000; display:flex; justify-content:center; align-items:center; font-size: 1.5rem; color:transparent;}
-.simon-box.pulse { background: var(--gold); box-shadow: 0 0 25px var(--gold); border-color: #fff; color:#000; }
-
-.cyber-switch { width: 70px; height: 90px; background: #0a0a0a; border: 2px solid #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555; font-weight: bold; font-size: 1.2rem; transition: 0.3s; }
-.cyber-switch.active { border-color: var(--gold); color: #000; background: var(--dark-gold); box-shadow: 0 0 20px var(--gold); }
-.cyber-slider-box { width: 100%; display: flex; align-items: center; gap: 15px; margin: 10px 0; }
-.cyber-slider { -webkit-appearance: none; width: 100%; height: 10px; background: #222; outline: none; border-radius: 5px; }
-.cyber-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 30px; background: var(--gold); cursor: pointer; }
-.cyber-valve { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, #222, #000); border: 4px solid #444; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #aaa; font-weight: bold; font-size: 1.2rem; transition: 0.2s; }
-.cyber-valve:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 15px var(--gold); }
-.cyber-input-box { width: 100%; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-.cyber-input-lg { background: rgba(0,0,0,0.8); border: 2px solid var(--gold); color: var(--gold); padding: 15px 20px; font-size: 1.5rem; text-align: center; width: 80%; outline: none; box-shadow: inset 0 0 15px rgba(212,175,55,0.2); letter-spacing: 5px; font-family: monospace; border-radius: 4px; }
-.dial-base { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, #111, #000); border: 5px solid #222; display: flex; justify-content: center; align-items: flex-start; cursor: pointer; transition: transform 0.3s; box-shadow: 0 0 15px rgba(0,0,0,0.9);}
-.dial-tick { width: 4px; height: 25px; background: var(--gold); margin-top: 4px; box-shadow: 0 0 8px var(--gold); }
-.radar-grid-cell { border: 1px solid #111; cursor: pointer; background: rgba(0,255,100,0.05); transition: 0.2s; display:flex; justify-content:center; align-items:center; font-size: 1.5rem;}
-.radar-grid-cell:hover { background: rgba(0,255,100,0.3); box-shadow: inset 0 0 10px rgba(0,255,100,0.5); }
-.cyber-node { width: 50px; height: 50px; border-radius: 50%; background: #000; border: 2px solid #555; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px #000; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#555;}
-.cyber-node.active { background: var(--gold); border-color: #fff; box-shadow: 0 0 20px var(--gold); color:#000;}
-.cyber-weight { width: 80px; height: 80px; background: #111; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #666; cursor: pointer; clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%); transition: 0.3s; }
-.cyber-weight.active { border-color: var(--gold); color: #000; background: var(--gold); }
+.flip-back { background: var(--dark-gold); color: #000; transform: rotateY(180deg); box-shadow: 0 0 20px var(--gold); border-color: var(--gold); }
 
 .bot-message { background: #000; border-radius: 4px; padding: 20px; margin-top: 20px; border: 1px solid #222; text-align: right;}
 .bot-header { font-family: 'Rajdhani', sans-serif; font-weight: bold; color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; justify-content: flex-start; flex-direction: row-reverse;}
