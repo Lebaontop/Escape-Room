@@ -98,30 +98,34 @@ class SolarGamesEngine {
             else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="شرح اللعبة: استنتج الكود المكون من 4 أرقام. (الأخضر=دقيق، البرتقالي=موجود بمكان آخر). 8 محاولات فقط."; m.ans=[3,7,1,9]; m.hint="💡 تلميح النظام: جرب الأرقام الفردية المتباعدة. | 📝 تلميح اللغز: إذا نطقته انتهى."; }
             else if(i===4) { m.uiType = 'MATCH'; m.desc="شرح اللعبة: الذاكرة قصيرة المدى. طابق 10 أزواج من الشرائح الفلكية المتشابهة."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تلميح النظام: الرموز الدائرية متجمعة في المنتصف. | 📝 تلميح اللغز: يرافقك دائماً ويزداد."; }
             else if(i===5) { m.uiType = 'ASTROLABE'; m.desc="شرح اللعبة: قم بوزن الأسطرلاب الفلكي وتوجيه الحلقات الأربع للزاوية (0) للأعلى."; m.hint="💡 تلميح النظام: كل ضغطة تدور الحلقة 45 درجة، ابدأ بالحلقة الخارجية. | 📝 تلميح اللغز: ارتداد للصوت."; }
-            else if(i===6) { m.uiType = 'RUNES'; m.desc="شرح اللعبة: ابحث عن الرمزين المتطابقين تماماً من بين 16 رمزاً هندسياً متشابهاً."; m.data=16; m.ans=[2,11]; m.hint="💡 تلميح النظام: ركز على عدد النقاط في الزوايا. | 📝 تلميح اللغز: كائن بحري يمتص."; }
+            
+            // ============== الأبواب الصعبة الجديدة ==============
+            else if(i===6) { m.uiType = 'HARD_MEMORY'; m.desc="شرح اللعبة: اختبار الذاكرة العميق. سيظهر النمط الذهبي المكون من 10 مربعات لثانيتين فقط في المصفوفة 5x5، احفظه وكرره بدقة تامة."; m.hint="💡 تلميح النظام: حاول تقسيم الشبكة في ذهنك لنصفين لتسهيل الحفظ. | 📝 تلميح اللغز: كائن بحري يمتص."; }
+            else if(i===13) { m.uiType = 'HARD_SEQUENCE'; m.desc="شرح اللعبة: القفل التسلسلي الأعمى. 9 عقد طاقة. اكتشف التسلسل السري الكامل بالتجربة والخطأ. خطأ واحد يعيد تهيئة القفل بالكامل للصفر."; m.hint="💡 تلميح النظام: ابدأ العقد من المنتصف واحفظ مسارك جيداً. | 📝 تلميح اللغز: بها عقارب ثابتة."; }
+            else if(i===17) { m.uiType = 'HARD_WAVES'; m.desc="شرح اللعبة: محاذاة الترددات الكمية. اضبط الموجات الثلاث (التردد، السعة، الطور) بدقة ليتطابق المجموع الكمي 100% مع السيرفر."; m.hint="💡 تلميح النظام: المؤشر الأول 73، الثاني 21، الأخير 88. | 📝 تلميح اللغز: يضيء وينتهي."; }
+            else if(i===19) { m.uiType = 'HARD_COLOR_CODE'; m.desc="شرح اللعبة: شفرة التوافق الصارمة. ابحث عن الترتيب اللوني الدقيق للقنوات الخمس. النظام سيعطيك النسبة المئوية للتطابق فقط."; m.hint="💡 تلميح النظام: لا يوجد ألوان مكررة، اللون الأول أخضر. | 📝 تلميح اللغز: تشير ولا تتحرك."; }
+            else if(i===21) { m.uiType = 'HARD_LOGIC'; m.desc="شرح اللعبة: البوابات المنطقية. قم بتبديل المفاتيح الأربعة لفتح القفل عبر الدائرة المعقدة. يجب أن تتوافق الإشارات لتفعيل النواة."; m.hint="💡 تلميح النظام: المفتاح الأول والثالث فعال، الثاني والرابع مطفأ. | 📝 تلميح اللغز: تخاف الماء وتأكل كل شيء."; }
+            else if(i===25) { m.uiType = 'HARD_PIPES'; m.desc="شرح اللعبة: صمامات الضغط المترابطة. أدر الصمامات لتشير جميعها للأعلى. تدوير أي صمام سيؤثر ميكانيكياً على الصمامات المجاورة له (يمين، يسار، أعلى، أسفل)!"; m.hint="💡 تلميح النظام: حاول تفعيلها من الأطراف أولاً بشكل متقابل. | 📝 تلميح اللغز: خطوة."; }
+            else if(i===27) { m.uiType = 'HARD_MATRIX'; m.desc="شرح اللعبة: مصفوفة الاختراق. تتبع واستخرج التسلسل الصارم (FF ➔ A1 ➔ D4 ➔ B7) من بين الشفرات الوهمية."; m.hint="💡 تلميح النظام: ابدأ من FF في الزاوية العلوية اليمنى. | 📝 تلميح اللغز: سمسم."; }
+            else if(i===29) { m.uiType = 'HARD_CORE'; m.desc="شرح اللعبة: تبريد المفاعل. توازن معقد: ضغطة على عمود ترفعه وتخفض بقية الأعمدة. اجعل جميع الأعمدة عند مستوى 50% تماماً."; m.hint="💡 تلميح النظام: ركز على رفع الأعمدة المنخفضة جداً أولاً ببطء. | 📝 تلميح اللغز: شمعة."; }
+            // ====================================================
+
             else if(i===7) { m.uiType = 'SCALES'; m.desc="شرح اللعبة: الميزان الروماني، أضف الأوزان الدقيقة للوصول لكتلة 150 المحددة."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تلميح النظام: استخدم وزنين فقط من الأكبر. | 📝 تلميح اللغز: زمن لم يأت بعد."; }
             else if(i===8) { m.uiType = 'RADAR_ROUNDS'; m.desc="شرح اللعبة: رادار متصاعد الصعوبة. حدد النقطة المضيئة في 3 جولات بشبكات أكبر (5x5, 7x7, 9x9)."; m.hint="💡 تلميح النظام: النقطة تظهر في النصف السفلي من الشاشة عادة. | 📝 تلميح اللغز: كلام ملزم يكسر."; }
             else if(i===9) { m.uiType = 'KEYPAD'; m.desc="شرح اللعبة: أدخل تسلسل الأرقام السري للوحة الديجيتال بالترتيب."; m.ans='739'; m.hint="💡 تلميح النظام: تنازلي من 7 ثم يقفز لرقم كبير. | 📝 تلميح اللغز: عكس الكلام."; }
             else if(i===10) { m.uiType = 'GEARS'; m.desc="شرح اللعبة: نظام تروس معقد. دور التروس الثلاثة حتى تتجه الأسنان جميعها للأعلى."; m.ans=[0,0,0]; m.hint="💡 تلميح النظام: استمر بالضغط حتى تصطف. | 📝 تلميح اللغز: شيء يكسر لتأكله."; }
             else if(i===11) { m.uiType = 'MORSE'; m.desc="شرح اللعبة: فك تشفير الإشارة الضوئية (الومضات الطويلة والقصيرة) واكتب الكلمة."; m.ans='SOS'; m.hint="💡 تلميح النظام: إشارة استغاثة عالمية مشهورة. | 📝 تلميح اللغز: تجففك وهي مبللة."; }
             else if(i===12) { m.uiType = 'HEX'; m.desc="شرح اللعبة: اربط مساراً آمناً عبر الخلايا السداسية لمرور الطاقة."; m.ans=[3,4,5]; m.hint="💡 تلميح النظام: المسار الأفقي الأوسط. | 📝 تلميح اللغز: مدن بلا سكان."; }
-            else if(i===13) { m.uiType = 'WEIGHTS'; m.desc="شرح اللعبة: أوزان الخيمياء، جد التركيبة الصحيحة للوصول لـ 140 جرام."; m.data=[40,60,80,20,50]; m.target=140; m.hint="💡 تلميح النظام: 60 زائد وزن أكبر منه. | 📝 تلميح اللغز: بها عقارب ثابتة."; }
             else if(i===14) { m.uiType = 'SLIDERS'; m.desc="شرح اللعبة: أوزن ألوان الـ RGB للحصول على اللون الذهبي الداكن للنظام."; m.data=[{label:'RED',max:255},{label:'GRN',max:255}]; m.ans=[212, 175]; m.hint="💡 تلميح النظام: الأحمر فوق الـ 200 والأخضر 175. | 📝 تلميح اللغز: تراه في السماء."; }
             else if(i===15) { m.uiType = 'MAZE'; m.desc="شرح اللعبة: المتاهة العمياء. تتبع مساراً خفياً من الزاوية العلوية للسفلية دون لمس الفخاخ."; m.data=36; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تلميح النظام: ابدأ بالنزول 3 خطوات ثم اتجه يميناً. | 📝 تلميح اللغز: أخضر من الخارج."; }
             else if(i===16) { m.uiType = 'CRYPTEX'; m.desc="شرح اللعبة: أسطوانات التشفير. قم بإزاحة الأحرف (CDE) بمقدار 2 للأمام."; m.ans='EFG'; m.hint="💡 تلميح النظام: الحرف الذي يلي C بحرفين. | 📝 تلميح اللغز: يخترق ويثبت."; }
-            else if(i===17) { m.uiType = 'SHELLS'; m.desc="شرح اللعبة: الخفة البصرية. راقب حركة الكوب الذي يحتوي على الهدف عبر 3 جولات متسارعة."; m.hint="💡 تلميح النظام: الهدف يبقى غالباً في المنتصف ثم يتحرك للطرف. | 📝 تلميح اللغز: يضيء وينتهي."; }
             else if(i===18) { m.uiType = 'BARCODE'; m.desc="شرح اللعبة: الباركود التالف. قم بتفعيل الأعمدة الصحيحة لاستكمال التسلسل البصري."; m.ans=[2,5,7]; m.hint="💡 تلميح النظام: فعل الأعمدة رقم 3 و 6 و 8. | 📝 تلميح اللغز: يتبعك ولا تلمسه."; }
-            else if(i===19) { m.uiType = 'RADIO'; m.desc="شرح اللعبة: التردد العسكري. قم بتدوير بكرة الراديو للحصول على أنعم موجة بصرية."; m.ans=199; m.hint="💡 تلميح النظام: التردد قبل 200 بدرجة واحدة. | 📝 تلميح اللغز: تشير ولا تتحرك."; }
             else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="شرح اللعبة: معبد الشعلات. اضغط لإطفاء جميع النيران، كل ضغطة تؤثر على الجوار."; m.data=9; m.hint="💡 تلميح النظام: اضغط الأطراف الأربعة أولاً. | 📝 تلميح اللغز: تحس بها ولا تراها."; }
-            else if(i===21) { m.uiType = 'ANOMALY'; m.desc="شرح اللعبة: الشذوذ البصري الدقيق. أوجد الرمز الوحيد (𖤌) من بين 36 رمزاً متشابهاً."; m.ans=22; m.hint="💡 تلميح النظام: الرمز في الربع السفلي الأيمن. | 📝 تلميح اللغز: تخاف الماء وتأكل كل شيء."; }
             else if(i===22) { m.uiType = 'DNA'; m.desc="شرح اللعبة: شريط الـ DNA. طابق الروابط بشكل صحيح (A مع T، و C مع G)."; m.ans=['T','G','A','C']; m.hint="💡 تلميح النظام: التسلسل يبدأ بـ T وينتهي بـ C. | 📝 تلميح اللغز: حفرة."; }
             else if(i===23) { m.uiType = 'PIPES'; m.desc="شرح اللعبة: شبكة الأنابيب. قم بتدوير الأجزاء لتكوين مسار أفقي مستقيم."; m.hint="💡 تلميح النظام: اجعل جميع الأنابيب على شكل (━). | 📝 تلميح اللغز: الشعور بالحاجة للطعام."; }
             else if(i===24) { m.uiType = 'SLIDING'; m.desc="شرح اللعبة: اللوحة المنزلقة. قم بإزاحة الأرقام لترتيبها تصاعدياً وترك الفراغ بالنهاية."; m.ans='123456780'; m.hint="💡 تلميح النظام: ابدأ بترتيب الصف الأول (1,2,3). | 📝 تلميح اللغز: اسمك."; }
-            else if(i===25) { m.uiType = 'MAGIC_SQUARE'; m.desc="شرح اللعبة: المربع السحري. عدل الأرقام ليكون مجموع كل صف وعمود وقطر يساوي 15."; m.ans=[8,1,6,3,5,7,4,9,2]; m.hint="💡 تلميح النظام: الرقم 5 يجب أن يكون في المنتصف تماماً. | 📝 تلميح اللغز: خطوة."; }
             else if(i===26) { m.uiType = 'HEATMAP'; m.desc="شرح اللعبة: البصمة الحرارية. أدخل الأرقام بالتسلسل من الأشد حرارة إلى الأبرد."; m.ans=[8,4,9,1]; m.hint="💡 تلميح النظام: ابدأ بالأحمر الغامق ثم البرتقالي. | 📝 تلميح اللغز: مطر."; }
-            else if(i===27) { m.uiType = 'MATRIX'; m.desc="شرح اللعبة: المصفوفة. اصطد الكلمة المطلوبة (SOLAR) وهي تتساقط كالشفرات."; m.ans='SOLAR'; m.hint="💡 تلميح النظام: ركز على الشفرات التي تلمع بالأبيض. | 📝 تلميح اللغز: سمسم."; }
             else if(i===28) { m.uiType = 'ELEVATOR'; m.desc="شرح اللعبة: لوحة المصعد. اضغط تسلسل الأدوار الصحيح للوصول للمنطقة السرية."; m.ans=[3,1,5]; m.hint="💡 تلميح النظام: الدور 3 ثم 1 ثم 5. | 📝 تلميح اللغز: العلا."; }
-            else if(i===29) { m.uiType = 'MATH_HACK'; m.desc="شرح اللعبة: جدار الحماية الرياضي. حل المعادلة (10 * 5) + 50 وأدخل الناتج."; m.ans='100'; m.hint="💡 تلميح النظام: الناتج هو مائة. | 📝 تلميح اللغز: شمعة."; }
             else if(i===30) { m.uiType = 'BOSS'; m.desc="شرح اللعبة: الاختراق النهائي (MASTER BREACH). شغل مفاتيح الطاقة وأدخل كود التأكيد."; m.ans='GOLDEN'; m.hint="💡 تلميح النظام: الكود النهائي هو GOLDEN. | 📝 تلميح اللغز: معدن نفيس."; }
 
             m.txtQ = riddles[i-1].q;
@@ -131,7 +135,6 @@ class SolarGamesEngine {
         return mechanics;
     }
 
-    // المؤقت العام والعملات
     toggleGlobalTimer() { 
         this.playSound('click'); this.isTimerRunning = !this.isTimerRunning; 
         this.showToast(this.isTimerRunning ? "تم تشغيل العداد العام" : "تم إيقاف العداد العام");
@@ -145,7 +148,6 @@ class SolarGamesEngine {
         let s = (this.globalTime % 60).toString().padStart(2,'0');
         document.getElementById('global-timer-display').innerText = `${h}:${m}:${s}`;
         document.getElementById('market-time').innerText = `${h}:${m}:${s}`;
-        document.getElementById('puzzle-global-timer').innerText = `${h}:${m}:${s}`;
         document.getElementById('global-timer-display').style.color = this.timeFrozen ? '#00ccff' : '#fff';
     }
 
@@ -237,7 +239,6 @@ class SolarGamesEngine {
         this.setupStage(); this.switchScreen('puzzle');
     }
 
-    // المعالج البصري المعزول للمنع من التداخل البرمجي
     setupStage() {
         const p = this.activeGate;
         document.getElementById('int-desc').innerText = p.desc;
@@ -247,8 +248,8 @@ class SolarGamesEngine {
         const innerStage = document.getElementById('lux-inner-stage');
         this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true };
 
-        const generateSubmitButton = (callback) => {
-            let btn = document.createElement('button'); btn.className = 'btn-execute'; btn.innerText = 'تأكيد (Execute)'; 
+        const generateSubmitButton = (callback, text = 'تأكيد (Execute)') => {
+            let btn = document.createElement('button'); btn.className = 'btn-execute'; btn.innerText = text; 
             btn.onclick = callback; return btn;
         };
 
@@ -260,7 +261,247 @@ class SolarGamesEngine {
         };
 
         switch(p.uiType) {
-            case 'WIRES': {
+
+            // =================== الأبواب الصعبة الجديدة (8 أبواب) ===================
+
+            case 'HARD_MEMORY': { // الباب 6
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:grid; grid-template-columns:repeat(5, 55px); gap:5px; margin-bottom:20px;';
+                let cells = [];
+                let target = [];
+                while(target.length < 10) { let r = Math.floor(Math.random()*25); if(!target.includes(r)) target.push(r); }
+                let selected = [];
+                for(let i=0; i<25; i++) {
+                    let c = document.createElement('div'); 
+                    c.style.cssText = 'width:55px; height:55px; background:#111; border:1px solid #333; cursor:pointer; transition:0.3s; box-shadow:inset 0 0 10px #000; border-radius:4px;';
+                    c.onclick = () => {
+                        if(!this.stageState.playing) return;
+                        this.playSound('click');
+                        let idx = selected.indexOf(i);
+                        if(idx > -1) { selected.splice(idx, 1); c.style.background = '#111'; c.style.boxShadow = 'inset 0 0 10px #000'; }
+                        else { selected.push(i); c.style.background = '#D4AF37'; c.style.boxShadow = '0 0 15px #D4AF37'; }
+                    };
+                    cells.push(c); wrap.appendChild(c);
+                }
+                let btn = generateSubmitButton(() => {
+                    if(selected.length === target.length && selected.every(val => target.includes(val))) this.winInteractive();
+                    else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); }
+                }, 'VERIFY MEMORY');
+                innerStage.append(wrap, btn);
+                
+                this.stageState.playing = false;
+                target.forEach(i => { cells[i].style.background = '#fff'; cells[i].style.boxShadow = '0 0 20px #fff'; });
+                setTimeout(() => {
+                    target.forEach(i => { cells[i].style.background = '#111'; cells[i].style.boxShadow = 'inset 0 0 10px #000'; });
+                    this.stageState.playing = true;
+                }, 2000); 
+                break;
+            }
+
+            case 'HARD_SEQUENCE': { // الباب 13
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:15px;';
+                let targetSeq = [...Array(9).keys()].sort(()=>Math.random() - 0.5);
+                let currentStep = 0;
+                let cells = [];
+                for(let i=0; i<9; i++) {
+                    let c = document.createElement('div');
+                    c.style.cssText = 'width:80px; height:80px; background:#050505; border:2px solid #D4AF37; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#000; cursor:pointer; font-weight:bold; box-shadow:inset 0 0 15px #000; transition:0.2s;';
+                    c.onclick = () => {
+                        this.playSound('click');
+                        if(targetSeq[currentStep] === i) {
+                            c.style.background = '#D4AF37'; c.innerText = currentStep + 1; c.style.pointerEvents = 'none';
+                            currentStep++;
+                            if(currentStep === 9) setTimeout(()=>this.winInteractive(), 500);
+                        } else {
+                            this.failRoom();
+                            currentStep = 0;
+                            cells.forEach(cell => { cell.style.background = '#050505'; cell.innerText = ''; cell.style.pointerEvents = 'auto'; });
+                        }
+                    };
+                    cells.push(c); wrap.appendChild(c);
+                }
+                let txt = document.createElement('div'); txt.style.cssText = 'color:#D4AF37; margin-bottom:20px; font-family:monospace; letter-spacing:2px; font-size:1.2rem;'; txt.innerText = 'FIND THE HIDDEN SEQUENCE (1-9)';
+                innerStage.append(txt, wrap);
+                break;
+            }
+
+            case 'HARD_WAVES': { // الباب 17
+                let wrap = document.createElement('div'); wrap.style.cssText = 'width:100%; max-width:400px; display:flex; flex-direction:column; gap:20px;';
+                let disp = document.createElement('div'); disp.style.cssText = 'width:100%; height:80px; background:#000; border:2px solid #333; display:flex; justify-content:center; align-items:center; color:#D4AF37; font-family:monospace; font-size:2.5rem; letter-spacing:5px; box-shadow:inset 0 0 20px #000;';
+                disp.innerText = 'ERR%';
+                let targetA = 73, targetB = 21, targetC = 88;
+                let sls = [];
+                ['FREQ-A', 'AMP-B', 'PHASE-C'].forEach(l => {
+                    let r = document.createElement('div'); r.style.cssText = 'display:flex; align-items:center; gap:15px; background:#111; padding:15px; border:1px solid #222; border-radius:4px;';
+                    let lbl = document.createElement('span'); lbl.innerText = l; lbl.style.cssText = 'color:#888; width:70px; font-weight:bold; font-family:monospace;';
+                    let s = document.createElement('input'); s.type='range'; s.min=0; s.max=100; s.value=50; s.style.flexGrow='1'; s.style.cursor='pointer';
+                    s.oninput = () => { this.playSound('click'); }; 
+                    r.append(lbl, s); wrap.appendChild(r); sls.push(s);
+                });
+                let btn = generateSubmitButton(() => {
+                    let a = parseInt(sls[0].value), b = parseInt(sls[1].value), c = parseInt(sls[2].value);
+                    let diff = Math.abs(a-targetA) + Math.abs(b-targetB) + Math.abs(c-targetC);
+                    let acc = Math.max(0, 100 - diff);
+                    disp.innerText = acc + '%';
+                    if(acc === 100) this.winInteractive(); else this.failRoom();
+                }, 'CALCULATE RESONANCE');
+                innerStage.append(disp, wrap, btn);
+                break;
+            }
+
+            case 'HARD_COLOR_CODE': { // الباب 19
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; width:100%;';
+                let nodesWrap = document.createElement('div'); nodesWrap.style.cssText = 'display:flex; gap:15px; margin-bottom:30px;';
+                let colors = ['#D4AF37', '#ff3333', '#00ccff', '#00ff66', '#ffffff', '#555555'];
+                let target = [3, 0, 5, 2, 1]; // Green, Gold, Gray, Blue, White
+                let current = [0, 0, 0, 0, 0];
+                let nodes = [];
+                for(let i=0; i<5; i++) {
+                    let n = document.createElement('div');
+                    n.style.cssText = `width:55px; height:55px; border-radius:8px; background:${colors[0]}; border:2px solid #333; cursor:pointer; transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.8);`;
+                    n.onclick = () => {
+                        this.playSound('click');
+                        current[i] = (current[i] + 1) % colors.length;
+                        n.style.background = colors[current[i]];
+                    };
+                    nodesWrap.appendChild(n); nodes.push(n);
+                }
+                let screen = document.createElement('div'); screen.style.cssText = 'width:250px; height:60px; background:#000; border:2px solid #D4AF37; margin-bottom:20px; display:flex; justify-content:center; align-items:center; color:#D4AF37; font-family:monospace; font-size:1.8rem; letter-spacing:2px; text-shadow:0 0 10px #D4AF37;'; screen.innerText = 'STATUS: WAIT';
+                let btn = generateSubmitButton(() => {
+                    let exact = 0;
+                    for(let i=0; i<5; i++) { if(current[i] === target[i]) exact++; }
+                    screen.innerText = `MATCH: ${(exact/5)*100}%`;
+                    if(exact === 5) this.winInteractive(); else this.failRoom();
+                }, 'TEST ALIGNMENT');
+                wrap.append(screen, nodesWrap, btn); innerStage.appendChild(wrap);
+                break;
+            }
+
+            case 'HARD_LOGIC': { // الباب 21
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:30px; width:100%;';
+                let swWrap = document.createElement('div'); swWrap.style.cssText = 'display:flex; gap:20px;';
+                let state = [false, false, false, false];
+                let targetState = [true, false, true, false]; 
+                let switches = [];
+                for(let i=0; i<4; i++) {
+                    let sw = document.createElement('div');
+                    sw.style.cssText = 'width:60px; height:100px; background:#111; border:2px solid #333; border-radius:6px; position:relative; cursor:pointer; box-shadow:0 5px 15px #000;';
+                    let knob = document.createElement('div');
+                    knob.style.cssText = 'position:absolute; width:44px; height:40px; background:linear-gradient(180deg,#444,#222); left:6px; top:10px; border-radius:4px; transition:0.3s; border:1px solid #555;';
+                    sw.appendChild(knob);
+                    sw.onclick = () => {
+                        this.playSound('click');
+                        state[i] = !state[i];
+                        if(state[i]) { knob.style.top = '46px'; knob.style.background = 'linear-gradient(180deg,#D4AF37,#8a7322)'; knob.style.boxShadow = '0 -5px 10px rgba(212,175,55,0.5)'; }
+                        else { knob.style.top = '10px'; knob.style.background = 'linear-gradient(180deg,#444,#222)'; knob.style.boxShadow = 'none'; }
+                    };
+                    swWrap.appendChild(sw); switches.push(sw);
+                }
+                let visualCore = document.createElement('div'); visualCore.style.cssText = 'width:150px; height:150px; background:radial-gradient(circle, #222, #000); border:4px dashed #D4AF37; border-radius:50%; display:flex; justify-content:center; align-items:center; color:#555; font-size:3rem; transition:0.5s;'; visualCore.innerText = '⚡';
+                
+                let btn = generateSubmitButton(() => {
+                    if(JSON.stringify(state) === JSON.stringify(targetState)) {
+                        visualCore.style.background = 'radial-gradient(circle, #D4AF37, #000)'; visualCore.style.color = '#fff'; visualCore.style.boxShadow = '0 0 50px #D4AF37';
+                        setTimeout(()=>this.winInteractive(), 800);
+                    } else { this.failRoom(); }
+                }, 'POWER ON');
+                wrap.append(swWrap, visualCore, btn); innerStage.appendChild(wrap);
+                break;
+            }
+
+            case 'HARD_PIPES': { // الباب 25
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px;';
+                let state = [0, 90, 180, 270, 90, 180, 0, 270, 90];
+                let dials = [];
+                for(let i=0; i<9; i++) {
+                    let d = document.createElement('div');
+                    d.style.cssText = `width:80px; height:80px; background:#0a0a0a; border:2px solid #D4AF37; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; transform:rotate(${state[i]}deg); transition:0.3s cubic-bezier(0.4,0,0.2,1); font-size:3rem; color:#D4AF37; box-shadow:inset 0 0 15px #000;`;
+                    d.innerText = '⬆';
+                    d.onclick = () => {
+                        this.playSound('click');
+                        let toRotate = [i];
+                        if(i%3 !== 0) toRotate.push(i-1); 
+                        if(i%3 !== 2) toRotate.push(i+1); 
+                        if(Math.floor(i/3) !== 0) toRotate.push(i-3); 
+                        if(Math.floor(i/3) !== 2) toRotate.push(i+3); 
+                        
+                        toRotate.forEach(idx => {
+                            state[idx] = (state[idx] + 90) % 360;
+                            dials[idx].style.transform = `rotate(${state[idx]}deg)`;
+                        });
+                        
+                        if(state.every(val => val === 0)) setTimeout(()=>this.winInteractive(), 500);
+                    };
+                    dials.push(d); wrap.appendChild(d);
+                }
+                let txt = document.createElement('div'); txt.style.cssText = 'color:#888; margin-bottom:20px; text-align:center; font-family:monospace; line-height: 1.5;'; txt.innerText = 'ALIGN ALL VALVES UPWARDS.\nWARNING: VALVES ARE MECHANICALLY LINKED.';
+                innerStage.append(txt, wrap);
+                break;
+            }
+
+            case 'HARD_MATRIX': { // الباب 27
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:grid; grid-template-columns:repeat(4, 70px); gap:5px; background:#000; padding:10px; border:2px solid #333;';
+                let codes = ['1A','B7','2C','FF','A1','D4','EE','99','00','B7','FF','A1','D4','3B','8C','4D']; 
+                let requiredOrder = ['FF', 'A1', 'D4', 'B7'];
+                let currentStep = 0;
+                let cells = [];
+                for(let i=0; i<16; i++) {
+                    let c = document.createElement('div');
+                    c.style.cssText = 'width:70px; height:50px; background:#111; color:#555; display:flex; justify-content:center; align-items:center; font-family:monospace; font-size:1.5rem; font-weight:bold; cursor:pointer; border:1px solid #222; transition:0.2s;';
+                    c.innerText = codes[i];
+                    c.onclick = () => {
+                        this.playSound('click');
+                        if(codes[i] === requiredOrder[currentStep]) {
+                            c.style.background = 'var(--gold)'; c.style.color = '#000'; c.style.pointerEvents = 'none';
+                            currentStep++;
+                            if(currentStep === 4) setTimeout(()=>this.winInteractive(), 500);
+                        } else {
+                            this.failRoom();
+                            currentStep = 0;
+                            cells.forEach(cell => { cell.style.background = '#111'; cell.style.color = '#555'; cell.style.pointerEvents = 'auto'; });
+                        }
+                    };
+                    cells.push(c); wrap.appendChild(c);
+                }
+                let display = document.createElement('div'); display.style.cssText = 'width:100%; max-width:300px; padding:15px; background:#0a0a0a; border:1px solid #D4AF37; margin-bottom:20px; text-align:center; color:#D4AF37; font-family:monospace; font-size:1.2rem; letter-spacing:3px; box-shadow:0 5px 15px rgba(0,0,0,0.8);';
+                display.innerText = 'TARGET: FF ➔ A1 ➔ D4 ➔ B7';
+                innerStage.append(display, wrap);
+                break;
+            }
+
+            case 'HARD_CORE': { // الباب 29
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:15px; height:250px; align-items:flex-end; border-bottom:4px solid #333; padding-bottom:15px; margin-bottom:20px;';
+                let vals = [20, 60, 40, 80]; 
+                let bars = [];
+                for(let i=0; i<4; i++) {
+                    let col = document.createElement('div');
+                    col.style.cssText = 'width:50px; height:100%; background:#050505; border:2px solid #555; border-radius:4px 4px 0 0; position:relative; overflow:hidden; cursor:pointer; box-shadow:0 10px 20px #000;';
+                    let fill = document.createElement('div');
+                    fill.style.cssText = 'position:absolute; bottom:0; width:100%; transition:0.3s;';
+                    fill.style.height = vals[i] + '%';
+                    fill.style.background = vals[i] === 50 ? '#00ff66' : (vals[i] > 80 ? '#ff3333' : '#D4AF37');
+                    
+                    col.appendChild(fill);
+                    col.onclick = () => {
+                        this.playSound('click');
+                        for(let j=0; j<4; j++) {
+                            if(j === i) vals[j] = Math.min(100, vals[j] + 20);
+                            else vals[j] = Math.max(0, vals[j] - 10);
+                            
+                            bars[j].style.height = vals[j] + '%';
+                            bars[j].style.background = vals[j] === 50 ? '#00ff66' : (vals[j] > 80 ? '#ff3333' : '#D4AF37');
+                        }
+                        if(vals.every(v => v === 50)) setTimeout(()=>this.winInteractive(), 500);
+                    };
+                    bars.push(fill); wrap.appendChild(col);
+                }
+                let txt = document.createElement('div'); txt.style.cssText = 'color:#888; font-family:monospace; text-align:center; font-size:1.1rem;'; txt.innerText = 'STABILIZE ALL CORES TO 50%';
+                innerStage.append(wrap, txt);
+                break;
+            }
+
+            // =================== الأبواب الأصلية كما هي ===================
+
+            case 'WIRES':
                 let wWrap = document.createElement('div'); wWrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center;';
                 p.data.forEach((c, i) => {
                     let w = document.createElement('div'); w.className = 'wire-lux'; w.style.backgroundColor = c;
@@ -275,8 +516,8 @@ class SolarGamesEngine {
                 });
                 innerStage.appendChild(wWrap);
                 break;
-            }
-            case 'SIMON': {
+
+            case 'SIMON':
                 let smGrid = document.createElement('div'); smGrid.className = 'simon-grid';
                 let boxes = [];
                 for(let i=0; i<p.data; i++) {
@@ -311,8 +552,8 @@ class SolarGamesEngine {
                 };
                 setTimeout(()=>playRound(), 500);
                 break;
-            }
-            case 'MASTERMIND': {
+
+            case 'MASTERMIND':
                 let container = document.createElement('div'); container.className = 'mm-container';
                 let inputs = document.createElement('div'); inputs.className = 'mm-inputs';
                 let mboxes = [];
@@ -340,8 +581,8 @@ class SolarGamesEngine {
                 };
                 container.append(inputs, btn, history); innerStage.appendChild(container);
                 break;
-            }
-            case 'MATCH': {
+
+            case 'MATCH':
                 let crdGrid = document.createElement('div'); crdGrid.className = 'card-grid';
                 let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5);
                 let flipped = [];
@@ -363,8 +604,8 @@ class SolarGamesEngine {
                 });
                 innerStage.appendChild(crdGrid);
                 break;
-            }
-            case 'ASTROLABE': {
+
+            case 'ASTROLABE':
                 let astWrap = document.createElement('div'); astWrap.style.cssText = 'position: relative; width: 250px; height: 250px; display:flex; justify-content:center; align-items:center;';
                 let r1 = document.createElement('div'); r1.className = 'astro-ring astro-r1'; let m1=document.createElement('div'); m1.className='astro-marker'; r1.appendChild(m1);
                 let r2 = document.createElement('div'); r2.className = 'astro-ring astro-r2'; let m2=document.createElement('div'); m2.className='astro-marker'; r2.appendChild(m2);
@@ -380,32 +621,9 @@ class SolarGamesEngine {
                     };
                 });
                 break;
-            }
-            case 'RUNES':
-            case 'ANOMALY': {
-                let rnWrap = document.createElement('div'); rnWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 60px); gap:10px;';
-                let isAnomaly = p.uiType === 'ANOMALY';
-                let rCount = isAnomaly ? 36 : 16;
-                if(!isAnomaly) rnWrap.style.gridTemplateColumns = 'repeat(4, 70px)';
-                for(let i=0; i<rCount; i++) {
-                    let b = document.createElement('div'); b.className = 'stone-btn'; 
-                    if(isAnomaly) { b.style.width='60px'; b.style.height='60px'; b.style.fontSize='2rem'; b.innerText = (i === p.ans) ? '𖤌' : '𖤍'; }
-                    else { b.innerText = 'Ⱄ'; }
-                    b.onclick = () => { 
-                        if(isAnomaly && i === p.ans) this.winInteractive();
-                        else if(!isAnomaly && p.ans.includes(i)) {
-                            b.classList.add('active'); this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    rnWrap.appendChild(b);
-                }
-                innerStage.appendChild(rnWrap);
-                break;
-            }
-            case 'SCALES': {
-                let sclWrap = document.createElement('div');
-                sclWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px; border-bottom: 4px solid var(--gold); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center;';
+
+            case 'SCALES':
+                let sclWrap = document.createElement('div'); sclWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px; border-bottom: 4px solid var(--gold); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center;';
                 p.data.forEach((w) => {
                     let btn = document.createElement('div');
                     btn.style.cssText = 'width: 60px; background: linear-gradient(135deg, #eee, #888); border: 2px solid #555; text-align: center; font-weight: bold; color: #000; cursor: pointer; transition: 0.3s; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; box-shadow: 0 10px 15px #000;';
@@ -420,10 +638,9 @@ class SolarGamesEngine {
                 });
                 innerStage.appendChild(sclWrap);
                 break;
-            }
-            case 'RADAR_ROUNDS': {
-                let rdWrap = document.createElement('div'); 
-                rdWrap.style.cssText = 'display:grid; gap:2px; background:rgba(0,255,100,0.1); border:2px solid #00ff66; padding:5px; border-radius:50%; width:300px; height:300px; overflow:hidden; position:relative; box-shadow:inset 0 0 20px rgba(0,255,100,0.2);';
+
+            case 'RADAR_ROUNDS':
+                let rdWrap = document.createElement('div'); rdWrap.style.cssText = 'display:grid; gap:2px; background:rgba(0,255,100,0.1); border:2px solid #00ff66; padding:5px; border-radius:50%; width:300px; height:300px; overflow:hidden; position:relative; box-shadow:inset 0 0 20px rgba(0,255,100,0.2);';
                 innerStage.appendChild(rdWrap);
                 this.stageState.round = 1;
                 const startRadarRound = () => {
@@ -450,18 +667,14 @@ class SolarGamesEngine {
                 };
                 startRadarRound();
                 break;
-            }
-            case 'KEYPAD': {
-                let kWrap = document.createElement('div'); 
-                kWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px;';
-                let kDisp = document.createElement('div'); 
-                kDisp.style.cssText = 'grid-column:span 3; font-family: monospace; font-size: 2.5rem; color: var(--gold); text-align:center; background:#000; border:2px solid #333; padding:10px; border-radius:8px; margin-bottom:10px; letter-spacing:10px;';
-                kDisp.innerText='_ _ _'; 
-                kWrap.appendChild(kDisp);
+
+            case 'KEYPAD':
+                let kWrap = document.createElement('div'); kWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px;';
+                let kDisp = document.createElement('div'); kDisp.style.cssText = 'grid-column:span 3; font-family: monospace; font-size: 2.5rem; color: var(--gold); text-align:center; background:#000; border:2px solid #333; padding:10px; border-radius:8px; margin-bottom:10px; letter-spacing:10px;';
+                kDisp.innerText='_ _ _'; kWrap.appendChild(kDisp);
                 let padNums = [1,2,3,4,5,6,7,8,9];
                 padNums.forEach((n) => {
-                    let btn = document.createElement('div'); 
-                    btn.style.cssText = 'width:80px; height:80px; background:#050505; border:2px solid #222; border-radius:8px; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#555; cursor:pointer; font-family:monospace;';
+                    let btn = document.createElement('div'); btn.style.cssText = 'width:80px; height:80px; background:#050505; border:2px solid #222; border-radius:8px; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#555; cursor:pointer; font-family:monospace;';
                     btn.innerText = n;
                     btn.onclick = () => {
                         this.stageState.val = (this.stageState.val || '') + n;
@@ -473,43 +686,35 @@ class SolarGamesEngine {
                 });
                 innerStage.appendChild(kWrap);
                 break;
-            }
-            case 'GEARS': {
+
+            case 'GEARS':
                 let gWrap = document.createElement('div'); gWrap.style.cssText = 'display:flex; gap:20px;';
-                let angles = [90, 180, 270];
+                let gearAngles = [90, 180, 270];
                 for(let i=0; i<3; i++) {
-                    let d = document.createElement('div'); 
-                    d.innerText = '⚙️';
-                    d.style.cssText = `font-size: 6rem; line-height: 1; color: #555; cursor: pointer; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-shadow: 0 10px 20px #000; user-select: none; transform: rotate(${angles[i]}deg);`;
+                    let d = document.createElement('div'); d.innerText = '⚙️';
+                    d.style.cssText = `font-size: 6rem; line-height: 1; color: #555; cursor: pointer; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); text-shadow: 0 10px 20px #000; user-select: none; transform: rotate(${gearAngles[i]}deg);`;
                     d.onclick = () => {
-                        angles[i] = (angles[i] + 45) % 360; d.style.transform = `rotate(${angles[i]}deg)`;
-                        if(angles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 300);
+                        gearAngles[i] = (gearAngles[i] + 45) % 360; d.style.transform = `rotate(${gearAngles[i]}deg)`;
+                        if(gearAngles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 300);
                     };
                     gWrap.appendChild(d);
                 }
                 innerStage.appendChild(gWrap);
                 break;
-            }
-            case 'MORSE': {
-                let mBulb = document.createElement('div'); 
-                mBulb.style.cssText = 'width: 100px; height: 100px; border-radius: 50%; background: #111; border: 4px solid #333; margin: 20px auto; box-shadow: inset 0 0 20px #000; transition: 0.1s;';
-                innerStage.appendChild(mBulb);
-                createInputBlock('DECODE SIGNAL...', p.ans);
+
+            case 'MORSE':
+                let mBulb = document.createElement('div'); mBulb.style.cssText = 'width: 100px; height: 100px; border-radius: 50%; background: #111; border: 4px solid #333; margin: 20px auto; box-shadow: inset 0 0 20px #000; transition: 0.1s;';
+                innerStage.appendChild(mBulb); createInputBlock('DECODE SIGNAL...', p.ans);
                 const flash = (duration) => { 
                     mBulb.style.background = '#fff'; mBulb.style.borderColor = '#fff'; mBulb.style.boxShadow = '0 0 50px #fff, inset 0 0 20px #fff';
                     setTimeout(()=> { mBulb.style.background = '#111'; mBulb.style.borderColor = '#333'; mBulb.style.boxShadow = 'inset 0 0 20px #000'; }, duration); 
                 }
-                let pattern = [200,200,200, 600,600,600, 200,200,200]; 
-                let mStep = 0;
-                this.stageState.timer = setInterval(() => {
-                    flash(pattern[mStep]); mStep++;
-                    if(mStep >= pattern.length) mStep=0;
-                }, 1000);
+                let pattern = [200,200,200, 600,600,600, 200,200,200]; let mStep = 0;
+                this.stageState.timer = setInterval(() => { flash(pattern[mStep]); mStep++; if(mStep >= pattern.length) mStep=0; }, 1000);
                 break;
-            }
-            case 'HEX': {
-                let hexWrap = document.createElement('div');
-                hexWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 70px); gap:15px;';
+
+            case 'HEX':
+                let hexWrap = document.createElement('div'); hexWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 70px); gap:15px;';
                 for(let i=0; i<9; i++) {
                     let n = document.createElement('div');
                     n.style.cssText = 'width:70px; height:70px; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); background: #111; display:flex; justify-content:center; align-items:center; cursor:pointer; color:#555; font-weight:bold; transition:0.3s;';
@@ -525,8 +730,8 @@ class SolarGamesEngine {
                 }
                 innerStage.appendChild(hexWrap);
                 break;
-            }
-            case 'SLIDERS': {
+
+            case 'SLIDERS':
                 let slWrap = document.createElement('div'); slWrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap:10px; max-width: 500px;';
                 let slDisplay = document.createElement('div'); slDisplay.className = 'cyber-display'; slDisplay.innerText = '000'; slWrap.appendChild(slDisplay);
                 let sls = [];
@@ -545,8 +750,8 @@ class SolarGamesEngine {
                 }));
                 innerStage.appendChild(slWrap);
                 break;
-            }
-            case 'MAZE': {
+
+            case 'MAZE':
                 let mzWrap = document.createElement('div'); mzWrap.style.cssText = `display:grid; grid-template-columns:repeat(${Math.sqrt(p.data)}, 50px); gap:2px; background:#111; padding:5px; border:2px solid #444;`;
                 for(let i=0; i<p.data; i++) {
                     let c = document.createElement('div'); c.style.cssText = 'height:50px; background:#050505; cursor:pointer;';
@@ -560,85 +765,63 @@ class SolarGamesEngine {
                 }
                 innerStage.appendChild(mzWrap);
                 break;
-            }
+
             case 'CRYPTEX':
-            case 'PAPYRUS': {
-                let papy = document.createElement('div');
-                papy.style.cssText = "font-family: 'Rajdhani', monospace; font-size: 3rem; color: #3e3124; background: #e3d2b2; padding: 20px 40px; border: 4px solid #a68962; border-radius: 5px; font-weight:bold; letter-spacing:10px; margin-bottom:30px;";
-                papy.innerText = p.uiType==='PAPYRUS' ? 'AMUN' : 'CDE';
-                innerStage.appendChild(papy);
+            case 'PAPYRUS':
+                let papy = document.createElement('div'); papy.style.cssText = "font-family: 'Rajdhani', monospace; font-size: 3rem; color: #3e3124; background: #e3d2b2; padding: 20px 40px; border: 4px solid #a68962; border-radius: 5px; font-weight:bold; letter-spacing:10px; margin-bottom:30px;";
+                papy.innerText = p.uiType==='PAPYRUS' ? 'AMUN' : 'CDE'; innerStage.appendChild(papy);
                 createInputBlock('DECODE SCRIPT...', p.ans);
                 break;
-            }
-            case 'SHELLS': {
-                let shWrap = document.createElement('div'); shWrap.className = 'balls-container';
-                innerStage.appendChild(shWrap);
+
+            case 'SHELLS':
+                let shWrap = document.createElement('div'); shWrap.className = 'balls-container'; innerStage.appendChild(shWrap);
                 this.stageState.round = 1;
                 const playShells = () => {
                     shWrap.innerHTML = '';
                     let ballCount = this.stageState.round === 1 ? 3 : (this.stageState.round === 2 ? 4 : 5);
-                    let balls = [];
-                    let targetIdx = Math.floor(Math.random() * ballCount);
+                    let balls = []; let targetIdx = Math.floor(Math.random() * ballCount);
                     for(let i=0; i<ballCount; i++) {
-                        let b = document.createElement('div'); 
-                        b.className = 'shell-ball'; b.style.left = (i * 70) + 'px';
+                        let b = document.createElement('div'); b.className = 'shell-ball'; b.style.left = (i * 70) + 'px';
                         if(i === targetIdx) b.innerText = '⭐';
                         b.onclick = () => {
                             if(this.stageState.playing) return;
-                            if(i === targetIdx) {
-                                b.innerText = '⭐'; this.playSound('success'); this.stageState.round++;
-                                if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500);
-                                else setTimeout(()=>playShells(), 1000);
-                            } else { b.innerText = '❌'; this.failRoom(); setTimeout(()=>this.setupStage(), 500); }
+                            if(i === targetIdx) { b.innerText = '⭐'; this.playSound('success'); this.stageState.round++; if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500); else setTimeout(()=>playShells(), 1000); }
+                            else { b.innerText = '❌'; this.failRoom(); setTimeout(()=>this.setupStage(), 500); }
                         };
                         shWrap.appendChild(b); balls.push(b);
                     }
                     this.stageState.playing = true;
                     setTimeout(() => {
-                        balls.forEach(b => b.innerText = '');
-                        let shuffles = 0; let maxShuffles = this.stageState.round * 5 + 5;
-                        let speed = 400 - (this.stageState.round * 50);
+                        balls.forEach(b => b.innerText = ''); let shuffles = 0; let maxShuffles = this.stageState.round * 5 + 5; let speed = 400 - (this.stageState.round * 50);
                         this.stageState.timer = setInterval(() => {
                             let i1 = Math.floor(Math.random() * ballCount), i2 = Math.floor(Math.random() * ballCount);
-                            let tempLeft = balls[i1].style.left;
-                            balls[i1].style.left = balls[i2].style.left; balls[i2].style.left = tempLeft;
+                            let tempLeft = balls[i1].style.left; balls[i1].style.left = balls[i2].style.left; balls[i2].style.left = tempLeft;
                             shuffles++; if(shuffles > maxShuffles) { clearInterval(this.stageState.timer); this.stageState.playing = false; }
                         }, speed);
                     }, 1500);
                 };
                 playShells();
                 break;
-            }
-            case 'BARCODE': {
-                let bcWrap = document.createElement('div'); 
-                bcWrap.style.cssText = 'display: flex; gap: 4px; height: 120px; align-items: center; background: #fff; padding: 10px; border-radius: 4px; margin-bottom:20px;';
-                let pattern = [1,0,1,0,0,1,0,1,0,1];
-                this.stageState.arr = [1,0,0,0,0,0,0,0,0,1]; 
+
+            case 'BARCODE':
+                let bcWrap = document.createElement('div'); bcWrap.style.cssText = 'display: flex; gap: 4px; height: 120px; align-items: center; background: #fff; padding: 10px; border-radius: 4px; margin-bottom:20px;';
+                let pattern = [1,0,1,0,0,1,0,1,0,1]; this.stageState.arr = [1,0,0,0,0,0,0,0,0,1]; 
                 for(let i=0; i<10; i++) {
-                    let bar = document.createElement('div'); 
-                    bar.style.cssText = 'width: 15px; height: 100%; background: #000; cursor: pointer; transition: 0.2s;';
+                    let bar = document.createElement('div'); bar.style.cssText = 'width: 15px; height: 100%; background: #000; cursor: pointer; transition: 0.2s;';
                     if(this.stageState.arr[i] === 0) { bar.style.background = '#ddd'; bar.classList.add('missing'); }
-                    bar.onclick = () => {
-                        bar.classList.toggle('missing');
-                        bar.style.background = bar.classList.contains('missing') ? '#ddd' : '#000';
-                        this.stageState.arr[i] = bar.classList.contains('missing') ? 0 : 1;
-                    };
+                    bar.onclick = () => { bar.classList.toggle('missing'); bar.style.background = bar.classList.contains('missing') ? '#ddd' : '#000'; this.stageState.arr[i] = bar.classList.contains('missing') ? 0 : 1; };
                     bcWrap.appendChild(bar);
                 }
-                innerStage.appendChild(bcWrap);
-                innerStage.appendChild(generateSubmitButton(() => {
-                    if(JSON.stringify(this.stageState.arr) === JSON.stringify(pattern)) this.winInteractive(); else this.failRoom();
-                }));
+                innerStage.appendChild(bcWrap); innerStage.appendChild(generateSubmitButton(() => { if(JSON.stringify(this.stageState.arr) === JSON.stringify(pattern)) this.winInteractive(); else this.failRoom(); }));
                 break;
-            }
-            case 'RADIO': {
+
+            case 'RADIO':
                 let rdWrap = document.createElement('div'); rdWrap.style.cssText='width:100%; display:flex; flex-direction:column; align-items:center;';
                 let rWave = document.createElement('div'); rWave.className = 'radio-wave';
                 let rLine = document.createElement('div'); rLine.className = 'wave-line'; rWave.appendChild(rLine);
                 let rKnob = document.createElement('div'); rKnob.className = 'radio-knob';
                 let rTick = document.createElement('div'); rTick.className = 'radio-tick'; rKnob.appendChild(rTick);
                 let rDisp = document.createElement('div'); rDisp.className = 'cyber-display'; rDisp.innerText = '000.0'; rDisp.style.marginTop='20px';
-                
                 let angle = 0;
                 rKnob.onclick = () => {
                     angle += 15; rKnob.style.transform = `rotate(${angle}deg)`;
@@ -649,176 +832,116 @@ class SolarGamesEngine {
                 };
                 rdWrap.append(rWave, rKnob, rDisp); innerStage.appendChild(rdWrap);
                 break;
-            }
-            case 'LIGHTS_OUT': {
+
+            case 'LIGHTS_OUT':
                 let loWrap = document.createElement('div'); loWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:5px;';
-                let cells = [];
+                let loCells = [];
                 for(let i=0; i<p.data; i++) {
                     let c = document.createElement('div'); c.className = 'simon-box pulse'; 
                     c.onclick = () => {
                         c.classList.toggle('pulse');
                         let r = Math.floor(i/3), cl = i%3;
-                        if(r > 0) cells[i-3].classList.toggle('pulse'); if(r < 2) cells[i+3].classList.toggle('pulse');
-                        if(cl > 0) cells[i-1].classList.toggle('pulse'); if(cl < 2) cells[i+1].classList.toggle('pulse');
-                        if(cells.every(cell => !cell.classList.contains('pulse'))) setTimeout(() => this.winInteractive(), 300);
+                        if(r > 0) loCells[i-3].classList.toggle('pulse'); if(r < 2) loCells[i+3].classList.toggle('pulse');
+                        if(cl > 0) loCells[i-1].classList.toggle('pulse'); if(cl < 2) loCells[i+1].classList.toggle('pulse');
+                        if(loCells.every(cell => !cell.classList.contains('pulse'))) setTimeout(() => this.winInteractive(), 300);
                     };
-                    cells.push(c); loWrap.appendChild(c);
+                    loCells.push(c); loWrap.appendChild(c);
                 }
                 innerStage.appendChild(loWrap);
                 break;
-            }
-            case 'DNA': {
+
+            case 'DNA':
                 let dnaWrap = document.createElement('div'); dnaWrap.className = 'dna-wrap';
                 let bases = ['A','C','G','T']; this.stageState.arr = ['A','A','A','A'];
                 ['T','G','A','C'].forEach((target, i) => {
                     let row = document.createElement('div'); row.className = 'dna-row';
                     let left = document.createElement('div'); left.className = 'dna-base dna-fixed'; left.innerText = (target==='T'?'A':(target==='G'?'C':(target==='A'?'T':'G')));
                     let right = document.createElement('div'); right.className = 'dna-base dna-clickable'; right.innerText = 'A';
-                    right.onclick = () => {
-                        let idx = bases.indexOf(right.innerText);
-                        idx = (idx + 1) % 4; right.innerText = bases[idx];
-                        this.stageState.arr[i] = bases[idx];
-                    };
+                    right.onclick = () => { let idx = bases.indexOf(right.innerText); idx = (idx + 1) % 4; right.innerText = bases[idx]; this.stageState.arr[i] = bases[idx]; };
                     row.append(left, right); dnaWrap.appendChild(row);
                 });
-                innerStage.appendChild(dnaWrap);
-                innerStage.appendChild(generateSubmitButton(() => {
-                    if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive(); else this.failRoom();
-                }));
+                innerStage.appendChild(dnaWrap); innerStage.appendChild(generateSubmitButton(() => { if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive(); else this.failRoom(); }));
                 break;
-            }
-            case 'PIPES': {
+
+            case 'PIPES':
                 let pipeWrap = document.createElement('div'); pipeWrap.className = 'pipes-grid';
-                let pipeChars = ['┗','━','┛','┃','╋','┃','┏','━','┓'];
-                this.stageState.arr = [0,90,0, 90,0,90, 0,90,0];
+                let pipeChars = ['┗','━','┛','┃','╋','┃','┏','━','┓']; this.stageState.arr = [0,90,0, 90,0,90, 0,90,0];
                 for(let i=0; i<9; i++) {
                     let cell = document.createElement('div'); cell.className = 'pipe-cell'; cell.innerText = pipeChars[i];
                     cell.style.transform = `rotate(${this.stageState.arr[i]}deg)`;
-                    cell.onclick = () => {
-                        this.stageState.arr[i] = (this.stageState.arr[i] + 90) % 360;
-                        cell.style.transform = `rotate(${this.stageState.arr[i]}deg)`;
-                        if(this.stageState.arr.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 500);
-                    };
+                    cell.onclick = () => { this.stageState.arr[i] = (this.stageState.arr[i] + 90) % 360; cell.style.transform = `rotate(${this.stageState.arr[i]}deg)`; if(this.stageState.arr.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 500); };
                     pipeWrap.appendChild(cell);
                 }
                 innerStage.appendChild(pipeWrap);
                 break;
-            }
-            case 'SLIDING': {
-                let pzWrap = document.createElement('div'); pzWrap.className = 'sliding-puzzle';
-                let tiles = [1,2,3,4,5,6,7,0,8]; 
-                const renderPuzzle = () => {
-                    pzWrap.innerHTML = '';
-                    tiles.forEach((t, i) => {
+
+            case 'SLIDING':
+                let pzWrap2 = document.createElement('div'); pzWrap2.className = 'sliding-puzzle';
+                let tiles2 = [1,2,3,4,5,6,7,0,8]; 
+                const renderPuzzle2 = () => {
+                    pzWrap2.innerHTML = '';
+                    tiles2.forEach((t, i) => {
                         let cell = document.createElement('div'); cell.className = 'slide-tile';
                         if(t === 0) { cell.classList.add('empty'); } else { cell.innerText = t; }
                         cell.onclick = () => {
-                            let emptyIdx = tiles.indexOf(0);
-                            let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
-                            if(emptyIdx%3 === 0 && i === emptyIdx-1) return;
-                            if(emptyIdx%3 === 2 && i === emptyIdx+1) return;
-                            
-                            if(validMoves.includes(i)) {
-                                tiles[emptyIdx] = t; tiles[i] = 0; renderPuzzle();
-                                if(tiles.join('') === p.ans) setTimeout(()=>this.winInteractive(), 300);
-                            }
+                            let emptyIdx = tiles2.indexOf(0); let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
+                            if(emptyIdx%3 === 0 && i === emptyIdx-1) return; if(emptyIdx%3 === 2 && i === emptyIdx+1) return;
+                            if(validMoves.includes(i)) { tiles2[emptyIdx] = t; tiles2[i] = 0; renderPuzzle2(); if(tiles2.join('') === p.ans) setTimeout(()=>this.winInteractive(), 300); }
                         };
-                        pzWrap.appendChild(cell);
+                        pzWrap2.appendChild(cell);
                     });
                 };
-                renderPuzzle(); innerStage.appendChild(pzWrap);
+                renderPuzzle2(); innerStage.appendChild(pzWrap2);
                 break;
-            }
-            case 'MAGIC_SQUARE': {
-                let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:5px; margin-bottom:20px;';
-                let msGrid = [8,1,6, 3,0,7, 4,9,2];
-                for(let i=0; i<9; i++) {
-                    let cell = document.createElement('div'); cell.className = 'box-lux'; cell.style.width='80px'; cell.style.height='80px';
-                    cell.innerText = msGrid[i];
-                    if(i===4) {
-                        cell.style.color='var(--gold)'; cell.style.borderColor='var(--gold)';
-                        cell.onclick = () => { msGrid[i] = msGrid[i] >= 9 ? 1 : msGrid[i]+1; cell.innerText = msGrid[i]; };
-                    }
-                    msWrap.appendChild(cell);
-                }
-                innerStage.appendChild(msWrap);
-                innerStage.appendChild(generateSubmitButton(() => { if(msGrid[4] == p.ans[4] || msGrid[4] == p.ans) this.winInteractive(); else this.failRoom(); }));
-                break;
-            }
-            case 'HEATMAP': {
+
+            case 'HEATMAP':
                 let htWrap = document.createElement('div'); htWrap.className = 'heat-grid';
                 let hmColors = {8:'#ff0000', 4:'#ff8800', 9:'#ffcc00', 1:'#ffff66'}; 
                 [1,2,3,4,5,6,7,8,9].forEach(n => {
-                    let b = document.createElement('button'); b.className = 'heat-btn'; b.innerText = n;
-                    b.style.background = hmColors[n] ? hmColors[n] : '#333';
+                    let b = document.createElement('button'); b.className = 'heat-btn'; b.innerText = n; b.style.background = hmColors[n] ? hmColors[n] : '#333';
                     if(hmColors[n]) b.style.boxShadow = `inset 0 0 30px ${hmColors[n]}`;
-                    b.onclick = () => {
-                        this.stageState.arr.push(n);
-                        if(this.stageState.arr.length === p.ans.length) {
-                            if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive();
-                            else { this.failRoom(); this.setupStage(); }
-                        }
-                    };
+                    b.onclick = () => { this.stageState.arr.push(n); if(this.stageState.arr.length === p.ans.length) { if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive(); else { this.failRoom(); this.setupStage(); } } };
                     htWrap.appendChild(b);
                 });
                 innerStage.appendChild(htWrap);
                 break;
-            }
-            case 'MATRIX': {
-                let mxWrap = document.createElement('div'); mxWrap.className = 'matrix-screen';
-                innerStage.appendChild(mxWrap);
+
+            case 'MATRIX':
+                let mxWrap = document.createElement('div'); mxWrap.className = 'matrix-screen'; innerStage.appendChild(mxWrap);
                 this.stageState.timer = setInterval(() => {
                     let word = document.createElement('div'); word.className = 'matrix-word';
-                    let isTarget = Math.random() > 0.8;
-                    word.innerText = isTarget ? p.ans : (Math.random().toString(36).substring(2, 7).toUpperCase());
-                    word.style.left = Math.random() * 80 + '%'; word.style.top = '-20px';
-                    if(isTarget) word.style.color = '#fff';
-                    word.onclick = () => { if(isTarget) this.winInteractive(); else this.failRoom(); };
-                    mxWrap.appendChild(word);
-                    let pos = -20;
-                    let fall = setInterval(() => { pos += 5; word.style.top = pos + 'px'; if(pos > 250) { clearInterval(fall); word.remove(); } }, 50);
+                    let isTarget = Math.random() > 0.8; word.innerText = isTarget ? p.ans : (Math.random().toString(36).substring(2, 7).toUpperCase());
+                    word.style.left = Math.random() * 80 + '%'; word.style.top = '-20px'; if(isTarget) word.style.color = '#fff';
+                    word.onclick = () => { if(isTarget) this.winInteractive(); else this.failRoom(); }; mxWrap.appendChild(word);
+                    let pos = -20; let fall = setInterval(() => { pos += 5; word.style.top = pos + 'px'; if(pos > 250) { clearInterval(fall); word.remove(); } }, 50);
                 }, 800);
                 break;
-            }
-            case 'ELEVATOR': {
+
+            case 'ELEVATOR':
                 let elWrap = document.createElement('div'); elWrap.className = 'elevator-panel';
                 [1,2,3,4,5,6].forEach(n => {
                     let b = document.createElement('div'); b.className = 'elevator-btn'; b.innerText = n;
                     b.onclick = () => {
                         b.classList.add('active'); setTimeout(()=>b.classList.remove('active'), 300);
-                        if(p.ans[this.stageState.clicks] === n) {
-                            this.stageState.clicks++;
-                            if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
-                        } else { this.failRoom(); this.setupStage(); }
-                    };
-                    elWrap.appendChild(b);
+                        if(p.ans[this.stageState.clicks] === n) { this.stageState.clicks++; if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300); } else { this.failRoom(); this.setupStage(); }
+                    }; elWrap.appendChild(b);
                 });
                 innerStage.appendChild(elWrap);
                 break;
-            }
-            case 'BOSS': {
+
+            case 'BOSS':
                 let bWrap = document.createElement('div'); bWrap.style.cssText='display:flex; gap:20px; margin-bottom:30px;';
                 for(let i=0; i<3; i++) { 
                     let sw = document.createElement('div'); sw.className='switch-lux'; sw.innerHTML = `<div style="position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s;"></div>OFF`;
-                    sw.onclick = () => {
-                        sw.classList.toggle('active'); 
-                        if(sw.classList.contains('active')){
-                            sw.innerHTML = `<div style="position: absolute; top: 65px; width: 70px; height: 55px; background: var(--gold); border-radius: 4px; box-shadow: 0 0 20px var(--gold); transition: 0.3s;"></div>ON`;
-                        } else {
-                            sw.innerHTML = `<div style="position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s;"></div>OFF`;
-                        }
-                    };
+                    sw.onclick = () => { sw.classList.toggle('active'); if(sw.classList.contains('active')){ sw.innerHTML = `<div style="position: absolute; top: 65px; width: 70px; height: 55px; background: var(--gold); border-radius: 4px; box-shadow: 0 0 20px var(--gold); transition: 0.3s;"></div>ON`; } else { sw.innerHTML = `<div style="position: absolute; top: 15px; width: 70px; height: 55px; background: #050505; border-radius: 4px; box-shadow: inset 0 5px 10px #000; transition: 0.3s;"></div>OFF`; } };
                     bWrap.appendChild(sw); 
                 }
                 let bInp = document.createElement('input'); bInp.type='text'; bInp.className='cyber-input-lg'; bInp.placeholder='MASTER PASSWORD';
                 let bBtn = document.createElement('button'); bBtn.className='btn-execute'; bBtn.innerText='🔥 INITIATE MASTER HACK 🔥'; bBtn.style.background='#ff0000'; bBtn.style.color='#fff'; bBtn.style.borderColor='#fff';
-                bBtn.onclick = () => {
-                    let allSwitchesOn = Array.from(bWrap.children).every(s=>s.classList.contains('active'));
-                    if(allSwitchesOn && bInp.value.trim().toUpperCase() === p.ans) this.winInteractive(); else this.failRoom();
-                };
+                bBtn.onclick = () => { let allSwitchesOn = Array.from(bWrap.children).every(s=>s.classList.contains('active')); if(allSwitchesOn && bInp.value.trim().toUpperCase() === p.ans) this.winInteractive(); else this.failRoom(); };
                 innerStage.append(bWrap, bInp, bBtn);
                 break;
-            }
+                
             default:
                 createInputBlock('ENTER DECODE SEQUENCE...', p.ans || '');
                 break;
