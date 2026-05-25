@@ -97,29 +97,27 @@ class SolarGamesEngine {
             else if(i===2) { m.uiType = 'SIMON'; m.desc="تتبع الأنماط: 3 جولات متتالية."; m.data=16; m.hint="💡 تفاعلي: ركز ووجهني بالترتيب الصحيح فوراً. | 📝 كتابي: يذوب في الحرارة."; }
             else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="خزنة الألوان: أدخل 4 أرقام (أخضر=صح، برتقالي=مكان غلط)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3719. | 📝 كتابي: لا يمكنك البوح به."; }
             else if(i===4) { m.uiType = 'MATCH'; m.desc="تطابق الأشكال: 20 شريحة، طابق 10 أزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تفاعلي: احفظ الأماكن ووجهني. | 📝 كتابي: يزيد ولا ينقص."; }
-            
-            // ============== التعديلات المطلوبة ==============
             else if(i===5) { m.uiType = 'COMPASS_3X'; m.desc="توجيه البوصلات الثلاث: اضبط الزوايا الدقيقة (135، 225، 45)."; m.ans=[135, 225, 45]; m.hint="💡 تفاعلي: أسفل يمين، أسفل يسار، أعلى يمين. | 📝 كتابي: يرتد لك من الجدار."; }
-            else if(i===6) { m.uiType = 'HARD_MEMORY'; m.desc="اختبار الذاكرة العميق: سيظهر النمط الذهبي لثانيتين فقط. كرره بدقة."; m.hint="💡 تفاعلي: قسم الشبكة في ذهنك. | 📝 كتابي: كائن بحري يمتص."; }
+            else if(i===6) { m.uiType = 'HARD_6'; m.desc="شبكة الدوائر الكهربائية (مستوى متقدم): قم بتوصيل جميع المسارات ببعضها لتكوين دائرة مغلقة تماماً."; m.hint="💡 تفاعلي: اجعل الزوايا تتقابل لتشكل مربعاً مغلقاً. | 📝 كتابي: يمتص السوائل."; }
             else if(i===7) { m.uiType = 'SCALES'; m.desc="الميزان الروماني: اختر أوزان مجموعها 150."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تفاعلي: 70 + 80. | 📝 كتابي: يأتي غداً."; }
             else if(i===8) { m.uiType = 'RADAR_ROUNDS_HARD'; m.desc="الرادار الخفي: الهدف سيومض ومضة واحدة خفيفة جداً ويختفي. ركز بشدة لتعرف موقعه."; m.hint="💡 تفاعلي: انتظر ثانيتين وسوف يومض. | 📝 كتابي: تقطعه لتفي به."; }
             else if(i===9) { m.uiType = 'PAPYRUS_HARD'; m.desc="لفافة البردي: الأحرف متوزعة ومخبأة داخل رومات الألعاب، اجمعها ورتبها لتشكل الكلمة."; m.ans='SOUL CALL OLD'; m.hint="💡 تفاعلي: الكلمة هي SOUL CALL OLD. | 📝 كتابي: لغته السكوت."; }
             else if(i===10) { m.uiType = 'GEARS_HARD'; m.desc="نظام التروس المعقد: تدوير ترس يؤثر على الآخرين. اصطفهم جميعاً للأعلى."; m.hint="💡 تفاعلي: التروس مرتبطة عكسياً، وازنها. | 📝 كتابي: قشرتها هشة."; }
             else if(i===11) { m.uiType = 'NEON_NODES'; m.desc="الشبكة السيبرانية: اربط الأطراف العلوية فقط."; m.data=12; m.ans=[0,1,2,3]; m.hint="💡 تفاعلي: الصف الأول كامل. | 📝 كتابي: تنشفك وتتبلل."; }
             else if(i===12) { m.uiType = 'JUGS'; m.desc="دوارق الخيمياء: احصل على 4 لتر من (8, 5, 3)."; m.hint="💡 تفاعلي: املأ الـ 5، صب في 3، يبقى 2.. | 📝 كتابي: ترسم العالم."; }
-            else if(i===13) { m.uiType = 'HARD_SEQUENCE'; m.desc="القفل التسلسلي الأعمى: 9 عقد طاقة. اكتشف التسلسل السري الكامل. خطأ واحد يعيدك للصفر."; m.hint="💡 تفاعلي: احفظ مسارك جيداً في كل محاولة. | 📝 كتابي: تعرف بها الوقت."; }
+            else if(i===13) { m.uiType = 'HARD_13'; m.desc="كاسر الشفرات المتقدم: استنتج ترتيب 4 ألوان مختلفة تماماً."; m.ans=[2,0,1,3]; m.hint="💡 تفاعلي: اللون الأول أزرق، والأخير رمادي. | 📝 كتابي: تعرف بها الوقت."; }
             else if(i===14) { m.uiType = 'SLIDING_PUZZLE'; m.desc="الجدارية المكسورة: رتب القطع (1-8)."; m.hint="💡 تفاعلي: رتبها تصاعدياً 1 لـ 8. | 📝 كتابي: يمطر."; }
             else if(i===15) { m.uiType = 'BLIND_MAZE'; m.desc="متاهة المينوتور: 6x6 معتمة. خطوة غلط ترجعك للصفر."; m.data=36; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تفاعلي: تحت 3 مرات، يمين مرتين... | 📝 كتابي: صيفي ولذيذ."; }
             else if(i===16) { m.uiType = 'CAESAR_HARD'; m.desc="تشفير دافنشي المتقدم: أزح الكلمة المشفرة بمقدار النجمة السباعية (+7)."; m.ans='ECLIPSE'; m.hint="💡 تفاعلي: الكلمة هي ECLIPSE. | 📝 كتابي: يثبت الأشياء."; }
-            else if(i===17) { m.uiType = 'HARD_WAVES'; m.desc="محاذاة الترددات الكمية: اضبط الموجات الثلاث بدقة ليتطابق المجموع 100%."; m.hint="💡 تفاعلي: 73, 21, 88. | 📝 كتابي: أداة الكتابة."; }
+            else if(i===17) { m.uiType = 'HARD_17'; m.desc="الميزان المعتم: قم بتفعيل أعمدة الطاقة المخفية لتصل الكتلة الإجمالية لـ 100%."; m.data=[25, 10, 45, 30, 20]; m.target=100; m.hint="💡 تفاعلي: فعل العمود الأول، الثالث، والرابع. | 📝 كتابي: أداة الكتابة."; }
             else if(i===18) { m.uiType = 'BARCODE_HARD'; m.desc="طابق الباركود العكسي: أدخل التردد السالب (العكسي) للباركود العلوي تماماً."; m.ans=[0,1,0,0,1,1,0,1,0,1]; m.hint="💡 تفاعلي: اعكس النمط العلوي بالضبط. | 📝 كتابي: يتبعك بالشمس."; }
-            else if(i===19) { m.uiType = 'HARD_COLOR_CODE'; m.desc="شفرة التوافق الصارمة: ابحث عن الترتيب اللوني الدقيق. النظام يعطيك نسبة التطابق فقط."; m.hint="💡 تفاعلي: أخضر، ذهبي، أبيض، أزرق، رمادي. | 📝 كتابي: تدل على الشمال."; }
+            else if(i===19) { m.uiType = 'HARD_19'; m.desc="قرص التشفير المزدوج: أدر الحلقة الداخلية مرتين لفك تشفير كلمة السر."; m.ans='GOLD'; m.hint="💡 تفاعلي: الكلمة الناتجة هي GOLD. | 📝 كتابي: تدل على الشمال."; }
             else if(i===20) { m.uiType = 'LIGHTS_OUT'; m.desc="معبد الشعلات: أطفئ جميع النيران (3x3)."; m.data=9; m.hint="💡 تفاعلي: الأطراف ثم المنتصف. | 📝 كتابي: لا تُرى."; }
             else if(i===21) { m.uiType = 'PATTERN_LOCK'; m.desc="قفل النمط الأمني: ارسم النمط السري (Z) عبر العقد بشكل متصل."; m.ans=[0,1,2,4,6,7,8]; m.hint="💡 تفاعلي: ارسم حرف Z. | 📝 كتابي: تخاف من الماء."; }
             else if(i===22) { m.uiType = 'DNA'; m.desc="فك شفرة الحمض: A=T, C=G."; m.ans='TGCA'; m.hint="💡 تفاعلي: TGCA. | 📝 كتابي: تكبر كلما أخذت منها."; }
             else if(i===23) { m.uiType = 'FREQUENCY_HACK'; m.desc="معايرة التردد الصوتي: وازن الـ 5 محركات حتى تتوهج النواة المركزية لأقصى درجة."; m.hint="💡 تفاعلي: حركها حتى تصبح النواة خضراء ساطعة. | 📝 كتابي: يقرصك ببطنك."; }
             else if(i===24) { m.uiType = 'KEYPAD_HARD'; m.desc="خزنة الكيبورد: الأرقام موزعة برومات الألعاب، ابحث عنها لفتح الخزنة."; m.ans='1936'; m.hint="💡 تفاعلي: الكود هو 1936. | 📝 كتابي: ينادونك به."; }
-            else if(i===25) { m.uiType = 'HARD_PIPES'; m.desc="صمامات الضغط المترابطة: أدر الصمامات للأعلى. كل صمام يؤثر على جيرانه المباشرين."; m.hint="💡 تفاعلي: ابدأ بالأطراف المتقابلة. | 📝 كتابي: تتركها وراءك."; }
+            else if(i===25) { m.uiType = 'HARD_25'; m.desc="نبضات التوهج: فك تشفير ومضات الإشارة (طويل وقصير) لترجمتها."; m.ans='SUN'; m.hint="💡 تفاعلي: الكلمة المترجمة هي SUN. | 📝 كتابي: تتركها وراءك."; }
             else if(i===26) { m.uiType = 'HEATMAP_HARD'; m.desc="التسلسل الطيفي: انقر على المربعات بتسلسل ألوان النجوم (أبيض، أزرق، أصفر، برتقالي، أحمر)."; m.hint="💡 تفاعلي: أبيض، أزرق، أصفر، برتقالي، أحمر. | 📝 كتابي: قطرات من السماء."; }
             else if(i===27) { m.uiType = 'HARD_ROTATION_25'; m.desc="المصفوفة الدوارة المتقدمة (5x5): احفظ المواقع الـ 6 المضيئة. الشبكة ستدور 180 درجة كاملة."; m.hint="💡 تفاعلي: تخيل الشبكة معكوسة تماماً أسفل وأعلى. | 📝 كتابي: افتح يا..."; }
             else if(i===28) { m.uiType = 'ELEVATOR_SEQ'; m.desc="المصعد المبرمج: انزل دورين، اصعد 3 أدوار.. هناك صور موزعة في السيرفر تساعدكم لمعرفة التسلسل."; m.ans=['B2','1','4','2','5']; m.hint="💡 تفاعلي: B2 ➔ 1 ➔ 4 ➔ 2 ➔ 5. | 📝 كتابي: مدينة تاريخية."; }
@@ -242,18 +240,20 @@ class SolarGamesEngine {
         document.getElementById('int-desc').innerText = p.desc;
         const stage = document.getElementById('interactive-stage');
         
-        stage.innerHTML = `<div class="lux-panel" id="lux-inner-stage"></div>`;
+        stage.innerHTML = `<div class="lux-panel" id="lux-inner-stage" style="width:100%; min-height:400px; background:#050505; border:2px solid #D4AF37; border-radius:8px; padding:20px; box-shadow:inset 0 0 20px #000; position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center;"></div>`;
         const innerStage = document.getElementById('lux-inner-stage');
-        this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true };
+        this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true, timer: null };
 
         const generateSubmitButton = (callback, text = 'تأكيد (Execute)') => {
             let btn = document.createElement('button'); btn.className = 'btn-execute'; btn.innerText = text; 
+            btn.style.cssText = 'background: linear-gradient(180deg, #222, #000); color: var(--gold); border: 2px solid var(--gold); padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top:20px; width: 100%; max-width: 400px;';
             btn.onclick = callback; return btn;
         };
 
         const createInputBlock = (placeholder, ans) => {
             let wrap = document.createElement('div'); wrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center;';
             let inp = document.createElement('input'); inp.type = 'text'; inp.className = 'cyber-input'; inp.placeholder = placeholder;
+            inp.style.cssText = 'background: #000; border: 2px solid var(--gold); color: var(--gold); padding: 15px; font-size: 1.8rem; text-align: center; width: 100%; max-width: 400px; outline: none; box-shadow: inset 0 0 20px rgba(212,175,55,0.2); letter-spacing: 5px; font-family: monospace; border-radius: 8px; text-transform: uppercase;';
             wrap.append(inp, generateSubmitButton(() => { if(inp.value.trim().toUpperCase() === ans.toUpperCase()) this.winInteractive(); else this.failRoom(); }));
             innerStage.appendChild(wrap);
         };
@@ -276,6 +276,28 @@ class SolarGamesEngine {
                     wrap.appendChild(cmp);
                 }
                 innerStage.appendChild(wrap);
+                break;
+            }
+
+            case 'HARD_6': { // الباب 6
+                let grid = document.createElement('div');
+                grid.style.cssText = 'display:grid; grid-template-columns:repeat(4, 70px); gap:6px; background:#000; padding:15px; border:2px solid #D4AF37; border-radius:8px; box-shadow:0 0 20px rgba(212,175,55,0.2);';
+                let nodes = [];
+                for(let i=0; i<16; i++) {
+                    let node = document.createElement('div'); let isLine = Math.random() > 0.5;
+                    node.style.cssText = `width:70px; height:70px; background:#111; display:flex; justify-content:center; align-items:center; cursor:pointer; font-size:2.5rem; color:#D4AF37; border:1px solid #333; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); user-select:none;`;
+                    node.innerText = isLine ? '━' : '┏';
+                    let rot = [0, 90, 180, 270][Math.floor(Math.random()*4)];
+                    node.style.transform = `rotate(${rot}deg)`; node.dataset.rot = rot; node.dataset.type = isLine ? 'line' : 'corner';
+                    node.onclick = () => {
+                        this.playSound('click'); let r = (parseInt(node.dataset.rot) + 90) % 360;
+                        node.dataset.rot = r; node.style.transform = `rotate(${r}deg)`;
+                        let win = nodes.every(n => { if(n.dataset.type === 'line') return [0, 180].includes(parseInt(n.dataset.rot)); return [0, 90, 180, 270].includes(parseInt(n.dataset.rot)); });
+                        if(win) setTimeout(() => this.winInteractive(), 400);
+                    };
+                    nodes.push(node); grid.appendChild(node);
+                }
+                innerStage.appendChild(grid);
                 break;
             }
 
@@ -335,11 +357,67 @@ class SolarGamesEngine {
                 break;
             }
 
+            case 'HARD_13': { // الباب 13
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;';
+                let inputsGrid = document.createElement('div'); inputsGrid.style.cssText = 'display:flex; gap:15px;';
+                let colors = ['#D4AF37', '#ff3333', '#00ccff', '#555555']; let mboxes = [];
+                for(let i=0; i<4; i++) {
+                    let poly = document.createElement('div');
+                    poly.style.cssText = 'width:60px; height:70px; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); background:#111; cursor:pointer; transition:0.3s; border: 2px solid #555; display:flex; justify-content:center; align-items:center;';
+                    poly.dataset.val = -1;
+                    poly.onclick = () => {
+                        this.playSound('click'); let v = (parseInt(poly.dataset.val) + 1) % colors.length;
+                        poly.dataset.val = v; poly.style.background = colors[v]; poly.style.boxShadow = `0 0 15px ${colors[v]}`;
+                    };
+                    inputsGrid.appendChild(poly); mboxes.push(poly);
+                }
+                let history = document.createElement('div'); history.style.cssText = 'display:flex; flex-direction:column; gap:10px; width:100%; max-width:350px; max-height:160px; overflow-y:auto; padding:10px; background:rgba(0,0,0,0.5); border-radius:8px; border:1px solid #222; margin-top:10px;';
+                let btn = generateSubmitButton(() => {
+                    let guess = mboxes.map(b => parseInt(b.dataset.val)); if(guess.includes(-1)) return;
+                    this.stageState.attempts++; if(this.stageState.attempts > 8) { this.failRoom(); this.setupStage(); return; }
+                    let row = document.createElement('div'); row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; background:#0a0a0a; padding:10px; border:1px solid #333; border-radius:4px;';
+                    let pegWrap = document.createElement('div'); pegWrap.style.cssText = 'display:flex; gap:8px;';
+                    guess.forEach(g => { let p=document.createElement('div'); p.style.cssText=`width:15px;height:15px;border-radius:2px;background:${colors[g]};`; pegWrap.appendChild(p); });
+                    let resultWrap = document.createElement('div'); resultWrap.style.cssText = 'display:flex; gap:5px;'; let exact = 0;
+                    for(let i=0; i<4; i++) {
+                        let resDot = document.createElement('div'); resDot.style.cssText = 'width:12px; height:12px; border-radius:50%; border:1px solid #555;';
+                        if(guess[i] === p.ans[i]) { resDot.style.background = '#00ff66'; exact++; }
+                        else if(p.ans.includes(guess[i])) { resDot.style.background = '#D4AF37'; } else { resDot.style.background = '#ff3333'; }
+                        resultWrap.appendChild(resDot);
+                    }
+                    row.append(pegWrap, resultWrap); history.prepend(row);
+                    if(exact === 4) this.winInteractive(); else this.playSound('error');
+                });
+                wrap.append(inputsGrid, btn, history); innerStage.appendChild(wrap);
+                break;
+            }
+
             case 'CAESAR_HARD': { // الباب 16
                 let txtDisp16 = document.createElement('div'); txtDisp16.style.cssText = 'font-family:monospace; font-size:3rem; color:var(--gold); text-shadow:0 0 20px var(--gold); background:#000; border:2px solid #333; padding:10px 30px; border-radius:8px; margin-bottom:20px; letter-spacing:5px; text-align:center;'; 
                 txtDisp16.innerText = 'LJSPWZL';
                 innerStage.appendChild(txtDisp16);
                 createInputBlock('ENTER DECODE SEQUENCE...', p.ans);
+                break;
+            }
+
+            case 'HARD_17': { // الباب 17
+                let meterWrap = document.createElement('div'); meterWrap.style.cssText = 'display:flex; align-items:flex-end; gap:15px; height:200px; padding-bottom:10px; border-bottom:4px solid #D4AF37; margin-bottom:30px;';
+                let bars = [];
+                p.data.forEach((val) => {
+                    let col = document.createElement('div');
+                    col.style.cssText = `width: 50px; height: ${val * 3}px; background: #111; border: 2px solid #333; position: relative; cursor: pointer; transition: 0.3s; box-shadow: inset 0 -10px 20px rgba(0,0,0,0.8); border-radius: 4px 4px 0 0; overflow: hidden;`;
+                    let glow = document.createElement('div'); glow.style.cssText = 'position: absolute; bottom: 0; width: 100%; height: 0%; background: linear-gradient(0deg, #D4AF37, transparent); transition: 0.4s ease-out; opacity: 0;'; col.appendChild(glow);
+                    col.dataset.val = val; col.dataset.active = "false";
+                    col.onclick = () => {
+                        this.playSound('click'); let isActive = col.dataset.active === "true"; col.dataset.active = !isActive;
+                        glow.style.height = !isActive ? '100%' : '0%'; glow.style.opacity = !isActive ? '1' : '0'; col.style.borderColor = !isActive ? '#D4AF37' : '#333';
+                        let sum = bars.reduce((acc, b) => acc + (b.dataset.active === "true" ? parseInt(b.dataset.val) : 0), 0);
+                        if(sum === p.target) setTimeout(()=>this.winInteractive(), 500);
+                    };
+                    bars.push(col); meterWrap.appendChild(col);
+                });
+                innerStage.appendChild(meterWrap);
+                let lbl = document.createElement('div'); lbl.style.cssText = 'color: #888; font-family: monospace; letter-spacing: 2px;'; lbl.innerText = 'ENERGY DISTRIBUTION MATRIX'; innerStage.appendChild(lbl);
                 break;
             }
 
@@ -358,6 +436,23 @@ class SolarGamesEngine {
                 }
                 wrap.append(topBc, botBc); innerStage.appendChild(wrap);
                 innerStage.appendChild(generateSubmitButton(() => { if(JSON.stringify(this.stageState.arr) === JSON.stringify(p.ans)) this.winInteractive(); else this.failRoom(); }));
+                break;
+            }
+
+            case 'HARD_19': { // الباب 19
+                let wheelCont = document.createElement('div'); wheelCont.style.cssText = 'position:relative; width:280px; height:280px; display:flex; justify-content:center; align-items:center; margin-bottom:30px; border-radius:50%; background: radial-gradient(circle, #111, #000); box-shadow: 0 0 40px rgba(0,0,0,0.9);';
+                let outerRing = document.createElement('div'); outerRing.style.cssText = 'position:absolute; width:100%; height:100%; border-radius:50%; border:2px dashed #555; display:flex; justify-content:center; align-items:center;';
+                let innerRing = document.createElement('div'); innerRing.style.cssText = 'position:absolute; width:70%; height:70%; border-radius:50%; background:#0a0a0a; border:4px solid #D4AF37; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 20px rgba(212,175,55,0.15);';
+                let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; let rOut = 120, rIn = 80;
+                for(let i=0; i<26; i++) {
+                    let angle = (i * 360 / 26) * (Math.PI/180);
+                    let oChar = document.createElement('div'); oChar.innerText=chars[i]; oChar.style.cssText=`position:absolute; left:${rOut*Math.cos(angle)+130}px; top:${rOut*Math.sin(angle)+130}px; color:#666; font-family:monospace; font-weight:bold; font-size:14px;`;
+                    let iChar = document.createElement('div'); iChar.innerText=chars[i]; iChar.style.cssText=`position:absolute; left:${rIn*Math.cos(angle)+90}px; top:${rIn*Math.sin(angle)+90}px; transform:rotate(${i*360/26}deg); color:#D4AF37; font-family:monospace; font-weight:bold; font-size:16px;`;
+                    outerRing.appendChild(oChar); innerRing.appendChild(iChar);
+                }
+                let rotation = 0; innerRing.onclick = () => { this.playSound('click'); rotation += (360/26); innerRing.style.transform = `rotate(${rotation}deg)`; };
+                wheelCont.append(outerRing, innerRing); innerStage.appendChild(wheelCont);
+                createInputBlock('DECODE "IQNF"...', p.ans);
                 break;
             }
 
@@ -419,6 +514,17 @@ class SolarGamesEngine {
                     kWrap.appendChild(btn);
                 });
                 innerStage.appendChild(kWrap);
+                break;
+            }
+
+            case 'HARD_25': { // الباب 25
+                let lensCont = document.createElement('div'); lensCont.style.cssText = 'width: 150px; height: 150px; border-radius: 50%; background: #000; border: 8px solid #222; margin: 30px auto; display:flex; justify-content:center; align-items:center; box-shadow: 0 10px 30px rgba(0,0,0,0.8);';
+                let lensCore = document.createElement('div'); lensCore.style.cssText = 'width: 60px; height: 60px; border-radius: 50%; background: #050505; transition: all 0.1s; box-shadow: inset 0 0 20px #000;';
+                lensCont.appendChild(lensCore); innerStage.appendChild(lensCont);
+                createInputBlock('TRANSLATE SIGNAL...', p.ans);
+                const flash = (dur) => { lensCore.style.background = '#D4AF37'; lensCore.style.boxShadow = '0 0 60px #D4AF37, inset 0 0 10px #fff'; setTimeout(()=> { lensCore.style.background = '#050505'; lensCore.style.boxShadow = 'inset 0 0 20px #000'; }, dur); }
+                let seq = [200,200,200, 800, 200,200,600, 800, 600,200]; let step = 0;
+                this.stageState.timer = setInterval(() => { flash(seq[step]); step++; if(step >= seq.length) step = 0; }, 1200);
                 break;
             }
 
@@ -640,35 +746,38 @@ class SolarGamesEngine {
                 break;
             }
 
-            case 'COMPASS': {
-                let cmp = document.createElement('div'); cmp.style.cssText = 'width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, #222, #000); border:8px solid #333; position:relative; box-shadow:0 0 30px #000; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:transform 0.3s;';
-                let ndl = document.createElement('div'); ndl.style.cssText = 'width:4px; height:180px; background:linear-gradient(to bottom, #ff3333 50%, #fff 50%); position:absolute;';
-                let cnt = document.createElement('div'); cnt.style.cssText = 'width:20px; height:20px; background:#D4AF37; border-radius:50%; position:absolute; box-shadow:0 0 10px #000;';
-                cmp.append(ndl, cnt);
-                let angle = 0;
-                cmp.onclick = () => {
-                    angle = (angle + 45) % 360; cmp.style.transform = `rotate(${angle}deg)`;
-                    if(angle === p.ans) setTimeout(()=>this.winInteractive(), 500);
-                };
-                innerStage.appendChild(cmp);
+            case 'LIGHTS_OUT': {
+                let loWrap = document.createElement('div'); loWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:5px;';
+                let loCells = [];
+                for(let i=0; i<p.data; i++) {
+                    let c = document.createElement('div'); c.style.cssText = 'width:80px; height:80px; background:var(--gold); border:2px solid #fff; border-radius:8px; cursor:pointer; box-shadow:0 0 30px var(--gold); transition:0.1s;'; c.classList.add('pulse'); 
+                    c.onclick = () => {
+                        c.classList.toggle('pulse'); c.style.background = c.classList.contains('pulse') ? 'var(--gold)' : '#050505'; c.style.boxShadow = c.classList.contains('pulse') ? '0 0 30px var(--gold)' : 'inset 0 0 15px #000';
+                        let r = Math.floor(i/3), cl = i%3;
+                        let tg = (idx) => { loCells[idx].classList.toggle('pulse'); loCells[idx].style.background = loCells[idx].classList.contains('pulse') ? 'var(--gold)' : '#050505'; loCells[idx].style.boxShadow = loCells[idx].classList.contains('pulse') ? '0 0 30px var(--gold)' : 'inset 0 0 15px #000'; };
+                        if(r > 0) tg(i-3); if(r < 2) tg(i+3);
+                        if(cl > 0) tg(i-1); if(cl < 2) tg(i+1);
+                        if(loCells.every(cell => !cell.classList.contains('pulse'))) setTimeout(() => this.winInteractive(), 300);
+                    };
+                    loCells.push(c); loWrap.appendChild(c);
+                }
+                innerStage.appendChild(loWrap);
                 break;
             }
 
-            case 'ASTROLABE': {
-                let astWrap = document.createElement('div'); astWrap.style.cssText = 'position: relative; width: 250px; height: 250px; display:flex; justify-content:center; align-items:center; border-radius:50%; border:10px solid #222; background:radial-gradient(circle, #111, #000); box-shadow:0 0 30px rgba(212,175,55,0.3);';
-                let r1 = document.createElement('div'); r1.style.cssText = 'position:absolute; border-radius:50%; border:4px dashed var(--gold); transition:transform 0.5s; cursor:pointer; display:flex; justify-content:center; align-items:flex-start; width:230px; height:230px; border-color:var(--gold);'; let m1=document.createElement('div'); m1.style.cssText = 'width:15px; height:15px; background:#fff; border-radius:50%; margin-top:-8px; box-shadow:0 0 10px #fff;'; r1.appendChild(m1);
-                let r2 = document.createElement('div'); r2.style.cssText = 'position:absolute; border-radius:50%; border:4px dashed var(--gold); transition:transform 0.5s; cursor:pointer; display:flex; justify-content:center; align-items:flex-start; width:160px; height:160px; border-color:#aaa;'; let m2=document.createElement('div'); m2.style.cssText = 'width:15px; height:15px; background:#fff; border-radius:50%; margin-top:-8px; box-shadow:0 0 10px #fff;'; r2.appendChild(m2);
-                let r3 = document.createElement('div'); r3.style.cssText = 'position:absolute; border-radius:50%; border:4px dashed var(--gold); transition:transform 0.5s; cursor:pointer; display:flex; justify-content:center; align-items:flex-start; width:90px; height:90px; border-color:#8a7322;'; let m3=document.createElement('div'); m3.style.cssText = 'width:15px; height:15px; background:#fff; border-radius:50%; margin-top:-8px; box-shadow:0 0 10px #fff;'; r3.appendChild(m3);
-                astWrap.append(r1, r2, r3); innerStage.appendChild(astWrap);
-                let angles = [90, 180, 270];
-                [r1, r2, r3].forEach((r, i) => {
-                    r.style.transform = `rotate(${angles[i]}deg)`;
-                    r.onclick = () => {
-                        angles[i] = (angles[i] + 45) % 360;
-                        r.style.transform = `rotate(${angles[i]}deg)`;
-                        if(angles.every(a => a === 0)) setTimeout(()=>this.winInteractive(), 500);
+            case 'BLIND_MAZE': {
+                let bmWrap = document.createElement('div'); bmWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 50px); gap:2px; background:#111; padding:5px; border:2px solid #444;';
+                for(let i=0; i<p.data; i++) {
+                    let c = document.createElement('div'); c.style.cssText = 'height:50px; background:#050505; cursor:pointer;';
+                    c.onclick = () => {
+                        if(p.ans[this.stageState.clicks] === i) {
+                            c.style.background = 'var(--gold)'; this.stageState.clicks++;
+                            if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 300);
+                        } else { this.failRoom(); this.setupStage(); }
                     };
-                });
+                    bmWrap.appendChild(c);
+                }
+                innerStage.appendChild(bmWrap);
                 break;
             }
 
