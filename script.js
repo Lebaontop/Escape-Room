@@ -10,7 +10,7 @@ function checkEntryCode() {
 class SolarGamesEngine {
     constructor() {
         this.roomTimers = {}; 
-        this.roomAllocatedTime = {}; // لحفظ الوقت المخصص لإعادة التشغيل (الريستارت)
+        this.roomAllocatedTime = {}; // لحفظ الوقت المخصص للريستارت
         this.isTimerRunning = false;
         this.activeGate = null;
         this.solvedGates = new Set();
@@ -20,12 +20,13 @@ class SolarGamesEngine {
         this.init();
         this.setupClickListeners();
         
+        // المحرك الأساسي للوقت (يشتغل كل ثانية)
         setInterval(() => {
             if(this.isTimerRunning && this.activeGate && this.roomTimers[this.activeGate.id] > 0) {
                 this.roomTimers[this.activeGate.id]--;
                 this.updateGlobalTimerUI();
                 
-                // تفعيل الريستارت عند انتهاء الوقت
+                // إذا وصل الوقت 0، سوي ريستارت للغرفة
                 if(this.roomTimers[this.activeGate.id] === 0) {
                     this.handleRoomTimeout();
                 }
@@ -149,7 +150,7 @@ class SolarGamesEngine {
     toggleGlobalTimer() { 
         this.playSound('click'); 
         this.isTimerRunning = !this.isTimerRunning; 
-        this.showToast(this.isTimerRunning ? "تم تشغيل وقت الغرفة" : "تم إيقاف وقت الغرفة");
+        this.showToast(this.isTimerRunning ? "تم استئناف الوقت" : "تم إيقاف الوقت مؤقتاً");
     }
     
     modifyGlobalTimer(secs) { 
@@ -160,23 +161,23 @@ class SolarGamesEngine {
         }
     }
 
-    // دالة جديدة لتحديد وقت مخصص وعمل ريستارت للغرفة
+    // دالة تحديد وقت مخصص للغرفة (وتبدأ تعد فوراً)
     setCustomTime(seconds) {
         if(isNaN(seconds) || seconds <= 0) return;
         this.playSound('click');
         if(this.activeGate) {
             this.roomTimers[this.activeGate.id] = seconds;
-            this.roomAllocatedTime[this.activeGate.id] = seconds; // حفظ الوقت الأساسي للريستارت
-            this.isTimerRunning = false; // إيقاف العداد مؤقتاً
+            this.roomAllocatedTime[this.activeGate.id] = seconds;
             this.updateGlobalTimerUI();
-            this.setupStage(); // ريستارت فوري للغرفة لتبدأ بالوقت الجديد
-            this.showToast(`تم ضبط وإعادة تشغيل الغرفة بوقت: ${seconds} ثانية`, 'var(--apple)');
+            this.setupStage(); 
+            this.isTimerRunning = true; // العداد يكمل فوراً
+            this.showToast(`تم ضبط الغرفة على: ${seconds} ثانية`, 'var(--apple)');
         } else {
             this.showToast('يجب أن تدخل الغرفة أولاً لضبط وقتها!', '#ff3333');
         }
     }
 
-    // دالة التعامل مع انتهاء الوقت
+    // دالة الريستارت عند انتهاء الوقت
     handleRoomTimeout() {
         this.playSound('error');
         this.triggerVisualGlitch();
@@ -184,12 +185,12 @@ class SolarGamesEngine {
         
         this.isTimerRunning = false; 
         
-        // تأخير بسيط قبل الريستارت ليلاحظ اللاعب الخسارة
+        // بعد ثانية ونص، يسوي ريستارت ويبدأ العداد يحسب من جديد
         setTimeout(() => {
-            // استعادة الوقت المخصص للغرفة
             this.roomTimers[this.activeGate.id] = this.roomAllocatedTime[this.activeGate.id];
             this.updateGlobalTimerUI();
-            this.setupStage(); // إعادة بناء اللغز من الصفر
+            this.setupStage(); 
+            this.isTimerRunning = true; // يبدأ يحسب تلقائي بعد الريستارت
         }, 1500); 
     }
     
@@ -253,13 +254,14 @@ class SolarGamesEngine {
         if(this.solvedGates.has(id)) return;
         this.activeGate = this.gameConfig.find(x => x.id === id);
         
-        // إعداد وقت افتراضي للغرفة إذا لم تفتح من قبل
+        // الوقت الافتراضي 30 ثانية لأي غرفة يدخلها
         if(this.roomTimers[id] === undefined) {
-            this.roomAllocatedTime[id] = 60; // الافتراضي دقيقة واحدة للريستارت
-            this.roomTimers[id] = 60;
+            this.roomAllocatedTime[id] = 30; 
+            this.roomTimers[id] = 30;
         }
         
-        this.isTimerRunning = false; // العداد يوقف الين يشغله الهوست
+        // يبدأ الوقت يحسب فوراً أول ما يدخل
+        this.isTimerRunning = true; 
         this.updateGlobalTimerUI();
         
         document.getElementById('interactive-stage-container').classList.remove('hidden');
