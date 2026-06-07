@@ -22,11 +22,12 @@
         </div>
     </section>
 
+    <!-- الهيدر العام -->
     <header id="main-nav" class="hidden">
         <div class="nav-content">
             <div class="stat-box">
                 <span class="label">وقت الغرفة الحالية</span>
-                <div class="value timer-txt" id="global-timer-display">15:00</div>
+                <div class="value timer-txt" id="global-timer-display">01:00</div>
             </div>
             <div class="nav-actions">
                 <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ تحكم السيرفر (الهوست)</button>
@@ -34,20 +35,32 @@
         </div>
     </header>
 
+    <!-- لوحة الآدمن للتحكم بالوقت والريستارت -->
     <div id="admin-sidebar" class="sidebar">
         <div class="sidebar-header">
             <h3>التحكم المركزي 👑</h3>
             <button type="button" class="close-sidebar-btn" onclick="game.toggleAdminSidebar(false)">×</button>
         </div>
         <div class="sidebar-section">
-            <h4>وقت الغرفة الحالية</h4>
+            <h4>التحكم بوقت الغرفة</h4>
             <div class="admin-input-group">
                 <div class="row">
                     <button type="button" onclick="game.toggleGlobalTimer()">▶️ تشغيل / إيقاف ⏸️</button>
                 </div>
                 <div class="row" style="margin-top:5px;">
-                    <button type="button" onclick="game.modifyGlobalTimer(60)">+ دقيقة</button>
-                    <button type="button" onclick="game.modifyGlobalTimer(-60)">- دقيقة</button>
+                    <button type="button" onclick="game.modifyGlobalTimer(10)">+ 10 ثواني</button>
+                    <button type="button" onclick="game.modifyGlobalTimer(-10)">- 10 ثواني</button>
+                </div>
+                
+                <h4 style="margin-top:20px; color:var(--apple); font-size:0.8rem; border-top:1px solid #333; padding-top:10px;">ضبط وقت مخصص (ويعمل ريستارت عند الانتهاء)</h4>
+                <div class="row" style="margin-top:5px;">
+                    <button type="button" onclick="game.setCustomTime(30)">30 ثانية</button>
+                    <button type="button" onclick="game.setCustomTime(60)">1 دقيقة</button>
+                    <button type="button" onclick="game.setCustomTime(120)">2 دقيقة</button>
+                </div>
+                <div class="row" style="margin-top:5px;">
+                    <input type="number" id="custom-time-input" placeholder="ثواني..." style="width:50%; background:#000; color:var(--apple); border:1px solid #333; padding:5px; text-align:center; outline:none; border-radius:2px;">
+                    <button type="button" onclick="game.setCustomTime(parseInt(document.getElementById('custom-time-input').value))" style="width:50%;">تطبيق وبدء</button>
                 </div>
             </div>
         </div>
@@ -66,12 +79,13 @@
         </div>
     </section>
 
+    <!-- شاشة الغرفة -->
     <section id="screen-puzzle" class="screen hidden">
         <div class="puzzle-container">
             <div class="puzzle-card" id="main-puzzle-card">
                 <div class="puzzle-header-actions">
                     <h2 id="puzzle-title" class="solar-txt" style="margin: 0; font-family: 'Rajdhani', sans-serif; display:flex; align-items:center; gap:10px;"><span style="color:#aaa;">🔊</span> # ROOM-01</h2>
-                    <div id="puzzle-global-timer" class="timer-txt">15:00</div>
+                    <div id="puzzle-global-timer" class="timer-txt">01:00</div>
                 </div>
 
                 <div class="puzzle-body">
