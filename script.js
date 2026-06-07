@@ -706,7 +706,7 @@ class SolarGamesEngine {
                     inputContainer.innerHTML = '';
                     
                     if(this.stageState.round === 1) {
-                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي في رسالة الدعم الفني).</strong>`;
+                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي ).</strong>`;
                         qTitle.innerText = `الراوند 1: فك تشفير الملف.`;
                         let inp = createInputBlock('أدخل الكود (مثال: ECHO)...', 'ECHO'); 
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ECHO') { this.playSound('success'); this.stageState.round++; loadRound(); } };
@@ -752,7 +752,7 @@ class SolarGamesEngine {
                         storyCard.innerHTML = `<strong>إغلاق القضية:</strong><br>اكتملت الأدلة، القاتل هو خالد، في الغرفة رقم 22، والدافع مخفي في اسم اللعبة التي تلعبونها الآن.`;
                         qTitle.innerText = `الراوند 5 (الأخير): أدخل الرمز النهائي الـ (MASTER PASSWORD).`;
                         let inp = createInputBlock('MASTER PASSWORD...', 'SOLAR');
-                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'SOLAR') { setTimeout(()=>this.winInteractive(), 500); } };
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ESCAPE ROOM') { setTimeout(()=>this.winInteractive(), 500); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                 };
