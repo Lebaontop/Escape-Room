@@ -16,79 +16,39 @@
             <h1 class="main-title">SOLAR GAMES</h1>
             <p class="subtitle">THE ESCAPE ROOM</p>
             <div class="cyber-divider"></div>
-            <button type="button" class="btn-prime" onclick="game.startLobby()">بدء السيرفر (Start)</button>
+            <input type="password" id="entry-code" placeholder="أدخل رمز الدخول..." style="margin-bottom: 20px; padding: 15px; text-align: center; font-size: 1.5rem; border: 2px solid var(--apple); background: #000; color: var(--apple); border-radius: 4px; width: 100%; outline: none; letter-spacing: 5px; font-family: monospace;">
+            <br>
+            <button type="button" class="btn-prime" onclick="checkEntryCode()">تسجيل الدخول (Login)</button>
         </div>
     </section>
 
-    <!-- الهيدر العام -->
     <header id="main-nav" class="hidden">
         <div class="nav-content">
             <div class="stat-box">
-                <span class="label">وقت السيرفر العام</span>
-                <div class="value timer-txt" id="global-timer-display">01:30:00</div>
-            </div>
-            <div class="stat-box">
-                <span class="label">البيانات (COINS)</span>
-                <div class="value solar-txt" id="coin-val">0</div>
+                <span class="label">وقت الغرفة الحالية</span>
+                <div class="value timer-txt" id="global-timer-display">15:00</div>
             </div>
             <div class="nav-actions">
-                <button type="button" class="action-btn" style="border-color: #00ff66; color: #00ff66;" onclick="game.toggleMarket(true)">🛒 السوق المظلم</button>
-                <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ تحكم السيرفر</button>
+                <button type="button" class="action-btn admin-btn" onclick="game.toggleAdminSidebar(true)">⚙️ تحكم السيرفر (الهوست)</button>
             </div>
         </div>
     </header>
 
-    <!-- السوق -->
-    <div id="market-modal" class="modal hidden">
-        <div class="modal-content luxury-border">
-            <h2 class="solar-txt">السوق المظلم (Dark Market)</h2>
-            <p style="margin-bottom: 20px; color: #aaa;">رصيدك: <span id="market-coins" class="solar-txt">0</span> | الوقت المتبقي: <span id="market-time" class="timer-txt" style="font-size: 1rem;">01:30:00</span></p>
-            
-            <div class="market-grid">
-                <div class="market-item">
-                    <h3>تشفير مساعد (Hint)</h3>
-                    <p>تلميح متوسط للغز البصري والكتابي معاً.</p>
-                    <button class="btn-market" onclick="game.buyHint('coins')">شراء بـ 60 كوينز</button>
-                </div>
-                <div class="market-item">
-                    <h3>تلميح مقابل الوقت</h3>
-                    <p>خصم 5 دقائق من الوقت العام للسيرفر مقابل التلميح.</p>
-                    <button class="btn-market time-cost" onclick="game.buyHint('time')">شراء بـ 5 دقائق</button>
-                </div>
-                <div class="market-item">
-                    <h3>تجميد الحماية (Freeze)</h3>
-                    <p>يوقف عداد الوقت العام لمدة دقيقتين للتفكير.</p>
-                    <button class="btn-market freeze-cost" onclick="game.buyFreeze()">شراء بـ 40 كوينز</button>
-                </div>
-            </div>
-            <button class="btn-cancel mt-10" onclick="game.toggleMarket(false)">إغلاق السوق</button>
-        </div>
-    </div>
-
-    <!-- لوحة الآدمن (تم ربطها بالمؤقت العام) -->
     <div id="admin-sidebar" class="sidebar">
         <div class="sidebar-header">
             <h3>التحكم المركزي 👑</h3>
             <button type="button" class="close-sidebar-btn" onclick="game.toggleAdminSidebar(false)">×</button>
         </div>
         <div class="sidebar-section">
-            <h4>الوقت العام (1:30:00)</h4>
+            <h4>وقت الغرفة الحالية</h4>
             <div class="admin-input-group">
                 <div class="row">
-                    <button type="button" onclick="game.startGlobalTimer()">▶️ تشغيل</button>
-                    <button type="button" onclick="game.pauseGlobalTimer()">⏸️ إيقاف</button>
+                    <button type="button" onclick="game.toggleGlobalTimer()">▶️ تشغيل / إيقاف ⏸️</button>
                 </div>
                 <div class="row" style="margin-top:5px;">
                     <button type="button" onclick="game.modifyGlobalTimer(60)">+ دقيقة</button>
                     <button type="button" onclick="game.modifyGlobalTimer(-60)">- دقيقة</button>
                 </div>
-            </div>
-        </div>
-        <div class="sidebar-section">
-            <h4>إدارة البيانات (العملات)</h4>
-            <div class="row">
-                <button type="button" class="btn-admin-action" onclick="game.addCoins(15)">+ 15 كوينز</button>
-                <button type="button" class="btn-admin-action" style="border-color:#ff3333; color:#ff3333;" onclick="game.addCoins(-15)">- 15 كوينز</button>
             </div>
         </div>
         <div class="sidebar-section">
@@ -106,17 +66,13 @@
         </div>
     </section>
 
-    <!-- شاشة الغرفة -->
     <section id="screen-puzzle" class="screen hidden">
         <div class="puzzle-container">
             <div class="puzzle-card" id="main-puzzle-card">
                 <div class="puzzle-header-actions">
                     <h2 id="puzzle-title" class="solar-txt" style="margin: 0; font-family: 'Rajdhani', sans-serif; display:flex; align-items:center; gap:10px;"><span style="color:#aaa;">🔊</span> # ROOM-01</h2>
-                    <!-- الوقت العام يظهر داخل الغرفة -->
-                    <div id="puzzle-global-timer" class="timer-txt">01:30:00</div>
+                    <div id="puzzle-global-timer" class="timer-txt">15:00</div>
                 </div>
-                
-                <div id="hint-display" class="hidden" style="color: #00ff66; font-weight: bold; font-size: 1.1rem; background: #002200; padding: 20px; border-radius: 6px; border: 1px solid #00ff66; margin-bottom: 20px; line-height: 1.8;"></div>
 
                 <div class="puzzle-body">
                     <div id="interactive-stage-container">
