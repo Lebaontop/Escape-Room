@@ -1,4 +1,3 @@
-// دالة فحص رمز الدخول للعبة
 function checkEntryCode() {
     const code = document.getElementById('entry-code').value;
     if(code === '87') {
@@ -10,7 +9,8 @@ function checkEntryCode() {
 
 class SolarGamesEngine {
     constructor() {
-        this.roomTimers = {}; // تخزين وقت كل غرفة
+        this.roomTimers = {}; 
+        this.roomAllocatedTime = {}; // لحفظ الوقت المخصص لإعادة التشغيل (الريستارت)
         this.isTimerRunning = false;
         this.activeGate = null;
         this.solvedGates = new Set();
@@ -20,11 +20,15 @@ class SolarGamesEngine {
         this.init();
         this.setupClickListeners();
         
-        // عداد الوقت الذي يعمل على الغرفة الحالية فقط
         setInterval(() => {
             if(this.isTimerRunning && this.activeGate && this.roomTimers[this.activeGate.id] > 0) {
                 this.roomTimers[this.activeGate.id]--;
                 this.updateGlobalTimerUI();
+                
+                // تفعيل الريستارت عند انتهاء الوقت
+                if(this.roomTimers[this.activeGate.id] === 0) {
+                    this.handleRoomTimeout();
+                }
             }
         }, 1000);
     }
@@ -87,7 +91,6 @@ class SolarGamesEngine {
     }
 
     buildPuzzles() {
-        // نفس الألغاز الـ 20 مع التعديلات
         const riddles = [
             {q: "شيء كلما زاد، قلّت رؤيتك له.", a: "الظلام"}, 
             {q: "ابن الماء، وإذا وضعته في الماء مات.", a: "الثلج"},
@@ -156,6 +159,39 @@ class SolarGamesEngine {
             this.updateGlobalTimerUI(); 
         }
     }
+
+    // دالة جديدة لتحديد وقت مخصص وعمل ريستارت للغرفة
+    setCustomTime(seconds) {
+        if(isNaN(seconds) || seconds <= 0) return;
+        this.playSound('click');
+        if(this.activeGate) {
+            this.roomTimers[this.activeGate.id] = seconds;
+            this.roomAllocatedTime[this.activeGate.id] = seconds; // حفظ الوقت الأساسي للريستارت
+            this.isTimerRunning = false; // إيقاف العداد مؤقتاً
+            this.updateGlobalTimerUI();
+            this.setupStage(); // ريستارت فوري للغرفة لتبدأ بالوقت الجديد
+            this.showToast(`تم ضبط وإعادة تشغيل الغرفة بوقت: ${seconds} ثانية`, 'var(--apple)');
+        } else {
+            this.showToast('يجب أن تدخل الغرفة أولاً لضبط وقتها!', '#ff3333');
+        }
+    }
+
+    // دالة التعامل مع انتهاء الوقت
+    handleRoomTimeout() {
+        this.playSound('error');
+        this.triggerVisualGlitch();
+        this.showToast('انتهى الوقت! إغلاق النظام وإعادة التشغيل...', '#ff3333');
+        
+        this.isTimerRunning = false; 
+        
+        // تأخير بسيط قبل الريستارت ليلاحظ اللاعب الخسارة
+        setTimeout(() => {
+            // استعادة الوقت المخصص للغرفة
+            this.roomTimers[this.activeGate.id] = this.roomAllocatedTime[this.activeGate.id];
+            this.updateGlobalTimerUI();
+            this.setupStage(); // إعادة بناء اللغز من الصفر
+        }, 1500); 
+    }
     
     updateGlobalTimerUI() {
         if(!this.activeGate) return;
@@ -190,7 +226,6 @@ class SolarGamesEngine {
             let btn = document.createElement('div'); 
             let isSolved = this.solvedGates.has(i);
             
-            // إلغاء القفل: الجميع يستطيع الدخول في أي وقت
             btn.className = `channel-card ${isSolved ? 'solved' : ''}`;
             btn.classList.add('interactive-element');
             
@@ -218,10 +253,13 @@ class SolarGamesEngine {
         if(this.solvedGates.has(id)) return;
         this.activeGate = this.gameConfig.find(x => x.id === id);
         
-        // إعداد وقت الغرفة إذا لم يكن موجود (الافتراضي 15 دقيقة = 900 ثانية)
+        // إعداد وقت افتراضي للغرفة إذا لم تفتح من قبل
         if(this.roomTimers[id] === undefined) {
-            this.roomTimers[id] = 15 * 60;
+            this.roomAllocatedTime[id] = 60; // الافتراضي دقيقة واحدة للريستارت
+            this.roomTimers[id] = 60;
         }
+        
+        this.isTimerRunning = false; // العداد يوقف الين يشغله الهوست
         this.updateGlobalTimerUI();
         
         document.getElementById('interactive-stage-container').classList.remove('hidden');
@@ -286,8 +324,6 @@ class SolarGamesEngine {
         };
 
         switch(p.uiType) {
-
-            // الباب 1: 6 أسلاك
             case 'WIRES': {
                 let wWrap = document.createElement('div'); wWrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap: 15px;';
                 p.data.forEach((color, i) => {
@@ -303,7 +339,6 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
-            // الباب 2: بطيء ومرحلتين
             case 'SIMON': {
                 let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(2, 100px); gap:15px; justify-content:center;';
                 let colors = ['#ff3333', '#00ff66', '#00ccff', 'var(--apple)']; let boxes = [];
@@ -339,7 +374,6 @@ class SolarGamesEngine {
                 }; setTimeout(()=>playRound(), 800); break;
             }
 
-            // الباب 3: العلامات من اليسار لليمين
             case 'MASTERMIND': {
                 let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:400px;';
                 let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px; direction:ltr;';
@@ -362,7 +396,7 @@ class SolarGamesEngine {
                     
                     let hRow = document.createElement('div'); hRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 15px; background:#222; border-radius:6px; border:1px solid #444; direction:ltr;';
                     let hNums = document.createElement('div'); hNums.innerText = guess.join(' '); hNums.style.cssText = 'color:#fff; font-size:1.5rem; font-family:monospace; letter-spacing:5px;';
-                    let hPegs = document.createElement('div'); hPegs.style.cssText = 'display:flex; gap:8px; direction:ltr;'; // من اليسار لليمين
+                    let hPegs = document.createElement('div'); hPegs.style.cssText = 'display:flex; gap:8px; direction:ltr;'; 
                     pegs.forEach(c => { let pg = document.createElement('div'); pg.style.cssText = `width:18px; height:18px; border-radius:50%; background:${c}; border:1px solid #111; box-shadow:0 0 5px ${c};`; hPegs.appendChild(pg); });
                     hRow.append(hNums, hPegs); historyWrap.prepend(hRow); mboxes.forEach(b => b.value = '');
                     if(pegs.every(c=>c==='#00ff66') && pegs.length===4) { setTimeout(()=>this.winInteractive(), 500); } else if (this.stageState.attempts >= 8) { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
@@ -456,12 +490,11 @@ class SolarGamesEngine {
                 }; renderPuzzle(); innerStage.appendChild(pzWrap); break;
             }
 
-            // الباب 9: 6 أسلاك (3 توصيل، 3 قطع)
             case 'HARDCORE_WIRES': {
                 let hwWrap = document.createElement('div'); hwWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; max-width:500px; background:#111; padding:20px; border-radius:12px; border:3px solid #333; box-shadow:0 15px 30px rgba(0,0,0,0.9);';
                 let colors = ['#ff3333', '#00ccff', '#00ff66', '#ffff00', '#ffffff', '#333333'];
-                let states = new Array(6).fill(0); // 0: Idle, 1: Connect, -1: Cut
-                let correctStates = [1, -1, 1, -1, 1, -1]; // 3 Connect, 3 Cut
+                let states = new Array(6).fill(0); 
+                let correctStates = [1, -1, 1, -1, 1, -1]; 
                 
                 colors.forEach((col, i) => {
                     let row = document.createElement('div'); row.style.cssText = 'display:flex; align-items:center; gap:15px; background:#050505; padding:8px 15px; border-radius:6px; border:1px solid #222;';
@@ -534,7 +567,6 @@ class SolarGamesEngine {
                 innerStage.append(startMarker, bmWrap, endMarker); break;
             }
 
-            // الباب 13: الأسطوانة من اليسار لليمين
             case 'CRYPTEX': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;';
                 let startWord = ['L','J','S','P','W','Z','L']; let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -568,12 +600,11 @@ class SolarGamesEngine {
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(mirWrap, innerStage.children[1]); loadRound(); break;
             }
 
-            // الباب 15: الصورة
             case 'IMAGE_CHALLENGE': {
                 let imgWrap = document.createElement('div');
                 imgWrap.style.cssText = 'width:400px; height:400px; border:4px solid var(--apple); border-radius:8px; overflow:hidden; display:flex; justify-content:center; align-items:center; background:#111; box-shadow:0 10px 30px rgba(0,0,0,0.8); margin-bottom:20px;';
                 let img = document.createElement('img');
-                img.src = 'puzzle15.jpg'; // مسار الصورة المطلوبة
+                img.src = 'puzzle15.jpg'; 
                 img.alt = 'قم بوضع ملف puzzle15.jpg في نفس المجلد';
                 img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
                 imgWrap.appendChild(img);
@@ -582,7 +613,6 @@ class SolarGamesEngine {
                 break;
             }
 
-            // الباب 16: البيانو
             case 'VIRTUAL_PIANO': {
                 let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:flex; position:relative; background:#111; padding:20px; border-radius:12px; border:4px solid #222; box-shadow:0 20px 40px rgba(0,0,0,0.8); height:250px; transition:0.3s;';
                 let whiteKeys = []; let seq = [];
@@ -658,7 +688,6 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(kWrap); break;
             }
 
-            // الباب 20 (القضية الكبرى من 5 راوندات ملحمية)
             case 'EPIC_DETECTIVE': {
                 this.stageState.round = 1;
                 
@@ -677,7 +706,7 @@ class SolarGamesEngine {
                     if(this.stageState.round === 1) {
                         storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي في رسالة الدعم الفني).</strong>`;
                         qTitle.innerText = `الراوند 1: فك تشفير الملف.`;
-                        let inp = createInputBlock('أدخل الكود (مثال: ECHO)...', 'ECHO'); // الكود ECHO
+                        let inp = createInputBlock('أدخل الكود (مثال: ECHO)...', 'ECHO'); 
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ECHO') { this.playSound('success'); this.stageState.round++; loadRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
@@ -755,7 +784,7 @@ class SolarGamesEngine {
         if (answerInput === this.activeGate.txtA) {
             this.playSound('success'); 
             this.solvedGates.add(this.activeGate.id);
-            this.showToast('تم اختراق الروم بنجاح!', '#00ff66');
+            this.showToast('تم اختراق الغرفة بنجاح!', '#00ff66');
             this.returnToLobby();
         } else {
             this.failRoom();
@@ -779,7 +808,7 @@ class SolarGamesEngine {
         
         this.toggleAdminSidebar(false); 
         this.solvedGates.add(this.activeGate.id);
-        this.showToast('تم تخطي الروم إجبارياً!', '#00ff66'); 
+        this.showToast('تم تخطي الغرفة إجبارياً!', '#00ff66'); 
         this.returnToLobby();
     }
 
@@ -792,5 +821,4 @@ class SolarGamesEngine {
     }
 }
 
-// تشغيل المحرك
 const game = new SolarGamesEngine();
