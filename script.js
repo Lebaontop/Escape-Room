@@ -476,7 +476,7 @@ class SolarGamesEngine {
 
             case 'SLIDER': {
                 let pzWrap = document.createElement('div'); pzWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:4px; background:#222; padding:8px; border:2px solid #555; border-radius:6px; box-shadow:0 15px 25px rgba(0,0,0,0.9);';
-                let tiles = [1,2,3,4,5,6,7,0,8]; 
+                let tiles = [6,5,2,4,3,1,7,0,8]; 
                 const renderPuzzle = () => {
                     pzWrap.innerHTML = '';
                     tiles.forEach((t, i) => {
