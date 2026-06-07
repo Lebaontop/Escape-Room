@@ -87,60 +87,52 @@ class SolarGamesEngine {
             {q: "شيء احتفاظك به لك، وإذا شاركته مع الناس فقدته؟", a: "السر"}, 
             {q: "شيء يرتفع ولا ينزل أبدًا؟", a: "العمر"},
             {q: "يتحدث بلا فم ويسمع بلا أذنين؟", a: "الصدى"}, 
+            {q: "لها عقارب ولكن لا تلدغ؟", a: "الساعة"},
             {q: "مليء بالثقوب ولكنه يحتفظ بالماء؟", a: "الاسفنج"},
-            {q: "دائمًا أمامك ولكن لا يمكنك رؤيته؟", a: "المستقبل"}, 
             {q: "لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a: "الوعد"},
             {q: "إذا نطقت باسمه كسرته؟", a: "الصمت"}, 
-            {q: "شيء يجب كسره قبل استخدامه؟", a: "البيضة"},
             {q: "كلما جففت شيئًا، أصبحت أكثر بللًا؟", a: "المنشفة"}, 
             {q: "فيها مدن بلا منازل، وغابات بلا أشجار؟", a: "الخريطة"},
-            {q: "لها عقارب ولكن لا تلدغ؟", a: "الساعة"}, 
             {q: "يمشي بلا أرجل ويبكي بلا أعين؟", a: "السحاب"},
             {q: "أخضر من الخارج، أحمر من الداخل؟", a: "البطيخ"}, 
             {q: "له رأس ولا عين له؟", a: "المسمار"},
-            {q: "يبكي دمعًا أسود ليضيء العقول؟", a: "القلم"}, 
-            {q: "يكبر في الصباح ويختفي في الظهيرة؟", a: "الظل"},
             {q: "دائمًا تشير للشمال ولكنها لا تتحرك؟", a: "البوصلة"}, 
             {q: "تسمعها ولكن لا تراها ولا تلمسها؟", a: "الريح"},
-            {q: "تأكل كل شيء وتخاف من الماء؟", a: "النار"}, 
+            {q: "يكبر في الصباح ويختفي في الظهيرة؟", a: "الظل"}, 
             {q: "كلما أخذت منه كبر؟", a: "الحفرة"},
             {q: "يقرصك ولا تراه؟", a: "الجوع"}, 
-            {q: "يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a: "الاسم"},
-            {q: "كلما أخذت منه أكثر، تركت أكثر وراءك؟", a: "الخطوة"}
+            {q: "يملكه الشخص ويستخدمه الآخرون أكثر منه؟", a: "الاسم"}
         ];
 
         let mechanics = [];
-        for(let i=1; i<=25; i++) {
+        for(let i=1; i<=20; i++) {
             let m = { id: i, type: `GAME_${i}` };
             
-            // الألعاب الثابتة كما هي
             if(i===1) { m.uiType = 'WIRES'; m.desc="اقطع 3 أسلاك محددة."; m.data=['#D4AF37','#ff3333','#333','#fff','#D4AF37','#00ccff','#333','#ff3333']; m.ans=[2,5,7]; m.hint="💡 تفاعلي: الاحمر، اسود، ازرق. | 📝 كتابي: يعتم كلما زاد."; }
             else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: تتبع الأنماط المضيئة وكررها (3 جولات)."; m.data=4; m.hint="💡 تفاعلي: ركز وكرر الترتيب. | 📝 كتابي: يذوب في الحرارة."; }
             else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (أخضر=صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3**9. | 📝 كتابي: لا يمكنك البوح به."; }
             else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات وطابق 10 أزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تفاعلي: احفظ الأماكن. | 📝 كتابي: يزيد ولا ينقص."; }
             else if(i===5) { m.uiType = 'COMPASS'; m.desc="توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; m.hint="💡 تفاعلي: أسفل، أسفل يمين، أعلى. | 📝 كتابي: يرتد لك من الجدار."; }
-            else if(i===7) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تفاعلي: 70 + 80. | 📝 كتابي: يأتي غداً."; }
-            else if(i===9) { m.uiType = 'SLIDER'; m.desc="اللوحة المكسورة: رتب القطع الخشبية المبعثرة بالترتيب التصاعدي."; m.hint="💡 تفاعلي: رتبها من 1 إلى 8. | 📝 كتابي: لغته السكوت."; }
-            else if(i===12) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8 لتر، 5 لتر، 3 لتر) لتحصل على 4 لتر."; m.hint="💡 تفاعلي: املأ الـ 5 ثم صب في الـ 3. | 📝 كتابي: ترسم العالم."; }
-            else if(i===15) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة. خطأ واحد يعيدك للصفر."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تفاعلي: انزل 3 مربعات ثم يمين. | 📝 كتابي: صيفي ولذيذ."; }
-            else if(i===16) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف السبعة للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; m.hint="💡 تفاعلي: الكلمة هي ECLIPSE. | 📝 كتابي: يثبت الأشياء."; }
-            else if(i===17) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشاعر."; m.hint="💡 تفاعلي: المتنبي، عنترة، البدر. | 📝 كتابي: أداة الكتابة."; }
-            else if(i===21) { m.uiType = 'TIMELINE'; m.desc="تايم لاين المونتاج: اسحب مسارات الفيديو والصوت لتتزامن بنسبة 100%."; m.hint="💡 تفاعلي: المسار الأول 15، الثاني 45. | 📝 كتابي: تخاف من الماء."; }
-            else if(i===22) { m.uiType = 'DNA'; m.desc="الحمض النووي: اضغط لتغيير القواعد، طابق A مع T، و C مع G للتركيبة المخفية."; m.ans='TGCA'; m.hint="💡 تفاعلي: الحل هو TGCA. | 📝 كتابي: تكبر كلما أخذت منها."; }
-            else if(i===24) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1936'; m.hint="💡 تفاعلي: الكود هو 1936. | 📝 كتابي: ينادونك به."; }
-
-            // الألعاب الجديدة كلياً والمعدلة حسب الطلب
-            else if(i===6) { m.uiType = 'COLOR_MIXER'; m.desc="دمج الألوان: حرك منزلقات الـ RGB للحصول على اللون البنفسجي السري المطابق للهدف."; m.ans=[150, 50, 200]; m.hint="💡 تفاعلي: أحمر عالي، أزرق أقصى شيء. | 📝 كتابي: كائن بحري يمتص."; }
-            else if(i===8) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: أدخل الأرقام من 1 إلى 9 في الشبكة (3x3) بحيث يكون مجموع كل صف وعمود يساوي 15."; m.hint="💡 تفاعلي: الرقم 5 في المنتصف. | 📝 كتابي: تقطعه لتفي به."; }
-            else if(i===10) { m.uiType = 'BOMB_DEFUSE'; m.desc="تفكيك القنبلة: اقرأ القاعدة واقطع السلك الصحيح فقط قبل انتهاء الوقت."; m.hint="💡 تفاعلي: اقطع السلك الأحمر. | 📝 كتابي: قشرتها هشة."; }
-            else if(i===11) { m.uiType = 'PATTERN_LOCK'; m.desc="القفل النمطي: اضغط على النقاط بالتسلسل الصحيح لرسم رمز الدخول (حرف Z)."; m.ans=[0,1,2,4,6,7,8]; m.hint="💡 تفاعلي: ارسم حرف Z بالإنجليزية. | 📝 كتابي: تنشفك وتتبلل."; }
-            else if(i===13) { m.uiType = 'HARD_PIPES_4X4'; m.desc="مسار الطاقة المتقدم: شبكة 4x4، أدر جميع الزوايا لتتطابق تماماً وتغلق الدائرة المغناطيسية."; m.hint="💡 تفاعلي: ركز على الزوايا الخارجية أولاً. | 📝 كتابي: تعرف بها الوقت."; }
-            else if(i===14) { m.uiType = 'BINARY_TOGGLES'; m.desc="نظام الباينري: شغّل المفاتيح الصحيحة ليكون مجموع قيمها (32، 16، 8، 4، 2، 1) يساوي الرقم السري 45."; m.ans=[1,0,1,1,0,1]; m.hint="💡 تفاعلي: 32 + 8 + 4 + 1. | 📝 كتابي: صيفي ولذيذ."; }
-            else if(i===18) { m.uiType = 'CARD_SWIPE'; m.desc="البطاقة الأمنية: اسحب البطاقة في المسار بسرعة معتدلة (لا سريعة جداً ولا بطيئة)."; m.hint="💡 تفاعلي: اسحبها بهدوء في ثانية ونصف. | 📝 كتابي: يتبعك بالشمس."; }
-            else if(i===19) { m.uiType = 'CONSTELLATION'; m.desc="كوكبة النجوم: 5 نجوم في السماء، اضغط عليها بالترتيب الصحيح لفتح البوابة."; m.ans=[2, 4, 0, 3, 1]; m.hint="💡 تفاعلي: ابدأ من النجمة السفلية يمين. | 📝 كتابي: تدل على الشمال."; }
-            else if(i===20) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل الصوتي."; m.ans=[0, 2, 4, 0]; m.hint="💡 تفاعلي: دو، مي، صول، دو (C, E, G, C). | 📝 كتابي: لا تُرى."; }
-            else if(i===23) { m.uiType = 'ROULETTE'; m.desc="عجلة الحظ (الروليت): اضغط (إيقاف) عندما يكون المؤشر داخل المنطقة الذهبية حصراً."; m.hint="💡 تفاعلي: احسب التوقيت بدقة. | 📝 كتابي: يقرصك ببطنك."; }
-            else if(i===25) { m.uiType = 'DETECTIVE_STORY'; m.desc="القضية الكبرى (4 مراحل): حلل القضية، اكتشف التناقضات، واعرف من هو القاتل الحقيقي."; m.hint="💡 تفاعلي: اقرأ النصوص جيداً وركز في التفاصيل. | 📝 كتابي: تتركها وراءك."; }
+            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تفاعلي: 70 + 80. | 📝 كتابي: يأتي غداً."; }
+            else if(i===7) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: أدخل الأرقام من 1 إلى 9 في الشبكة بحيث يكون مجموع كل صف وعمود يساوي 15."; m.hint="💡 تفاعلي: الرقم 5 في المنتصف. | 📝 كتابي: تقطعه لتفي به."; }
+            else if(i===8) { m.uiType = 'SLIDER'; m.desc="اللوحة المكسورة: رتب القطع الخشبية المبعثرة بالترتيب التصاعدي."; m.hint="💡 تفاعلي: رتبها من 1 إلى 8. | 📝 كتابي: لغته السكوت."; }
+            
+            // الباب 9 المعقد (الأسلاك العشرة)
+            else if(i===9) { m.uiType = 'HARDCORE_WIRES'; m.desc="لوحة التحكم المعقدة: 10 أسلاك أمامك. عليك توصيل 5 أسلاك وقطع 5 أسلاك أخرى بدقة متناهية لتجاوز النظام."; m.hint="💡 تفاعلي: وصل (الأزرق، الأخضر، الأسود، البنفسجي، السماوي)، واقطع الباقي. | 📝 كتابي: قشرتها هشة."; }
+            
+            else if(i===10) { m.uiType = 'PATTERN_LOCK'; m.desc="القفل النمطي: اضغط على النقاط بالتسلسل الصحيح لرسم رمز الدخول (حرف Z)."; m.ans=[0,1,2,4,6,7,8]; m.hint="💡 تفاعلي: ارسم حرف Z بالإنجليزية. | 📝 كتابي: تنشفك وتتبلل."; }
+            else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8 لتر، 5 لتر، 3 لتر) لتحصل على 4 لتر."; m.hint="💡 تفاعلي: املأ الـ 5 ثم صب في الـ 3. | 📝 كتابي: ترسم العالم."; }
+            else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة. خطأ واحد يعيدك للصفر."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تفاعلي: انزل 3 مربعات ثم يمين. | 📝 كتابي: صيفي ولذيذ."; }
+            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف السبعة للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; m.hint="💡 تفاعلي: الكلمة هي ECLIPSE. | 📝 كتابي: يثبت الأشياء."; }
+            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشاعر."; m.hint="💡 تفاعلي: المتنبي، عنترة، البدر. | 📝 كتابي: أداة الكتابة."; }
+            else if(i===15) { m.uiType = 'CONSTELLATION'; m.desc="كوكبة النجوم: 5 نجوم في السماء، اضغط عليها بالترتيب الصحيح لفتح البوابة."; m.ans=[2, 4, 0, 3, 1]; m.hint="💡 تفاعلي: ابدأ من النجمة السفلية يمين. | 📝 كتابي: تدل على الشمال."; }
+            else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل الصوتي."; m.ans=[0, 2, 4, 0]; m.hint="💡 تفاعلي: دو، مي، صول، دو (C, E, G, C). | 📝 كتابي: لا تُرى."; }
+            else if(i===17) { m.uiType = 'TIMELINE'; m.desc="تايم لاين المونتاج: اسحب مسارات الفيديو والصوت لتتزامن بنسبة 100%."; m.hint="💡 تفاعلي: المسار الأول 15، الثاني 45. | 📝 كتابي: تخاف من الماء."; }
+            else if(i===18) { m.uiType = 'DNA'; m.desc="الحمض النووي: اضغط لتغيير القواعد، طابق A مع T، و C مع G للتركيبة المخفية."; m.ans='TGCA'; m.hint="💡 تفاعلي: الحل هو TGCA. | 📝 كتابي: تكبر كلما أخذت منها."; }
+            else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1936'; m.hint="💡 تفاعلي: الكود هو 1936. | 📝 كتابي: ينادونك به."; }
+            
+            // الباب 20 الملحمي (القضية الكبرى)
+            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف القضية الأسود (5 مراحل): ستستغرق هذه القضية منك وقتاً طويلاً. ابحث عن الأدلة داخل اللعبة، وخارجها في رومات السيرفر، لتعرف القاتل الحقيقي."; m.hint="💡 تفاعلي: اقرأ النصوص بتركيز شديد وابحث في الديسكورد. | 📝 كتابي: تتركها وراءك."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -277,7 +269,7 @@ class SolarGamesEngine {
         const c = document.getElementById('gates-container'); 
         c.innerHTML = '';
         
-        for(let i=1; i<=25; i++) {
+        for(let i=1; i<=20; i++) {
             let btn = document.createElement('div'); 
             let isSolved = this.solvedGates.has(i);
             let isLocked = i !== 1 && !this.solvedGates.has(i - 1); 
@@ -379,9 +371,6 @@ class SolarGamesEngine {
 
         switch(p.uiType) {
 
-            // ==========================================
-            // الألعاب الثابتة (كما هي، مع إصلاح رقم 3 و 24)
-            // ==========================================
             case 'WIRES': {
                 let wWrap = document.createElement('div'); wWrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap: 15px;';
                 p.data.forEach((color, i) => {
@@ -433,7 +422,6 @@ class SolarGamesEngine {
             }
 
             case 'MASTERMIND': {
-                // تم إضافة السجل (History) ليعرض النتيجة لكل محاولة بألوان (أخضر، برتقالي، أحمر)
                 let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:400px;';
                 let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px;';
                 let mboxes = [];
@@ -442,35 +430,23 @@ class SolarGamesEngine {
                     inp.style.cssText = 'width:60px; height:70px; background:#000; border:2px solid var(--gold); color:var(--gold); font-size:2.5rem; text-align:center; border-radius:8px; outline:none; font-family:monospace; box-shadow:inset 0 0 15px rgba(212,175,55,0.2);'; 
                     inp.maxLength=1; inputs.appendChild(inp); mboxes.push(inp); 
                 }
-                
                 let historyWrap = document.createElement('div');
                 historyWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; height:160px; overflow-y:auto; background:#111; padding:10px; border-radius:8px; border:2px solid #333;';
-                
                 let btn = generateSubmitButton(() => {
                     let guess = mboxes.map(b => parseInt(b.value));
                     if(guess.some(isNaN)) return;
                     this.stageState.attempts++;
-                    
                     let tempAns = [...p.ans]; let tempGuess = [...guess]; let pegs = [];
-                    // Check Greens (Correct number and position)
                     for(let i=0; i<4; i++) { if(tempGuess[i] === tempAns[i]) { pegs.push('#00ff66'); tempAns[i]=null; tempGuess[i]=-1; } }
-                    // Check Oranges (Correct number, wrong position)
                     for(let i=0; i<4; i++) { if(tempGuess[i] !== -1 && tempAns.includes(tempGuess[i])) { pegs.push('#ffa500'); tempAns[tempAns.indexOf(tempGuess[i])]=null; } }
-                    // Fill the rest with Reds
                     while(pegs.length < 4) pegs.push('#ff3333'); 
-                    
                     let hRow = document.createElement('div'); hRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 15px; background:#222; border-radius:6px; border:1px solid #444;';
                     let hNums = document.createElement('div'); hNums.innerText = guess.join(' '); hNums.style.cssText = 'color:#fff; font-size:1.5rem; font-family:monospace; letter-spacing:5px;';
                     let hPegs = document.createElement('div'); hPegs.style.cssText = 'display:flex; gap:8px;';
-                    pegs.forEach(c => { let p = document.createElement('div'); p.style.cssText = `width:18px; height:18px; border-radius:50%; background:${c}; border:1px solid #111; box-shadow:0 0 5px ${c};`; hPegs.appendChild(p); });
-                    
-                    hRow.append(hNums, hPegs); historyWrap.prepend(hRow);
-                    mboxes.forEach(b => b.value = '');
-                    
-                    if(pegs.every(c=>c==='#00ff66') && pegs.length===4) { setTimeout(()=>this.winInteractive(), 500); } 
-                    else if (this.stageState.attempts >= 8) { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
+                    pegs.forEach(c => { let pg = document.createElement('div'); pg.style.cssText = `width:18px; height:18px; border-radius:50%; background:${c}; border:1px solid #111; box-shadow:0 0 5px ${c};`; hPegs.appendChild(pg); });
+                    hRow.append(hNums, hPegs); historyWrap.prepend(hRow); mboxes.forEach(b => b.value = '');
+                    if(pegs.every(c=>c==='#00ff66') && pegs.length===4) { setTimeout(()=>this.winInteractive(), 500); } else if (this.stageState.attempts >= 8) { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
                 }, 'فحص الكود');
-                
                 container.append(inputs, historyWrap, btn); innerStage.appendChild(container); break;
             }
 
@@ -488,8 +464,7 @@ class SolarGamesEngine {
                         inner.style.transform = 'rotateY(180deg)'; flipped.push({c:inner, s:sym});
                         if(flipped.length === 2) {
                             setTimeout(() => {
-                                if(flipped[0].s === flipped[1].s) { this.stageState.clicks += 2; if(this.stageState.clicks === 20) this.winInteractive(); } 
-                                else { flipped[0].c.style.transform = 'rotateY(0deg)'; flipped[1].c.style.transform = 'rotateY(0deg)'; }
+                                if(flipped[0].s === flipped[1].s) { this.stageState.clicks += 2; if(this.stageState.clicks === 20) this.winInteractive(); } else { flipped[0].c.style.transform = 'rotateY(0deg)'; flipped[1].c.style.transform = 'rotateY(0deg)'; }
                                 flipped = [];
                             }, 600);
                         }
@@ -524,6 +499,25 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(sclWrap); break;
             }
 
+            case 'MAGIC_SQUARE': {
+                let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--gold); box-shadow:0 10px 30px rgba(212,175,55,0.2);';
+                let inputs = [];
+                for(let i=0; i<9; i++) {
+                    let inp = document.createElement('input'); inp.type = 'number'; inp.className = 'interactive-element';
+                    inp.style.cssText = 'width:80px; height:80px; background:#000; border:2px solid #444; color:#fff; font-size:2.5rem; text-align:center; border-radius:8px; outline:none; transition:0.2s;';
+                    inp.onfocus = () => inp.style.borderColor = 'var(--gold)'; inp.onblur = () => inp.style.borderColor = '#444';
+                    inputs.push(inp); msWrap.appendChild(inp);
+                }
+                let btn = generateSubmitButton(() => {
+                    let vals = inputs.map(inp => parseInt(inp.value));
+                    if(vals.includes(NaN) || new Set(vals).size !== 9 || vals.some(v => v < 1 || v > 9)) { this.failRoom(); return; }
+                    let lines = [ [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6] ];
+                    let win = lines.every(line => (vals[line[0]] + vals[line[1]] + vals[line[2]]) === 15);
+                    if(win) { inputs.forEach(inp => { inp.style.background = 'var(--gold)'; inp.style.color = '#000'; }); setTimeout(()=>this.winInteractive(), 800); } else this.failRoom();
+                }, 'تأكيد التوازن');
+                innerStage.append(msWrap, btn); break;
+            }
+
             case 'SLIDER': {
                 let pzWrap = document.createElement('div'); pzWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:4px; background:#222; padding:8px; border:2px solid #555; border-radius:6px; box-shadow:0 15px 25px rgba(0,0,0,0.9);';
                 let tiles = [1,2,3,4,5,6,7,0,8]; 
@@ -540,6 +534,71 @@ class SolarGamesEngine {
                         }; pzWrap.appendChild(cell);
                     });
                 }; renderPuzzle(); innerStage.appendChild(pzWrap); break;
+            }
+
+            // --- الباب 9: الأسلاك الـ 10 المعقدة ---
+            case 'HARDCORE_WIRES': {
+                let hwWrap = document.createElement('div'); hwWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; max-width:500px; background:#111; padding:20px; border-radius:12px; border:3px solid #333; box-shadow:0 15px 30px rgba(0,0,0,0.9);';
+                
+                let colors = ['#ff3333', '#00ccff', '#00ff66', '#ffff00', '#ffffff', '#333333', '#800080', '#ffa500', '#00ffff', '#ffc0cb'];
+                let names = ['أحمر', 'أزرق', 'أخضر', 'أصفر', 'أبيض', 'أسود', 'بنفسجي', 'برتقالي', 'سماوي', 'وردي'];
+                
+                // 0: Idle, 1: Connected, -1: Cut
+                let states = new Array(10).fill(0);
+                // Correct ans: Connect (1,2,5,6,8). Cut (0,3,4,7,9).
+                let correctStates = [-1, 1, 1, -1, -1, 1, 1, -1, 1, -1]; 
+                
+                colors.forEach((col, i) => {
+                    let row = document.createElement('div'); row.style.cssText = 'display:flex; align-items:center; gap:15px; background:#050505; padding:8px 15px; border-radius:6px; border:1px solid #222;';
+                    
+                    let wireDisp = document.createElement('div');
+                    wireDisp.style.cssText = `flex-grow:1; height:15px; background:${col}; border-radius:8px; border:1px solid #000; box-shadow:inset 0 2px 5px rgba(255,255,255,0.3); transition:0.3s; position:relative; overflow:hidden;`;
+                    
+                    let btnCut = document.createElement('button'); btnCut.className = 'interactive-element'; btnCut.innerHTML = '✂️ قطع';
+                    btnCut.style.cssText = 'background:#440000; color:#ff3333; border:1px solid #ff3333; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
+                    
+                    let btnConn = document.createElement('button'); btnConn.className = 'interactive-element'; btnConn.innerHTML = '🔌 توصيل';
+                    btnConn.style.cssText = 'background:#003300; color:#00ff66; border:1px solid #00ff66; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
+                    
+                    const updateWireVisual = () => {
+                        btnCut.style.background = states[i] === -1 ? '#ff3333' : '#440000'; btnCut.style.color = states[i] === -1 ? '#fff' : '#ff3333';
+                        btnConn.style.background = states[i] === 1 ? '#00ff66' : '#003300'; btnConn.style.color = states[i] === 1 ? '#000' : '#00ff66';
+                        
+                        if(states[i] === -1) { wireDisp.style.opacity = '0.3'; wireDisp.style.borderStyle = 'dashed'; } 
+                        else if(states[i] === 1) { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = `0 0 15px ${col}`; wireDisp.style.borderStyle = 'solid'; } 
+                        else { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = 'inset 0 2px 5px rgba(255,255,255,0.3)'; wireDisp.style.borderStyle = 'solid'; }
+                    };
+                    
+                    btnCut.onclick = () => { states[i] = -1; updateWireVisual(); };
+                    btnConn.onclick = () => { states[i] = 1; updateWireVisual(); };
+                    
+                    row.append(wireDisp, btnCut, btnConn); hwWrap.appendChild(row);
+                });
+                
+                let checkBtn = generateSubmitButton(() => {
+                    if(states.includes(0)) { this.showToast('قم بتحديد حالة جميع الأسلاك العشرة أولاً!', '#ffa500'); return; }
+                    if(JSON.stringify(states) === JSON.stringify(correctStates)) { setTimeout(()=>this.winInteractive(), 500); } 
+                    else { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
+                }, 'تنفيذ الأمر (EXECUTE)');
+                
+                innerStage.append(hwWrap, checkBtn); break;
+            }
+
+            case 'PATTERN_LOCK': {
+                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:20px; background:#111; padding:30px; border-radius:15px; border:2px solid #333; position:relative;';
+                let dots = []; let currentLine = [];
+                for(let i=0; i<9; i++) {
+                    let dot = document.createElement('div'); dot.className = 'interactive-element'; dot.style.cssText = 'width:80px; height:80px; background:#222; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; border:4px solid #444; transition:0.2s; box-shadow:inset 0 0 10px #000;';
+                    let innerDot = document.createElement('div'); innerDot.style.cssText = 'width:20px; height:20px; background:#555; border-radius:50%; transition:0.2s;'; dot.appendChild(innerDot);
+                    dot.onclick = () => {
+                        if(currentLine.includes(i)) return;
+                        currentLine.push(i); innerDot.style.background = 'var(--gold)'; innerDot.style.boxShadow = '0 0 15px var(--gold)'; dot.style.borderColor = 'var(--gold)';
+                        if(currentLine.length === p.ans.length) {
+                            if(JSON.stringify(currentLine) === JSON.stringify(p.ans)) { setTimeout(()=>this.winInteractive(), 500); } 
+                            else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); }
+                        }
+                    }; dots.push(dot); pWrap.appendChild(dot);
+                } innerStage.appendChild(pWrap); break;
             }
 
             case 'JUGS': {
@@ -607,6 +666,36 @@ class SolarGamesEngine {
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(mirWrap, innerStage.children[1]); loadRound(); break;
             }
 
+            case 'CONSTELLATION': {
+                let cWrap = document.createElement('div'); cWrap.style.cssText = 'position:relative; width:400px; height:400px; background:radial-gradient(circle at center, #1a1a2e, #0f0f1a); border:2px solid var(--gold); border-radius:8px; box-shadow:0 0 30px rgba(212,175,55,0.2); overflow:hidden;';
+                let positions = [ {t:100, l:200}, {t:300, l:320}, {t:320, l:80}, {t:150, l:80}, {t:80, l:300} ]; 
+                let clicks = [];
+                positions.forEach((pos, i) => {
+                    let star = document.createElement('div'); star.className = 'interactive-element'; star.style.cssText = `position:absolute; width:15px; height:15px; background:#fff; border-radius:50%; top:${pos.t}px; left:${pos.l}px; cursor:pointer; box-shadow:0 0 10px #fff; transition:0.3s; z-index:2;`;
+                    star.onclick = () => {
+                        if(clicks.includes(i)) return;
+                        clicks.push(i); star.style.background = 'var(--gold)'; star.style.boxShadow = '0 0 20px var(--gold)'; star.style.transform = 'scale(1.5)';
+                        if(clicks.length === 5) { if(JSON.stringify(clicks) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 500); else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); } }
+                    }; cWrap.appendChild(star);
+                }); innerStage.appendChild(cWrap); break;
+            }
+
+            case 'VIRTUAL_PIANO': {
+                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:flex; position:relative; background:#111; padding:20px; border-radius:12px; border:4px solid #222; box-shadow:0 20px 40px rgba(0,0,0,0.8); height:250px;';
+                let whiteKeys = []; let seq = [];
+                for(let i=0; i<7; i++) {
+                    let wk = document.createElement('div'); wk.className = 'interactive-element'; wk.style.cssText = 'width:60px; height:100%; background:linear-gradient(to bottom, #fff, #eee); border:1px solid #ccc; border-radius:0 0 6px 6px; cursor:pointer; box-shadow:inset 0 -5px 5px rgba(0,0,0,0.2); transition:0.1s; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; font-weight:bold; color:#555;'; wk.innerText = ['C','D','E','F','G','A','B'][i];
+                    wk.onmousedown = () => { wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); if(seq.length === p.ans.length) { if(JSON.stringify(seq) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 400); else { this.failRoom(); seq = []; } } };
+                    wk.onmouseup = wk.onmouseleave = () => { wk.style.background = 'linear-gradient(to bottom, #fff, #eee)'; wk.style.transform = 'translateY(0)'; };
+                    pWrap.appendChild(wk); whiteKeys.push(wk);
+                }
+                [1, 2, 4, 5, 6].forEach((pos) => { 
+                    let bk = document.createElement('div'); bk.className = 'interactive-element'; bk.style.cssText = `position:absolute; width:40px; height:60%; background:linear-gradient(to bottom, #222, #000); border:1px solid #111; border-radius:0 0 4px 4px; left:${20 + pos*60 - 20}px; top:20px; z-index:2; cursor:pointer; box-shadow:2px 2px 5px rgba(0,0,0,0.5);`;
+                    bk.onmousedown = () => { bk.style.background = '#333'; this.failRoom(); seq = []; }; bk.onmouseup = bk.onmouseleave = () => { bk.style.background = 'linear-gradient(to bottom, #222, #000)'; };
+                    pWrap.appendChild(bk);
+                }); innerStage.appendChild(pWrap); break;
+            }
+
             case 'TIMELINE': {
                 let ccWrap = document.createElement('div'); ccWrap.style.cssText = 'width:100%; max-width:600px; display:flex; flex-direction:column; gap:20px; background:#111; padding:30px; border-radius:12px; border:2px solid #333; margin-bottom:20px; box-shadow:0 20px 40px rgba(0,0,0,0.9); position:relative;';
                 let targets = [15, 80, 45, 90, 20]; let sliders = [];
@@ -641,9 +730,9 @@ class SolarGamesEngine {
             }
 
             case 'KEYPAD': {
-                // إصلاح مشكلة الشرطة الرابعة بتعديل الـ CSS 
                 let kWrap = document.createElement('div'); kWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:15px; background:#111; padding:30px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8);';
-                let kDisp = document.createElement('div'); kDisp.style.cssText = 'grid-column:span 3; height:70px; background:#000; border:2px solid var(--gold); color:var(--gold); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-family:monospace; letter-spacing:15px; padding-left:15px; margin-bottom:15px; border-radius:6px; box-shadow:inset 0 0 20px rgba(212,175,55,0.2); white-space:nowrap; overflow:hidden;';
+                // اصلاح التوسيط
+                let kDisp = document.createElement('div'); kDisp.style.cssText = 'grid-column:span 3; height:70px; background:#000; border:2px solid var(--gold); color:var(--gold); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-family:monospace; letter-spacing:15px; margin-bottom:15px; border-radius:6px; box-shadow:inset 0 0 20px rgba(212,175,55,0.2); white-space:nowrap; overflow:hidden; padding-left:15px;';
                 kDisp.innerText='_ _ _ _'; kWrap.appendChild(kDisp);
                 [1,2,3,4,5,6,7,8,9,'*',0,'#'].forEach((n) => {
                     let btn = document.createElement('div'); btn.className = 'interactive-element'; btn.style.cssText = 'width:80px; height:60px; background:linear-gradient(to bottom, #333, #111); border:1px solid #555; border-radius:6px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:1.8rem; font-weight:bold; cursor:pointer; box-shadow:0 5px 10px rgba(0,0,0,0.5); user-select:none;'; btn.innerText = n;
@@ -657,243 +746,37 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(kWrap); break;
             }
 
-            // ==========================================
-            // الألعاب الـ 9 الجديدة كلياً
-            // ==========================================
-            
-            case 'COLOR_MIXER': {
-                let mWrap = document.createElement('div'); mWrap.style.cssText = 'display:flex; flex-direction:column; gap:20px; width:100%; max-width:400px;';
-                
-                let boxWrap = document.createElement('div'); boxWrap.style.cssText = 'display:flex; justify-content:space-between; gap:20px;';
-                let targetBox = document.createElement('div'); targetBox.style.cssText = `flex-grow:1; height:100px; background:rgb(${p.ans[0]},${p.ans[1]},${p.ans[2]}); border:4px solid #fff; border-radius:8px; display:flex; justify-content:center; align-items:center; color:#fff; font-weight:bold; text-shadow:0 0 5px #000; box-shadow:0 0 20px rgb(${p.ans[0]},${p.ans[1]},${p.ans[2]});`; targetBox.innerText = 'TARGET';
-                let userBox = document.createElement('div'); userBox.style.cssText = `flex-grow:1; height:100px; background:rgb(0,0,0); border:4px solid #555; border-radius:8px; display:flex; justify-content:center; align-items:center; color:#888; font-weight:bold; transition:background 0.1s;`; userBox.innerText = 'MIX';
-                boxWrap.append(targetBox, userBox);
-                
-                let slidersWrap = document.createElement('div'); slidersWrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; background:#111; padding:20px; border-radius:8px; border:2px solid #333;';
-                let vals = [0, 0, 0]; let colors = ['#ff3333', '#00ff66', '#00ccff'];
-                
-                for(let i=0; i<3; i++) {
-                    let s = document.createElement('input'); s.type = 'range'; s.min = 0; s.max = 255; s.value = 0; s.className = 'interactive-element';
-                    s.style.cssText = `width:100%; cursor:pointer; accent-color:${colors[i]};`;
-                    s.oninput = () => { vals[i] = parseInt(s.value); userBox.style.background = `rgb(${vals[0]},${vals[1]},${vals[2]})`; };
-                    slidersWrap.appendChild(s);
-                }
-                
-                let btn = generateSubmitButton(() => {
-                    let diff = Math.abs(vals[0]-p.ans[0]) + Math.abs(vals[1]-p.ans[1]) + Math.abs(vals[2]-p.ans[2]);
-                    if(diff < 20) { userBox.style.borderColor = '#00ff66'; setTimeout(()=>this.winInteractive(), 500); } else this.failRoom();
-                }, 'تأكيد المزج');
-                
-                mWrap.append(boxWrap, slidersWrap, btn); innerStage.appendChild(mWrap); break;
-            }
-
-            case 'MAGIC_SQUARE': {
-                let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--gold); box-shadow:0 10px 30px rgba(212,175,55,0.2);';
-                let inputs = [];
-                for(let i=0; i<9; i++) {
-                    let inp = document.createElement('input'); inp.type = 'number'; inp.className = 'interactive-element';
-                    inp.style.cssText = 'width:80px; height:80px; background:#000; border:2px solid #444; color:#fff; font-size:2.5rem; text-align:center; border-radius:8px; outline:none; transition:0.2s;';
-                    inp.onfocus = () => inp.style.borderColor = 'var(--gold)'; inp.onblur = () => inp.style.borderColor = '#444';
-                    inputs.push(inp); msWrap.appendChild(inp);
-                }
-                let btn = generateSubmitButton(() => {
-                    let vals = inputs.map(inp => parseInt(inp.value));
-                    if(vals.includes(NaN) || new Set(vals).size !== 9 || vals.some(v => v < 1 || v > 9)) { this.failRoom(); return; }
-                    let lines = [ [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6] ];
-                    let win = lines.every(line => (vals[line[0]] + vals[line[1]] + vals[line[2]]) === 15);
-                    if(win) { inputs.forEach(inp => { inp.style.background = 'var(--gold)'; inp.style.color = '#000'; }); setTimeout(()=>this.winInteractive(), 800); } else this.failRoom();
-                }, 'التحقق من التوازن');
-                innerStage.append(msWrap, btn); break;
-            }
-
-            case 'BOMB_DEFUSE': {
-                let bWrap = document.createElement('div'); bWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; background:#1a1a1a; padding:30px; border-radius:12px; border:4px solid #333; width:100%; max-width:500px;';
-                let timerDisp = document.createElement('div'); timerDisp.style.cssText = 'font-size:3rem; color:#ff3333; font-family:monospace; font-weight:bold; background:#000; padding:10px 30px; border-radius:8px; border:2px solid #ff3333; box-shadow:0 0 20px rgba(255,0,0,0.4);'; timerDisp.innerText = '00:60';
-                
-                let ruleCard = document.createElement('div'); ruleCard.style.cssText = 'background:#222; color:#ccc; padding:15px; border-left:4px solid var(--gold); font-family:monospace; font-size:1.1rem; line-height:1.6; text-align:left; direction:ltr; width:100%;';
-                ruleCard.innerHTML = `<strong>DEFUSAL PROTOCOL:</strong><br>1. If exactly 2 wires are Yellow, cut the first wire.<br>2. Else, if there is a Red wire, cut the fourth wire.<br>3. Else, cut the middle wire.`;
-                
-                let wireWrap = document.createElement('div'); wireWrap.style.cssText = 'display:flex; gap:15px; margin-top:10px; width:100%; justify-content:center;';
-                let wiresColor = ['#00ccff', '#ffff00', '#00ff66', '#ff3333', '#ffffff']; // Blue, Yellow, Green, Red, White
-                
-                let time = 60; this.stageState.timer = setInterval(() => { time--; timerDisp.innerText = `00:${time.toString().padStart(2,'0')}`; if(time <= 0) { clearInterval(this.stageState.timer); this.failRoom(); setTimeout(()=>this.setupStage(), 1000); } }, 1000);
-                
-                wiresColor.forEach((col, i) => {
-                    let w = document.createElement('div'); w.className = 'interactive-element'; w.style.cssText = `width:25px; height:150px; background:${col}; cursor:pointer; border:2px solid #000; box-shadow:2px 2px 5px #000; border-radius:12px; transition:0.2s;`;
-                    w.onclick = () => {
-                        clearInterval(this.stageState.timer);
-                        w.style.height = '70px'; w.style.borderBottom = '5px dashed #000'; // visually cut
-                        if(i === 3) { timerDisp.style.color = '#00ff66'; timerDisp.style.borderColor = '#00ff66'; setTimeout(()=>this.winInteractive(), 800); } else { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
-                    }; wireWrap.appendChild(w);
-                });
-                bWrap.append(timerDisp, ruleCard, wireWrap); innerStage.appendChild(bWrap); break;
-            }
-
-            case 'PATTERN_LOCK': {
-                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:20px; background:#111; padding:30px; border-radius:15px; border:2px solid #333; position:relative;';
-                let dots = []; let currentLine = [];
-                for(let i=0; i<9; i++) {
-                    let dot = document.createElement('div'); dot.className = 'interactive-element'; dot.style.cssText = 'width:80px; height:80px; background:#222; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; border:4px solid #444; transition:0.2s; box-shadow:inset 0 0 10px #000;';
-                    let innerDot = document.createElement('div'); innerDot.style.cssText = 'width:20px; height:20px; background:#555; border-radius:50%; transition:0.2s;'; dot.appendChild(innerDot);
-                    dot.onclick = () => {
-                        if(currentLine.includes(i)) return;
-                        currentLine.push(i); innerDot.style.background = 'var(--gold)'; innerDot.style.boxShadow = '0 0 15px var(--gold)'; dot.style.borderColor = 'var(--gold)';
-                        if(currentLine.length === p.ans.length) {
-                            if(JSON.stringify(currentLine) === JSON.stringify(p.ans)) { setTimeout(()=>this.winInteractive(), 500); } 
-                            else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); }
-                        }
-                    }; dots.push(dot); pWrap.appendChild(dot);
-                } innerStage.appendChild(pWrap); break;
-            }
-
-            case 'HARD_PIPES_4X4': {
-                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:grid; grid-template-columns:repeat(4, 60px); gap:2px; background:#0a0a0a; padding:10px; border:6px solid #222; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.9);';
-                // 16 tiles, target state to win (all connected logic is simplified to an exact exact layout match for DOM puzzle)
-                let state = Array(16).fill(90); let target = [0,90,0,0, 90,90,0,90, 0,0,90,0, 90,0,0,90];
-                for(let i=0; i<16; i++) {
-                    let cell = document.createElement('div'); cell.className = 'interactive-element'; cell.style.cssText = `width:60px; height:60px; background:#1a1a1a; border:1px solid #333; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:transform 0.2s; transform:rotate(${state[i]}deg);`;
-                    let pipe = document.createElement('div');
-                    // Randomize shapes a bit for visual complexity (Straight and L-shapes)
-                    if(i%2===0) { pipe.style.cssText = 'width:100%; height:15px; background:linear-gradient(to bottom, #b8860b, #ffd700, #b8860b);'; } 
-                    else { pipe.style.cssText = 'width:60%; height:60%; border-bottom:15px solid #ffd700; border-left:15px solid #ffd700; border-bottom-left-radius:15px; align-self:flex-start; justify-self:flex-end; margin-bottom:auto; margin-left:auto;'; }
-                    cell.appendChild(pipe);
-                    cell.onclick = () => { state[i] = (state[i] + 90) % 180; cell.style.transform = `rotate(${state[i]}deg)`; if(JSON.stringify(state) === JSON.stringify(target)) setTimeout(()=>this.winInteractive(), 500); };
-                    pWrap.appendChild(cell);
-                } innerStage.appendChild(pWrap); break;
-            }
-
-            case 'BINARY_TOGGLES': {
-                let bWrap = document.createElement('div'); bWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:30px; background:#111; padding:40px; border-radius:12px; border:2px solid #333; box-shadow:0 15px 30px rgba(0,0,0,0.8);';
-                let targetDisp = document.createElement('div'); targetDisp.style.cssText = 'font-size:4rem; color:var(--gold); font-family:monospace; font-weight:bold; letter-spacing:5px; text-shadow:0 0 20px rgba(212,175,55,0.5);'; targetDisp.innerText = '45';
-                
-                let swWrap = document.createElement('div'); swWrap.style.cssText = 'display:flex; gap:15px;';
-                let vals = [32, 16, 8, 4, 2, 1]; let state = [0,0,0,0,0,0];
-                
-                vals.forEach((v, i) => {
-                    let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:10px;';
-                    let lbl = document.createElement('div'); lbl.innerText = v; lbl.style.cssText = 'color:#888; font-family:monospace; font-size:1.2rem; font-weight:bold;';
-                    let sw = document.createElement('div'); sw.className = 'interactive-element'; sw.style.cssText = 'width:50px; height:80px; background:#050505; border:3px solid #444; border-radius:25px; position:relative; cursor:pointer; transition:0.3s; box-shadow:inset 0 0 10px #000;';
-                    let knob = document.createElement('div'); knob.style.cssText = 'width:40px; height:40px; background:#555; border-radius:50%; position:absolute; bottom:2px; left:2px; transition:0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow:0 2px 5px #000;';
-                    sw.appendChild(knob); col.append(lbl, sw); swWrap.appendChild(col);
-                    
-                    sw.onclick = () => {
-                        state[i] = 1 - state[i];
-                        if(state[i]) { sw.style.background = 'rgba(212,175,55,0.2)'; sw.style.borderColor = 'var(--gold)'; knob.style.background = 'var(--gold)'; knob.style.bottom = '32px'; knob.style.boxShadow = '0 0 10px var(--gold)'; } 
-                        else { sw.style.background = '#050505'; sw.style.borderColor = '#444'; knob.style.background = '#555'; knob.style.bottom = '2px'; knob.style.boxShadow = '0 2px 5px #000'; }
-                    };
-                });
-                
-                let btn = generateSubmitButton(() => { if(JSON.stringify(state) === JSON.stringify(p.ans)) this.winInteractive(); else this.failRoom(); }, 'إرسال الإشارة الثنائية');
-                bWrap.append(targetDisp, swWrap, btn); innerStage.appendChild(bWrap); break;
-            }
-
-            case 'CARD_SWIPE': {
-                let sWrap = document.createElement('div'); sWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:40px; width:100%;';
-                let msg = document.createElement('div'); msg.style.cssText = 'font-size:1.8rem; color:var(--gold); font-family:monospace;'; msg.innerText = 'PLEASE SWIPE CARD';
-                let track = document.createElement('div'); track.style.cssText = 'width:500px; height:100px; background:#111; border:4px solid #333; border-radius:10px; position:relative; overflow:hidden; box-shadow:inset 0 0 20px #000;';
-                let card = document.createElement('div'); card.style.cssText = 'width:120px; height:90px; background:#eee; border-radius:6px; position:absolute; top:1px; left:5px; border:2px solid #ccc; display:flex; flex-direction:column; justify-content:space-between; padding:10px 0; cursor:grab; box-shadow:5px 0 10px rgba(0,0,0,0.5); z-index:5;';
-                let strip = document.createElement('div'); strip.style.cssText = 'width:100%; height:25px; background:#222;'; card.appendChild(strip);
-                track.appendChild(card); sWrap.append(msg, track); innerStage.appendChild(sWrap);
-                
-                let isDragging = false; let startX = 0; let startTime = 0;
-                card.onmousedown = (e) => { isDragging = true; card.style.cursor = 'grabbing'; startX = e.clientX - card.offsetLeft; startTime = Date.now(); };
-                window.onmousemove = (e) => {
-                    if(!isDragging) return;
-                    let newLeft = e.clientX - startX;
-                    if(newLeft >= 5 && newLeft <= 375) card.style.left = newLeft + 'px';
-                };
-                window.onmouseup = () => {
-                    if(!isDragging) return;
-                    isDragging = false; card.style.cursor = 'grab';
-                    if(parseInt(card.style.left) >= 350) {
-                        let duration = Date.now() - startTime;
-                        if(duration < 800) { msg.innerText = 'TOO FAST. TRY AGAIN.'; msg.style.color = '#ff3333'; this.failRoom(); card.style.left = '5px'; }
-                        else if(duration > 2000) { msg.innerText = 'TOO SLOW. TRY AGAIN.'; msg.style.color = '#ff3333'; this.failRoom(); card.style.left = '5px'; }
-                        else { msg.innerText = 'ACCEPTED.'; msg.style.color = '#00ff66'; setTimeout(()=>this.winInteractive(), 500); }
-                    } else { card.style.left = '5px'; } // reset if not fully swiped
-                }; break;
-            }
-
-            case 'CONSTELLATION': {
-                let cWrap = document.createElement('div'); cWrap.style.cssText = 'position:relative; width:400px; height:400px; background:radial-gradient(circle at center, #1a1a2e, #0f0f1a); border:2px solid var(--gold); border-radius:8px; box-shadow:0 0 30px rgba(212,175,55,0.2); overflow:hidden;';
-                let positions = [ {t:100, l:200}, {t:300, l:320}, {t:320, l:80}, {t:150, l:80}, {t:80, l:300} ]; // Star points
-                let clicks = [];
-                positions.forEach((pos, i) => {
-                    let star = document.createElement('div'); star.className = 'interactive-element'; star.style.cssText = `position:absolute; width:15px; height:15px; background:#fff; border-radius:50%; top:${pos.t}px; left:${pos.l}px; cursor:pointer; box-shadow:0 0 10px #fff; transition:0.3s; z-index:2;`;
-                    star.onclick = () => {
-                        if(clicks.includes(i)) return;
-                        clicks.push(i); star.style.background = 'var(--gold)'; star.style.boxShadow = '0 0 20px var(--gold)'; star.style.transform = 'scale(1.5)';
-                        if(clicks.length === 5) { if(JSON.stringify(clicks) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 500); else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); } }
-                    }; cWrap.appendChild(star);
-                }); innerStage.appendChild(cWrap); break;
-            }
-
-            case 'VIRTUAL_PIANO': {
-                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:flex; position:relative; background:#111; padding:20px; border-radius:12px; border:4px solid #222; box-shadow:0 20px 40px rgba(0,0,0,0.8); height:250px;';
-                let whiteKeys = []; let seq = [];
-                for(let i=0; i<7; i++) {
-                    let wk = document.createElement('div'); wk.className = 'interactive-element'; wk.style.cssText = 'width:60px; height:100%; background:linear-gradient(to bottom, #fff, #eee); border:1px solid #ccc; border-radius:0 0 6px 6px; cursor:pointer; box-shadow:inset 0 -5px 5px rgba(0,0,0,0.2); transition:0.1s; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; font-weight:bold; color:#555;'; wk.innerText = ['C','D','E','F','G','A','B'][i];
-                    wk.onmousedown = () => { wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); if(seq.length === p.ans.length) { if(JSON.stringify(seq) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 400); else { this.failRoom(); seq = []; } } };
-                    wk.onmouseup = wk.onmouseleave = () => { wk.style.background = 'linear-gradient(to bottom, #fff, #eee)'; wk.style.transform = 'translateY(0)'; };
-                    pWrap.appendChild(wk); whiteKeys.push(wk);
-                }
-                [1, 2, 4, 5, 6].forEach((pos) => { // Black keys positions
-                    let bk = document.createElement('div'); bk.className = 'interactive-element'; bk.style.cssText = `position:absolute; width:40px; height:60%; background:linear-gradient(to bottom, #222, #000); border:1px solid #111; border-radius:0 0 4px 4px; left:${20 + pos*60 - 20}px; top:20px; z-index:2; cursor:pointer; box-shadow:2px 2px 5px rgba(0,0,0,0.5);`;
-                    bk.onmousedown = () => { bk.style.background = '#333'; this.failRoom(); seq = []; }; bk.onmouseup = bk.onmouseleave = () => { bk.style.background = 'linear-gradient(to bottom, #222, #000)'; };
-                    pWrap.appendChild(bk);
-                }); innerStage.appendChild(pWrap); break;
-            }
-
-            case 'ROULETTE': {
-                let rWrap = document.createElement('div'); rWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:30px;';
-                let wheel = document.createElement('div'); wheel.style.cssText = 'width:250px; height:250px; border-radius:50%; background:conic-gradient(#ff3333 0deg 90deg, #111 90deg 270deg, var(--gold) 270deg 300deg, #111 300deg 360deg); border:8px solid #333; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.8); transition:transform 0.05s linear;';
-                let pointer = document.createElement('div'); pointer.style.cssText = 'position:absolute; top:-20px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:15px solid transparent; border-right:15px solid transparent; border-top:25px solid #fff; z-index:5; filter:drop-shadow(0 2px 5px #000);';
-                rWrap.append(pointer, wheel);
-                
-                let angle = 0; let spinning = true;
-                this.stageState.timer = setInterval(() => { if(spinning) { angle = (angle + 12) % 360; wheel.style.transform = `rotate(${angle}deg)`; } }, 20);
-                
-                let btn = generateSubmitButton(() => {
-                    spinning = false; clearInterval(this.stageState.timer);
-                    // Gold zone is 270-300 degrees in conic gradient.
-                    // Because wheel rotates clockwise, the pointer (at top, 0 deg relative to container) hits the gold zone when wheel is rotated between 60 and 90 degrees (360-300 = 60, 360-270 = 90).
-                    if(angle >= 60 && angle <= 90) { setTimeout(()=>this.winInteractive(), 500); } 
-                    else { this.failRoom(); setTimeout(()=> { spinning = true; this.stageState.timer = setInterval(() => { if(spinning) { angle = (angle + 12) % 360; wheel.style.transform = `rotate(${angle}deg)`; } }, 20); }, 1000); }
-                }, 'إيقاف (STOP)');
-                
-                rWrap.appendChild(btn); innerStage.appendChild(rWrap); break;
-            }
-
-            case 'DETECTIVE_STORY': {
-                // القضية من 4 مراحل دقيقة
+            // --- الباب 20 (القضية الكبرى من 5 راوندات ملحمية) ---
+            case 'EPIC_DETECTIVE': {
                 this.stageState.round = 1;
                 
                 let storyCard = document.createElement('div'); 
                 storyCard.style.cssText = 'width:100%; max-width:650px; background:#1a1a1a; padding:30px; border-radius:8px; border-right:6px solid var(--gold); color:#ddd; font-size:1.4rem; line-height:2; box-shadow:inset 0 0 30px #000; margin-bottom:20px; font-family:"Traditional Arabic", serif; text-align:right; direction:rtl; transition:0.3s;';
                 
-                let qTitle = document.createElement('h3'); qTitle.style.cssText = 'color:var(--gold); margin-bottom:15px; font-size:1.6rem; text-align:right; width:100%; max-width:650px; direction:rtl;';
-                let inputContainer = document.createElement('div'); inputContainer.style.width = '100%';
+                let qTitle = document.createElement('h3'); 
+                qTitle.style.cssText = 'color:var(--gold); margin-bottom:15px; font-size:1.6rem; text-align:right; width:100%; max-width:650px; direction:rtl;';
+                
+                let inputContainer = document.createElement('div'); 
+                inputContainer.style.width = '100%';
                 
                 const loadRound = () => {
                     inputContainer.innerHTML = '';
+                    
                     if(this.stageState.round === 1) {
-                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على جثة رجل أعمال في فندق (ذا بلازا). تشير السجلات أن الضحية استلم مفتاح الغرفة رقم ٤٠٤ في تمام الساعة الثامنة مساءً، ولم يخرج منها أبداً.`;
-                        qTitle.innerText = `الراوند الأول: بناءً على التقرير، ما هو رقم الغرفة التي وقعت فيها الجريمة؟`;
-                        let inp = createInputBlock('أدخل رقم الغرفة...', '404');
-                        inp.oninput = () => { if(inp.value.trim() === '404' || inp.value.trim() === '٤٠٤') { this.playSound('success'); this.stageState.round++; loadRound(); } };
-                        // hide default submit button for input block
-                        innerStage.lastChild.lastChild.style.display = 'none';
-                        inputContainer.appendChild(innerStage.lastChild);
+                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي في رسالة الدعم الفني).</strong>`;
+                        qTitle.innerText = `الراوند 1: فك تشفير الملف.`;
+                        let inp = createInputBlock('أدخل الكود (مثال: ECHO)...', 'ECHO'); // الكود ECHO
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ECHO') { this.playSound('success'); this.stageState.round++; loadRound(); } };
+                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.round === 2) {
-                        storyCard.innerHTML = `<strong>شهادة الحارس:</strong><br>"كنت أقف في حديقة الفندق ليلاً، كانت السماء صافية تماماً والـ<span class="case-word" data-ans="1">نجوم</span> ساطعة، فجأة سمعت صراخاً، ركضت للداخل وتركت مظلتي التي كنت أحتمي بها من الـ<span class="case-word" data-ans="1">مطر</span> الغزير بالخارج."`;
-                        qTitle.innerText = `الراوند الثاني: هناك تناقض مستحيل في شهادة الحارس. اضغط (Click) على الكلمتين المتناقضتين.`;
+                        storyCard.innerHTML = `<strong>شهادة الحارس:</strong><br>"كنت أقف في حديقة الفندق ليلاً، كانت السماء صافية تماماً والـ<span class="case-word interactive-element" data-ans="1">نجوم</span> ساطعة، فجأة سمعت صراخاً، ركضت للداخل وتركت مظلتي التي كنت أحتمي بها من الـ<span class="case-word interactive-element" data-ans="1">مطر</span> الغزير بالخارج. وعندما دخلت الغرفة كانت <span class="case-word interactive-element" data-ans="0">مظلمة</span>."`;
+                        qTitle.innerText = `الراوند 2: هناك تناقض مستحيل في الشهادة. اضغط (Click) على الكلمتين المتناقضتين بالظبط.`;
                         
                         let selectedWords = new Set();
                         storyCard.querySelectorAll('.case-word').forEach((el, index) => {
                             el.style.cssText = 'color:var(--gold); cursor:pointer; text-decoration:underline dashed #555; padding:0 5px;';
                             el.onclick = () => {
-                                this.playSound('click');
                                 if(selectedWords.has(index)) { selectedWords.delete(index); el.style.background = 'transparent'; el.style.color = 'var(--gold)'; }
                                 else { selectedWords.add(index); el.style.background = 'var(--gold)'; el.style.color = '#000'; }
                                 
@@ -905,24 +788,31 @@ class SolarGamesEngine {
                         });
                     }
                     else if(this.stageState.round === 3) {
-                        storyCard.innerHTML = `<strong>تفحص الجوال:</strong><br>تم العثور على رسالة غير مرسلة في جوال الضحية كتبت الساعة 21:00 بتوقيت الـ 24 ساعة.`;
-                        qTitle.innerText = `الراوند الثالث: في أي ساعة بنظام الـ 12 ساعة تمت كتابة الرسالة؟ (أدخل الرقم فقط)`;
-                        let inp = createInputBlock('أدخل الساعة...', '9');
-                        inp.oninput = () => { if(inp.value.trim() === '9' || inp.value.trim() === '٩') { this.playSound('success'); this.stageState.round++; loadRound(); } };
-                        innerStage.lastChild.lastChild.style.display = 'none';
-                        inputContainer.appendChild(innerStage.lastChild);
-                    }
-                    else if(this.stageState.round === 4) {
-                        storyCard.innerHTML = `<strong>الاستنتاج النهائي:</strong><br>الحارس كذب بشأن الطقس، والضحية قتل الساعة التاسعة. من هو القاتل الفعلي؟`;
-                        qTitle.innerText = `الراوند الأخير: حدد القاتل لإنهاء القضية.`;
-                        
-                        let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%;';
-                        ['الخادمة', 'المدير', 'الحارس', 'الضحية نفسه'].forEach((suspect, i) => {
+                        storyCard.innerHTML = `<strong>الاستجواب:</strong><br>3 مشتبه بهم: (أحمد، خالد، سعد).<br>- أحمد يقول: "سعد هو القاتل".<br>- خالد يقول: "أنا لم أقتل أحداً".<br>- سعد يقول: "أحمد يكذب".<br><br><strong>ملاحظة:</strong> واحد فقط من الثلاثة يقول الحقيقة!`;
+                        qTitle.innerText = `الراوند 3: استنتج من هو القاتل؟`;
+                        let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
+                        ['أحمد', 'خالد', 'سعد'].forEach((suspect, i) => {
                             let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--gold); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.2rem;';
-                            btn.onclick = () => { if(i === 2) { setTimeout(()=>this.winInteractive(), 500); } else { this.failRoom(); } };
+                            // الحل: خالد هو القاتل. لو خالد صادق (ما قتل) وأحمد كاذب وسعد كاذب (أحمد ما يكذب)، تناقض.
+                            // الوحيد اللي يخلي عبارة وحدة صح هو أن (سعد يقول الحقيقة أن أحمد يكذب)، وخالد كاذب (يعني هو القاتل).
+                            btn.onclick = () => { if(i === 1) { this.playSound('success'); this.stageState.round++; loadRound(); } else { this.failRoom(); } };
                             btnWrap.appendChild(btn);
                         });
                         inputContainer.appendChild(btnWrap);
+                    }
+                    else if(this.stageState.round === 4) {
+                        storyCard.innerHTML = `<strong>الرسالة المشفرة:</strong><br>وجدنا في جيب القاتل (خالد) ملاحظة تقول: "الغرفة رقم 10110". هذا الرقم بنظام الباينري (الثنائي).`;
+                        qTitle.innerText = `الراوند 4: حول الرقم الثنائي إلى عشري لمعرفة رقم الغرفة الصحيح.`;
+                        let inp = createInputBlock('أدخل رقم الغرفة...', '22'); // 10110 in binary is 22
+                        inp.oninput = () => { if(inp.value.trim() === '22' || inp.value.trim() === '٢٢') { this.playSound('success'); this.stageState.round++; loadRound(); } };
+                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
+                    }
+                    else if(this.stageState.round === 5) {
+                        storyCard.innerHTML = `<strong>إغلاق القضية:</strong><br>اكتملت الأدلة، القاتل هو خالد، في الغرفة رقم 22، والدافع مخفي في اسم اللعبة التي تلعبونها الآن.`;
+                        qTitle.innerText = `الراوند 5 (الأخير): أدخل الرمز النهائي الـ (MASTER PASSWORD).`;
+                        let inp = createInputBlock('MASTER PASSWORD...', 'SOLAR');
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'SOLAR') { setTimeout(()=>this.winInteractive(), 500); } };
+                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                 };
                 
@@ -931,10 +821,7 @@ class SolarGamesEngine {
             }
 
             default:
-                let defaultMsg = document.createElement('div'); 
-                defaultMsg.style.cssText = "color:var(--gold); font-family:monospace; font-size:1.5rem;"; 
-                defaultMsg.innerText = "Error: Protocol Missing"; 
-                innerStage.appendChild(defaultMsg); break;
+                let defaultMsg = document.createElement('div'); defaultMsg.style.cssText = "color:var(--gold); font-family:monospace; font-size:1.5rem;"; defaultMsg.innerText = "Error: Protocol Missing"; innerStage.appendChild(defaultMsg); break;
         }
     }
 
