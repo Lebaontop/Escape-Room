@@ -1,10 +1,17 @@
+// دالة فحص رمز الدخول للعبة
+function checkEntryCode() {
+    const code = document.getElementById('entry-code').value;
+    if(code === '87') {
+        game.startLobby();
+    } else {
+        alert('الرمز السري غير صحيح!');
+    }
+}
+
 class SolarGamesEngine {
     constructor() {
-        this.coins = 0; 
-        this.globalTime = 90 * 60; 
+        this.roomTimers = {}; // تخزين وقت كل غرفة
         this.isTimerRunning = false;
-        this.timeFrozen = false;
-        
         this.activeGate = null;
         this.solvedGates = new Set();
         this.audioCtx = null;
@@ -13,9 +20,10 @@ class SolarGamesEngine {
         this.init();
         this.setupClickListeners();
         
+        // عداد الوقت الذي يعمل على الغرفة الحالية فقط
         setInterval(() => {
-            if(this.isTimerRunning && !this.timeFrozen && this.globalTime > 0) {
-                this.globalTime--;
+            if(this.isTimerRunning && this.activeGate && this.roomTimers[this.activeGate.id] > 0) {
+                this.roomTimers[this.activeGate.id]--;
                 this.updateGlobalTimerUI();
             }
         }, 1000);
@@ -23,8 +31,6 @@ class SolarGamesEngine {
 
     init() { 
         this.renderLobby(); 
-        this.updateCoinsUI();
-        this.updateGlobalTimerUI();
     }
 
     initAudio() {
@@ -55,7 +61,7 @@ class SolarGamesEngine {
         }
     }
     
-    showToast(msg, color = 'var(--gold)') {
+    showToast(msg, color = 'var(--apple)') {
         const t = document.createElement('div'); 
         t.className = 'toast'; 
         t.innerText = msg; 
@@ -81,6 +87,7 @@ class SolarGamesEngine {
     }
 
     buildPuzzles() {
+        // نفس الألغاز الـ 20 مع التعديلات
         const riddles = [
             {q: "شيء كلما زاد، قلّت رؤيتك له.", a: "الظلام"}, 
             {q: "ابن الماء، وإذا وضعته في الماء مات.", a: "الثلج"},
@@ -108,31 +115,26 @@ class SolarGamesEngine {
         for(let i=1; i<=20; i++) {
             let m = { id: i, type: `GAME_${i}` };
             
-            if(i===1) { m.uiType = 'WIRES'; m.desc="اقطع 3 أسلاك محددة."; m.data=['#D4AF37','#ff3333','#333','#fff','#D4AF37','#00ccff','#333','#ff3333']; m.ans=[2,5,7]; m.hint="💡 تفاعلي: الاحمر، اسود، ازرق. | 📝 كتابي: يعتم كلما زاد."; }
-            else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: تتبع الأنماط المضيئة وكررها (3 جولات)."; m.data=4; m.hint="💡 تفاعلي: ركز وكرر الترتيب. | 📝 كتابي: يذوب في الحرارة."; }
-            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (أخضر=صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; m.hint="💡 تفاعلي: الكود هو 3**9. | 📝 كتابي: لا يمكنك البوح به."; }
-            else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات وطابق 10 أزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; m.hint="💡 تفاعلي: احفظ الأماكن. | 📝 كتابي: يزيد ولا ينقص."; }
-            else if(i===5) { m.uiType = 'COMPASS'; m.desc="توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; m.hint="💡 تفاعلي: أسفل، أسفل يمين، أعلى. | 📝 كتابي: يرتد لك من الجدار."; }
-            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; m.hint="💡 تفاعلي: 70 + 80. | 📝 كتابي: يأتي غداً."; }
-            else if(i===7) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: أدخل الأرقام من 1 إلى 9 في الشبكة بحيث يكون مجموع كل صف وعمود يساوي 15."; m.hint="💡 تفاعلي: الرقم 5 في المنتصف. | 📝 كتابي: تقطعه لتفي به."; }
-            else if(i===8) { m.uiType = 'SLIDER'; m.desc="اللوحة المكسورة: رتب القطع الخشبية المبعثرة بالترتيب التصاعدي."; m.hint="💡 تفاعلي: رتبها من 1 إلى 8. | 📝 كتابي: لغته السكوت."; }
-            
-            // الباب 9 المعقد (الأسلاك العشرة)
-            else if(i===9) { m.uiType = 'HARDCORE_WIRES'; m.desc="لوحة التحكم المعقدة: 10 أسلاك أمامك. عليك توصيل 5 أسلاك وقطع 5 أسلاك أخرى بدقة متناهية لتجاوز النظام."; m.hint="💡 تفاعلي: وصل (الأزرق، الأخضر، الأسود، البنفسجي، السماوي)، واقطع الباقي. | 📝 كتابي: قشرتها هشة."; }
-            
-            else if(i===10) { m.uiType = 'PATTERN_LOCK'; m.desc="القفل النمطي: اضغط على النقاط بالتسلسل الصحيح لرسم رمز الدخول (حرف Z)."; m.ans=[0,1,2,4,6,7,8]; m.hint="💡 تفاعلي: ارسم حرف Z بالإنجليزية. | 📝 كتابي: تنشفك وتتبلل."; }
-            else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8 لتر، 5 لتر، 3 لتر) لتحصل على 4 لتر."; m.hint="💡 تفاعلي: املأ الـ 5 ثم صب في الـ 3. | 📝 كتابي: ترسم العالم."; }
-            else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة. خطأ واحد يعيدك للصفر."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; m.hint="💡 تفاعلي: انزل 3 مربعات ثم يمين. | 📝 كتابي: صيفي ولذيذ."; }
-            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف السبعة للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; m.hint="💡 تفاعلي: الكلمة هي ECLIPSE. | 📝 كتابي: يثبت الأشياء."; }
-            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشاعر."; m.hint="💡 تفاعلي: المتنبي، عنترة، البدر. | 📝 كتابي: أداة الكتابة."; }
-            else if(i===15) { m.uiType = 'CONSTELLATION'; m.desc="كوكبة النجوم: 5 نجوم في السماء، اضغط عليها بالترتيب الصحيح لفتح البوابة."; m.ans=[2, 4, 0, 3, 1]; m.hint="💡 تفاعلي: ابدأ من النجمة السفلية يمين. | 📝 كتابي: تدل على الشمال."; }
-            else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل الصوتي."; m.ans=[0, 2, 4, 0]; m.hint="💡 تفاعلي: دو، مي، صول، دو (C, E, G, C). | 📝 كتابي: لا تُرى."; }
-            else if(i===17) { m.uiType = 'TIMELINE'; m.desc="تايم لاين المونتاج: اسحب مسارات الفيديو والصوت لتتزامن بنسبة 100%."; m.hint="💡 تفاعلي: المسار الأول 15، الثاني 45. | 📝 كتابي: تخاف من الماء."; }
-            else if(i===18) { m.uiType = 'DNA'; m.desc="الحمض النووي: اضغط لتغيير القواعد، طابق A مع T، و C مع G للتركيبة المخفية."; m.ans='TGCA'; m.hint="💡 تفاعلي: الحل هو TGCA. | 📝 كتابي: تكبر كلما أخذت منها."; }
-            else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1936'; m.hint="💡 تفاعلي: الكود هو 1936. | 📝 كتابي: ينادونك به."; }
-            
-            // الباب 20 الملحمي (القضية الكبرى)
-            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف القضية الأسود (5 مراحل): ستستغرق هذه القضية منك وقتاً طويلاً. ابحث عن الأدلة داخل اللعبة، وخارجها في رومات السيرفر، لتعرف القاتل الحقيقي."; m.hint="💡 تفاعلي: اقرأ النصوص بتركيز شديد وابحث في الديسكورد. | 📝 كتابي: تتركها وراءك."; }
+            if(i===1) { m.uiType = 'WIRES'; m.desc="اقطع 3 أسلاك محددة."; m.data=['#8cc63f','#ff3333','#333','#fff','#00ccff','#ff3333']; m.ans=[1,3,4]; }
+            else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: تتبع الأنماط المضيئة وكررها (جولتين)."; m.data=4; }
+            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (أخضر=صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; }
+            else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات وطابق 10 أزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; }
+            else if(i===5) { m.uiType = 'COMPASS'; m.desc="توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
+            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
+            else if(i===7) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: أدخل الأرقام من 1 إلى 9 بحيث يكون المجموع 15."; }
+            else if(i===8) { m.uiType = 'SLIDER'; m.desc="اللوحة المكسورة: رتب القطع الخشبية المبعثرة بالترتيب التصاعدي."; }
+            else if(i===9) { m.uiType = 'HARDCORE_WIRES'; m.desc="اللوحة المعقدة: 6 أسلاك. وصل 3 واقطع 3 بدقة متناهية."; }
+            else if(i===10) { m.uiType = 'PATTERN_LOCK'; m.desc="القفل النمطي: اضغط على النقاط بالتسلسل الصحيح لرسم رمز الدخول."; m.ans=[0,1,2,4,6,7,8]; }
+            else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
+            else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
+            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; }
+            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشاعر."; }
+            else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور: تفحص الصورة جيداً."; m.ans='رسم'; }
+            else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل الصوتي."; m.ans=[0, 2, 4, 0]; }
+            else if(i===17) { m.uiType = 'TIMELINE'; m.desc="تايم لاين المونتاج: اسحب مسارات الفيديو والصوت لتتزامن بنسبة 100%."; }
+            else if(i===18) { m.uiType = 'DNA'; m.desc="الحمض النووي: طابق A مع T، و C مع G للتركيبة المخفية."; m.ans='TGCA'; }
+            else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1936'; }
+            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف القضية الأسود (5 مراحل): ابحث عن الأدلة لتعرف القاتل الحقيقي."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -144,112 +146,28 @@ class SolarGamesEngine {
     toggleGlobalTimer() { 
         this.playSound('click'); 
         this.isTimerRunning = !this.isTimerRunning; 
-        this.showToast(this.isTimerRunning ? "تم تشغيل العداد العام" : "تم إيقاف العداد العام");
+        this.showToast(this.isTimerRunning ? "تم تشغيل وقت الغرفة" : "تم إيقاف وقت الغرفة");
     }
     
     modifyGlobalTimer(secs) { 
-        this.playSound('click'); 
-        this.globalTime = Math.max(0, this.globalTime + secs); 
-        this.updateGlobalTimerUI(); 
+        this.playSound('click');
+        if(this.activeGate) {
+            this.roomTimers[this.activeGate.id] = Math.max(0, this.roomTimers[this.activeGate.id] + secs); 
+            this.updateGlobalTimerUI(); 
+        }
     }
     
     updateGlobalTimerUI() {
-        let h = Math.floor(this.globalTime / 3600).toString().padStart(2,'0');
-        let m = Math.floor((this.globalTime % 3600) / 60).toString().padStart(2,'0');
-        let s = (this.globalTime % 60).toString().padStart(2,'0');
+        if(!this.activeGate) return;
+        let t = this.roomTimers[this.activeGate.id];
+        let m = Math.floor(t / 60).toString().padStart(2,'0');
+        let s = (t % 60).toString().padStart(2,'0');
         
-        let displays = ['global-timer-display', 'market-time', 'puzzle-global-timer'];
+        let displays = ['global-timer-display', 'puzzle-global-timer'];
         displays.forEach(id => {
             let el = document.getElementById(id);
-            if(el) {
-                el.innerText = `${h}:${m}:${s}`;
-                if(id !== 'market-time') el.style.color = this.timeFrozen ? '#00ccff' : '#fff';
-            }
+            if(el) { el.innerText = `${m}:${s}`; }
         });
-    }
-
-    addCoins(amount) {
-        this.playSound('click'); 
-        this.coins = Math.max(0, this.coins + amount); 
-        this.updateCoinsUI();
-        if(amount > 0) this.showToast(`تم استخراج ${amount} بيانات!`); 
-        else this.showToast(`تم خصم ${Math.abs(amount)} بيانات!`, '#ff3333');
-    }
-    
-    updateCoinsUI() {
-        document.getElementById('coin-val').innerText = this.coins; 
-        document.getElementById('market-coins').innerText = this.coins;
-    }
-
-    toggleMarket(show) {
-        this.playSound('click'); 
-        const m = document.getElementById('market-modal');
-        if(show) { 
-            m.classList.remove('hidden'); 
-            this.updateCoinsUI(); 
-            this.updateGlobalTimerUI(); 
-        } else {
-            m.classList.add('hidden');
-        }
-    }
-    
-    buyHint(type) {
-        this.playSound('click');
-        if(!this.activeGate) { this.showToast('يجب أن تكون داخل روم!', '#ff3333'); return; }
-        
-        if(type === 'coins') {
-            if(this.coins >= 60) { 
-                this.coins -= 60; 
-                this.showToast('تم فك التشفير بنجاح!'); 
-                this.displayHint(); 
-            } else { this.showToast('بيانات غير كافية!', '#ff3333'); }
-        } else if (type === 'time') {
-            if(this.globalTime > 300) { 
-                this.globalTime -= 300; 
-                this.showToast('تم الشراء بخصم 5 دقائق!'); 
-                this.displayHint(); 
-            } else { this.showToast('الوقت لا يكفي!', '#ff3333'); }
-        }
-        this.updateCoinsUI(); 
-        this.updateGlobalTimerUI();
-    }
-
-    buyFreeze() {
-        this.playSound('click');
-        if(this.coins >= 40) {
-            if(this.timeFrozen) { this.showToast('مجمد مسبقاً!', '#ff3333'); return; }
-            this.coins -= 40; 
-            this.timeFrozen = true; 
-            this.updateGlobalTimerUI(); 
-            this.showToast('❄️ تم تجميد الحماية!', '#00ccff');
-            
-            setTimeout(() => { 
-                this.timeFrozen = false; 
-                this.updateGlobalTimerUI(); 
-                this.showToast('انتهى التجميد!', '#ff3333'); 
-            }, 120000); 
-            
-        } else { this.showToast('بيانات غير كافية!', '#ff3333'); }
-        this.updateCoinsUI();
-    }
-
-    displayHint() {
-        this.toggleMarket(false);
-        const hd = document.getElementById('hint-display');
-        const hintParts = this.activeGate.hint.split('|');
-        
-        let interactiveHint = hintParts[0] ? hintParts[0].replace('💡 تفاعلي:', '').trim() : 'لا يوجد تلميح للعبة.';
-        let textHint = hintParts[1] ? hintParts[1].replace('📝 كتابي:', '').trim() : 'لا يوجد تلميح للغز.';
-        
-        hd.innerHTML = `
-            <div style="border-bottom:1px solid var(--gold); padding-bottom:10px; margin-bottom:10px; color:var(--gold);">
-                <strong style="color:#fff;">تلميح اللعبة التفاعلية:</strong><br>${interactiveHint}
-            </div>
-            <div style="color:var(--gold);">
-                <strong style="color:#fff;">تلميح اللغز الكتابي:</strong><br>${textHint}
-            </div>
-        `;
-        hd.classList.remove('hidden');
     }
 
     switchScreen(id) {
@@ -261,7 +179,6 @@ class SolarGamesEngine {
     startLobby() { 
         this.initAudio(); 
         this.playSound('click'); 
-        this.isTimerRunning = true; 
         this.switchScreen('lobby'); 
     }
 
@@ -272,10 +189,9 @@ class SolarGamesEngine {
         for(let i=1; i<=20; i++) {
             let btn = document.createElement('div'); 
             let isSolved = this.solvedGates.has(i);
-            let isLocked = i !== 1 && !this.solvedGates.has(i - 1); 
-            let isNext = !isSolved && !isLocked; 
             
-            btn.className = `channel-card ${isSolved ? 'solved' : ''} ${isLocked ? 'locked' : ''} ${isNext ? 'unlocked-next' : ''}`;
+            // إلغاء القفل: الجميع يستطيع الدخول في أي وقت
+            btn.className = `channel-card ${isSolved ? 'solved' : ''}`;
             btn.classList.add('interactive-element');
             
             let info = document.createElement('div'); 
@@ -287,14 +203,13 @@ class SolarGamesEngine {
             let status = document.createElement('span'); 
             status.className = 'channel-status';
             
-            if(isNext) { status.innerText = 'BYPASS REQUIRED'; status.style.color = 'var(--gold)'; }
-            else if(isSolved) { status.innerText = 'HACKED'; status.style.color = 'var(--green)'; }
-            else { status.innerText = 'ENCRYPTED'; status.style.color = '#555'; }
+            if(isSolved) { status.innerText = 'HACKED'; status.style.color = 'var(--green)'; }
+            else { status.innerText = 'متاح للدخول'; status.style.color = 'var(--apple)'; }
 
             info.append(title, status); 
             btn.appendChild(info);
             
-            btn.addEventListener('click', () => { if(!isLocked) this.handleGateClick(i); });
+            btn.addEventListener('click', () => { this.handleGateClick(i); });
             c.appendChild(btn);
         }
     }
@@ -303,16 +218,18 @@ class SolarGamesEngine {
         if(this.solvedGates.has(id)) return;
         this.activeGate = this.gameConfig.find(x => x.id === id);
         
+        // إعداد وقت الغرفة إذا لم يكن موجود (الافتراضي 15 دقيقة = 900 ثانية)
+        if(this.roomTimers[id] === undefined) {
+            this.roomTimers[id] = 15 * 60;
+        }
+        this.updateGlobalTimerUI();
+        
         document.getElementById('interactive-stage-container').classList.remove('hidden');
         document.getElementById('text-stage').classList.add('hidden');
         document.getElementById('input-area').classList.add('hidden');
         document.getElementById('user-input').value = '';
         
-        const hd = document.getElementById('hint-display');
-        hd.classList.add('hidden');
-        hd.innerHTML = '';
-        
-        document.getElementById('puzzle-title').innerHTML = `<span style="color:#aaa;">🔊</span> # CHANNEL-${id.toString().padStart(2,'0')}`;
+        document.getElementById('puzzle-title').innerHTML = `<span style="color:#aaa;">🔊</span> # ROOM-${id.toString().padStart(2,'0')}`;
 
         this.setupStage(); 
         this.switchScreen('puzzle');
@@ -336,7 +253,7 @@ class SolarGamesEngine {
         document.getElementById('int-desc').innerText = p.desc;
         
         const stage = document.getElementById('interactive-stage');
-        stage.innerHTML = `<div class="lux-panel" id="lux-inner-stage" style="width:100%; min-height:400px; background:#050505; border:2px solid #D4AF37; border-radius:8px; padding:20px; box-shadow:inset 0 0 20px #000; position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center;"></div>`;
+        stage.innerHTML = `<div class="lux-panel" id="lux-inner-stage" style="width:100%; min-height:400px; background:#050505; border:2px solid var(--apple); border-radius:8px; padding:20px; box-shadow:inset 0 0 20px #000; position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center;"></div>`;
         const innerStage = document.getElementById('lux-inner-stage');
         
         this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true, timer: null, animFrame: null };
@@ -345,7 +262,7 @@ class SolarGamesEngine {
             let btn = document.createElement('button'); 
             btn.className = 'btn-execute interactive-element'; 
             btn.innerText = text; 
-            btn.style.cssText = 'background: linear-gradient(180deg, #222, #000); color: var(--gold); border: 2px solid var(--gold); padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top:20px; width: 100%; max-width: 400px; z-index:10;';
+            btn.style.cssText = 'background: linear-gradient(180deg, #222, #000); color: var(--apple); border: 2px solid var(--apple); padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top:20px; width: 100%; max-width: 400px; z-index:10;';
             btn.onclick = callback; 
             return btn;
         };
@@ -358,7 +275,6 @@ class SolarGamesEngine {
             inp.type = 'text'; 
             inp.className = 'cyber-input interactive-element'; 
             inp.placeholder = placeholder;
-            inp.style.cssText = 'background: #000; border: 2px solid var(--gold); color: var(--gold); padding: 15px; font-size: 1.8rem; text-align: center; width: 100%; max-width: 400px; outline: none; box-shadow: inset 0 0 20px rgba(212,175,55,0.2); letter-spacing: 2px; font-family: monospace; border-radius: 8px; margin-top:20px;';
             
             wrap.append(inp, generateSubmitButton(() => { 
                 if(inp.value.trim().toUpperCase() === ans.toUpperCase()) this.winInteractive(); 
@@ -371,6 +287,7 @@ class SolarGamesEngine {
 
         switch(p.uiType) {
 
+            // الباب 1: 6 أسلاك
             case 'WIRES': {
                 let wWrap = document.createElement('div'); wWrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap: 15px;';
                 p.data.forEach((color, i) => {
@@ -386,9 +303,10 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
+            // الباب 2: بطيء ومرحلتين
             case 'SIMON': {
                 let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(2, 100px); gap:15px; justify-content:center;';
-                let colors = ['#ff3333', '#00ff66', '#00ccff', '#D4AF37']; let boxes = [];
+                let colors = ['#ff3333', '#00ff66', '#00ccff', 'var(--apple)']; let boxes = [];
                 for(let i=0; i<4; i++) {
                     let b = document.createElement('div'); b.className = 'interactive-element';
                     b.style.cssText = `width:100px; height:100px; background:#111; border:4px solid #333; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:inset 0 0 15px #000;`;
@@ -396,38 +314,39 @@ class SolarGamesEngine {
                         if(!this.stageState.playing) return;
                         if(this.stageState.sequence[this.stageState.clicks] === i) {
                             b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 30px ${colors[i]}`; 
-                            setTimeout(()=>{ b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000'; }, 200);
+                            setTimeout(()=>{ b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000'; }, 300);
                             this.stageState.clicks++;
                             if(this.stageState.clicks === this.stageState.sequence.length) {
                                 this.stageState.round++;
-                                if(this.stageState.round > 3) setTimeout(() => this.winInteractive(), 500); else setTimeout(()=>playRound(), 1000);
+                                if(this.stageState.round > 2) setTimeout(() => this.winInteractive(), 500); else setTimeout(()=>playRound(), 1500);
                             }
                         } else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
                     }; smGrid.appendChild(b); boxes.push(b);
                 } innerStage.appendChild(smGrid); this.stageState.round = 1;
                 const playRound = () => {
                     this.stageState.playing = false; this.stageState.clicks = 0;
-                    let count = this.stageState.round === 1 ? 4 : (this.stageState.round === 2 ? 6 : 8);
+                    let count = this.stageState.round === 1 ? 4 : 6;
                     this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 4));
                     let step = 0;
                     this.stageState.timer = setInterval(() => {
                         if(step < count) {
                             let idx = this.stageState.sequence[step];
                             boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 30px ${colors[idx]}`; this.playSound('click');
-                            setTimeout(()=> { boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000'; }, 300);
+                            setTimeout(()=> { boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000'; }, 600);
                             step++;
                         } else { clearInterval(this.stageState.timer); this.stageState.playing = true; }
-                    }, 600);
+                    }, 1000);
                 }; setTimeout(()=>playRound(), 800); break;
             }
 
+            // الباب 3: العلامات من اليسار لليمين
             case 'MASTERMIND': {
                 let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:400px;';
-                let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px;';
+                let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px; direction:ltr;';
                 let mboxes = [];
                 for(let i=0; i<4; i++) { 
                     let inp = document.createElement('input'); inp.type='number'; inp.className = 'interactive-element';
-                    inp.style.cssText = 'width:60px; height:70px; background:#000; border:2px solid var(--gold); color:var(--gold); font-size:2.5rem; text-align:center; border-radius:8px; outline:none; font-family:monospace; box-shadow:inset 0 0 15px rgba(212,175,55,0.2);'; 
+                    inp.style.cssText = 'width:60px; height:70px; background:#000; border:2px solid var(--apple); color:var(--apple); font-size:2.5rem; text-align:center; border-radius:8px; outline:none; font-family:monospace; box-shadow:inset 0 0 15px rgba(140, 198, 63, 0.2);'; 
                     inp.maxLength=1; inputs.appendChild(inp); mboxes.push(inp); 
                 }
                 let historyWrap = document.createElement('div');
@@ -440,9 +359,10 @@ class SolarGamesEngine {
                     for(let i=0; i<4; i++) { if(tempGuess[i] === tempAns[i]) { pegs.push('#00ff66'); tempAns[i]=null; tempGuess[i]=-1; } }
                     for(let i=0; i<4; i++) { if(tempGuess[i] !== -1 && tempAns.includes(tempGuess[i])) { pegs.push('#ffa500'); tempAns[tempAns.indexOf(tempGuess[i])]=null; } }
                     while(pegs.length < 4) pegs.push('#ff3333'); 
-                    let hRow = document.createElement('div'); hRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 15px; background:#222; border-radius:6px; border:1px solid #444;';
+                    
+                    let hRow = document.createElement('div'); hRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 15px; background:#222; border-radius:6px; border:1px solid #444; direction:ltr;';
                     let hNums = document.createElement('div'); hNums.innerText = guess.join(' '); hNums.style.cssText = 'color:#fff; font-size:1.5rem; font-family:monospace; letter-spacing:5px;';
-                    let hPegs = document.createElement('div'); hPegs.style.cssText = 'display:flex; gap:8px;';
+                    let hPegs = document.createElement('div'); hPegs.style.cssText = 'display:flex; gap:8px; direction:ltr;'; // من اليسار لليمين
                     pegs.forEach(c => { let pg = document.createElement('div'); pg.style.cssText = `width:18px; height:18px; border-radius:50%; background:${c}; border:1px solid #111; box-shadow:0 0 5px ${c};`; hPegs.appendChild(pg); });
                     hRow.append(hNums, hPegs); historyWrap.prepend(hRow); mboxes.forEach(b => b.value = '');
                     if(pegs.every(c=>c==='#00ff66') && pegs.length===4) { setTimeout(()=>this.winInteractive(), 500); } else if (this.stageState.attempts >= 8) { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
@@ -457,7 +377,7 @@ class SolarGamesEngine {
                     let card = document.createElement('div'); card.className = 'interactive-element'; card.style.cssText = 'width:60px; height:60px; perspective:1000px; cursor:pointer; position:relative;';
                     let inner = document.createElement('div'); inner.style.cssText = 'width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d; position:absolute;';
                     let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px;';
-                    let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--gold); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
+                    let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
                     inner.append(front, back); card.appendChild(inner);
                     card.onclick = () => {
                         if(inner.style.transform === 'rotateY(180deg)' || flipped.length >= 2) return;
@@ -475,9 +395,9 @@ class SolarGamesEngine {
             case 'COMPASS': { 
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:30px;'; let angles = [0, 0, 0];
                 for(let i=0; i<3; i++) {
-                    let cmp = document.createElement('div'); cmp.className = 'interactive-element'; cmp.style.cssText = 'width:100px; height:100px; border-radius:50%; background:radial-gradient(circle, #222, #000); border:4px solid var(--gold); position:relative; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:transform 0.3s; box-shadow:0 0 20px rgba(212,175,55,0.2);';
+                    let cmp = document.createElement('div'); cmp.className = 'interactive-element'; cmp.style.cssText = 'width:100px; height:100px; border-radius:50%; background:radial-gradient(circle, #222, #000); border:4px solid var(--apple); position:relative; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:transform 0.3s; box-shadow:0 0 20px rgba(140, 198, 63, 0.2);';
                     let ndl = document.createElement('div'); ndl.style.cssText = 'width:4px; height:80px; background:linear-gradient(to bottom, #ff3333 50%, #fff 50%); position:absolute; border-radius:2px;';
-                    let center = document.createElement('div'); center.style.cssText = 'width:12px; height:12px; background:var(--gold); border-radius:50%; z-index:2;';
+                    let center = document.createElement('div'); center.style.cssText = 'width:12px; height:12px; background:var(--apple); border-radius:50%; z-index:2;';
                     cmp.append(ndl, center);
                     cmp.onclick = () => { angles[i] = (angles[i] + 45) % 360; cmp.style.transform = `rotate(${angles[i]}deg)`; if(angles[0]===p.ans[0] && angles[1]===p.ans[1] && angles[2]===p.ans[2]) { setTimeout(()=>this.winInteractive(), 500); } };
                     wrap.appendChild(cmp);
@@ -485,13 +405,13 @@ class SolarGamesEngine {
             }
 
             case 'SCALES': {
-                let sclWrap = document.createElement('div'); sclWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px; border-bottom: 4px solid var(--gold); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center; margin-top:50px; position:relative;';
+                let sclWrap = document.createElement('div'); sclWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px; border-bottom: 4px solid var(--apple); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center; margin-top:50px; position:relative;';
                 let balanceNeedle = document.createElement('div'); balanceNeedle.style.cssText = 'position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:15px solid #ff3333; transition:transform 0.3s;';
                 sclWrap.appendChild(balanceNeedle);
                 p.data.forEach((w) => {
                     let btn = document.createElement('div'); btn.className = 'interactive-element'; btn.style.cssText = 'width:60px; background:linear-gradient(to bottom, #ccc, #888); border:2px solid #555; text-align:center; font-weight:bold; color:#000; cursor:pointer; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; transition:0.2s; border-radius:4px 4px 0 0; box-shadow:0 -5px 10px rgba(0,0,0,0.5);'; btn.innerText = w + 'kg'; btn.style.height = (w + 40) + 'px';
                     btn.onclick = () => {
-                        btn.classList.toggle('active'); btn.style.background = btn.classList.contains('active') ? 'linear-gradient(to bottom, var(--gold), #8a7322)' : 'linear-gradient(to bottom, #ccc, #888)'; btn.style.transform = btn.classList.contains('active') ? 'translateY(-10px)' : 'translateY(0)';
+                        btn.classList.toggle('active'); btn.style.background = btn.classList.contains('active') ? 'linear-gradient(to bottom, var(--apple), #5c8a24)' : 'linear-gradient(to bottom, #ccc, #888)'; btn.style.transform = btn.classList.contains('active') ? 'translateY(-10px)' : 'translateY(0)';
                         let sum = Array.from(sclWrap.children).reduce((acc, el, idx) => acc + (el.classList && el.classList.contains('active') ? p.data[idx-1] : 0), 0);
                         let tilt = ((sum - p.target) / p.target) * 45; balanceNeedle.style.transform = `translateX(-50%) rotate(${Math.max(-45, Math.min(45, tilt))}deg)`;
                         if(sum === p.target) { balanceNeedle.style.borderBottomColor = '#00ff66'; setTimeout(()=>this.winInteractive(), 500); } else { balanceNeedle.style.borderBottomColor = '#ff3333'; }
@@ -500,12 +420,12 @@ class SolarGamesEngine {
             }
 
             case 'MAGIC_SQUARE': {
-                let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--gold); box-shadow:0 10px 30px rgba(212,175,55,0.2);';
+                let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--apple); box-shadow:0 10px 30px rgba(140, 198, 63, 0.2);';
                 let inputs = [];
                 for(let i=0; i<9; i++) {
                     let inp = document.createElement('input'); inp.type = 'number'; inp.className = 'interactive-element';
                     inp.style.cssText = 'width:80px; height:80px; background:#000; border:2px solid #444; color:#fff; font-size:2.5rem; text-align:center; border-radius:8px; outline:none; transition:0.2s;';
-                    inp.onfocus = () => inp.style.borderColor = 'var(--gold)'; inp.onblur = () => inp.style.borderColor = '#444';
+                    inp.onfocus = () => inp.style.borderColor = 'var(--apple)'; inp.onblur = () => inp.style.borderColor = '#444';
                     inputs.push(inp); msWrap.appendChild(inp);
                 }
                 let btn = generateSubmitButton(() => {
@@ -513,7 +433,7 @@ class SolarGamesEngine {
                     if(vals.includes(NaN) || new Set(vals).size !== 9 || vals.some(v => v < 1 || v > 9)) { this.failRoom(); return; }
                     let lines = [ [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6] ];
                     let win = lines.every(line => (vals[line[0]] + vals[line[1]] + vals[line[2]]) === 15);
-                    if(win) { inputs.forEach(inp => { inp.style.background = 'var(--gold)'; inp.style.color = '#000'; }); setTimeout(()=>this.winInteractive(), 800); } else this.failRoom();
+                    if(win) { inputs.forEach(inp => { inp.style.background = 'var(--apple)'; inp.style.color = '#000'; }); setTimeout(()=>this.winInteractive(), 800); } else this.failRoom();
                 }, 'تأكيد التوازن');
                 innerStage.append(msWrap, btn); break;
             }
@@ -526,7 +446,7 @@ class SolarGamesEngine {
                     tiles.forEach((t, i) => {
                         let cell = document.createElement('div'); cell.className = 'interactive-element';
                         if(t === 0) { cell.style.cssText = 'width:80px; height:80px; background:transparent; border:1px dashed #444; border-radius:4px;'; } 
-                        else { cell.style.cssText = 'width:80px; height:80px; background:linear-gradient(135deg, var(--gold), #8a7322); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-weight:bold; color:#000; cursor:pointer; border-radius:4px; box-shadow:inset 0 0 10px rgba(0,0,0,0.3); transition:0.1s; user-select:none; border:1px solid #fff;'; cell.innerText = t; }
+                        else { cell.style.cssText = 'width:80px; height:80px; background:linear-gradient(135deg, var(--apple), #5c8a24); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-weight:bold; color:#000; cursor:pointer; border-radius:4px; box-shadow:inset 0 0 10px rgba(0,0,0,0.3); transition:0.1s; user-select:none; border:1px solid #fff;'; cell.innerText = t; }
                         cell.onclick = () => {
                             let emptyIdx = tiles.indexOf(0); let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
                             if(emptyIdx%3 === 0 && i === emptyIdx-1) return; if(emptyIdx%3 === 2 && i === emptyIdx+1) return;
@@ -536,51 +456,32 @@ class SolarGamesEngine {
                 }; renderPuzzle(); innerStage.appendChild(pzWrap); break;
             }
 
-            // --- الباب 9: الأسلاك الـ 10 المعقدة ---
+            // الباب 9: 6 أسلاك (3 توصيل، 3 قطع)
             case 'HARDCORE_WIRES': {
                 let hwWrap = document.createElement('div'); hwWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; max-width:500px; background:#111; padding:20px; border-radius:12px; border:3px solid #333; box-shadow:0 15px 30px rgba(0,0,0,0.9);';
-                
-                let colors = ['#ff3333', '#00ccff', '#00ff66', '#ffff00', '#ffffff', '#333333', '#800080', '#ffa500', '#00ffff', '#ffc0cb'];
-                let names = ['أحمر', 'أزرق', 'أخضر', 'أصفر', 'أبيض', 'أسود', 'بنفسجي', 'برتقالي', 'سماوي', 'وردي'];
-                
-                // 0: Idle, 1: Connected, -1: Cut
-                let states = new Array(10).fill(0);
-                // Correct ans: Connect (1,2,5,6,8). Cut (0,3,4,7,9).
-                let correctStates = [-1, 1, 1, -1, -1, 1, 1, -1, 1, -1]; 
+                let colors = ['#ff3333', '#00ccff', '#00ff66', '#ffff00', '#ffffff', '#333333'];
+                let states = new Array(6).fill(0); // 0: Idle, 1: Connect, -1: Cut
+                let correctStates = [1, -1, 1, -1, 1, -1]; // 3 Connect, 3 Cut
                 
                 colors.forEach((col, i) => {
                     let row = document.createElement('div'); row.style.cssText = 'display:flex; align-items:center; gap:15px; background:#050505; padding:8px 15px; border-radius:6px; border:1px solid #222;';
-                    
-                    let wireDisp = document.createElement('div');
-                    wireDisp.style.cssText = `flex-grow:1; height:15px; background:${col}; border-radius:8px; border:1px solid #000; box-shadow:inset 0 2px 5px rgba(255,255,255,0.3); transition:0.3s; position:relative; overflow:hidden;`;
-                    
-                    let btnCut = document.createElement('button'); btnCut.className = 'interactive-element'; btnCut.innerHTML = '✂️ قطع';
-                    btnCut.style.cssText = 'background:#440000; color:#ff3333; border:1px solid #ff3333; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
-                    
-                    let btnConn = document.createElement('button'); btnConn.className = 'interactive-element'; btnConn.innerHTML = '🔌 توصيل';
-                    btnConn.style.cssText = 'background:#003300; color:#00ff66; border:1px solid #00ff66; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
+                    let wireDisp = document.createElement('div'); wireDisp.style.cssText = `flex-grow:1; height:15px; background:${col}; border-radius:8px; border:1px solid #000; box-shadow:inset 0 2px 5px rgba(255,255,255,0.3); transition:0.3s;`;
+                    let btnCut = document.createElement('button'); btnCut.className = 'interactive-element'; btnCut.innerHTML = '✂️ قطع'; btnCut.style.cssText = 'background:#440000; color:#ff3333; border:1px solid #ff3333; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
+                    let btnConn = document.createElement('button'); btnConn.className = 'interactive-element'; btnConn.innerHTML = '🔌 توصيل'; btnConn.style.cssText = 'background:#003300; color:#00ff66; border:1px solid #00ff66; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
                     
                     const updateWireVisual = () => {
                         btnCut.style.background = states[i] === -1 ? '#ff3333' : '#440000'; btnCut.style.color = states[i] === -1 ? '#fff' : '#ff3333';
                         btnConn.style.background = states[i] === 1 ? '#00ff66' : '#003300'; btnConn.style.color = states[i] === 1 ? '#000' : '#00ff66';
-                        
-                        if(states[i] === -1) { wireDisp.style.opacity = '0.3'; wireDisp.style.borderStyle = 'dashed'; } 
-                        else if(states[i] === 1) { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = `0 0 15px ${col}`; wireDisp.style.borderStyle = 'solid'; } 
-                        else { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = 'inset 0 2px 5px rgba(255,255,255,0.3)'; wireDisp.style.borderStyle = 'solid'; }
+                        if(states[i] === -1) { wireDisp.style.opacity = '0.3'; wireDisp.style.borderStyle = 'dashed'; } else if(states[i] === 1) { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = `0 0 15px ${col}`; wireDisp.style.borderStyle = 'solid'; } else { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = 'inset 0 2px 5px rgba(255,255,255,0.3)'; wireDisp.style.borderStyle = 'solid'; }
                     };
-                    
-                    btnCut.onclick = () => { states[i] = -1; updateWireVisual(); };
-                    btnConn.onclick = () => { states[i] = 1; updateWireVisual(); };
-                    
+                    btnCut.onclick = () => { states[i] = -1; updateWireVisual(); }; btnConn.onclick = () => { states[i] = 1; updateWireVisual(); };
                     row.append(wireDisp, btnCut, btnConn); hwWrap.appendChild(row);
                 });
                 
                 let checkBtn = generateSubmitButton(() => {
-                    if(states.includes(0)) { this.showToast('قم بتحديد حالة جميع الأسلاك العشرة أولاً!', '#ffa500'); return; }
-                    if(JSON.stringify(states) === JSON.stringify(correctStates)) { setTimeout(()=>this.winInteractive(), 500); } 
-                    else { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
+                    if(states.includes(0)) { this.showToast('قم بتحديد حالة جميع الأسلاك الستة أولاً!', '#ffa500'); return; }
+                    if(JSON.stringify(states) === JSON.stringify(correctStates)) { setTimeout(()=>this.winInteractive(), 500); } else { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
                 }, 'تنفيذ الأمر (EXECUTE)');
-                
                 innerStage.append(hwWrap, checkBtn); break;
             }
 
@@ -592,7 +493,7 @@ class SolarGamesEngine {
                     let innerDot = document.createElement('div'); innerDot.style.cssText = 'width:20px; height:20px; background:#555; border-radius:50%; transition:0.2s;'; dot.appendChild(innerDot);
                     dot.onclick = () => {
                         if(currentLine.includes(i)) return;
-                        currentLine.push(i); innerDot.style.background = 'var(--gold)'; innerDot.style.boxShadow = '0 0 15px var(--gold)'; dot.style.borderColor = 'var(--gold)';
+                        currentLine.push(i); innerDot.style.background = 'var(--apple)'; innerDot.style.boxShadow = '0 0 15px var(--apple)'; dot.style.borderColor = 'var(--apple)';
                         if(currentLine.length === p.ans.length) {
                             if(JSON.stringify(currentLine) === JSON.stringify(p.ans)) { setTimeout(()=>this.winInteractive(), 500); } 
                             else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); }
@@ -608,7 +509,7 @@ class SolarGamesEngine {
                     jugWrap.innerHTML = '';
                     caps.forEach((cap, i) => {
                         let j = document.createElement('div'); j.className = 'interactive-element'; j.style.cssText = 'width:70px; background:rgba(255,255,255,0.1); border:3px solid #666; border-radius:0 0 10px 10px; position:relative; overflow:hidden; cursor:pointer; transition:0.2s;'; j.style.height = (cap * 15 + 50) + 'px'; 
-                        if(i === selected) { j.style.borderColor = 'var(--gold)'; j.style.transform = 'translateY(-10px)'; j.style.boxShadow = '0 10px 20px rgba(212,175,55,0.3)'; }
+                        if(i === selected) { j.style.borderColor = 'var(--apple)'; j.style.transform = 'translateY(-10px)'; j.style.boxShadow = '0 10px 20px rgba(140, 198, 63, 0.3)'; }
                         let w = document.createElement('div'); w.style.cssText = 'position:absolute; bottom:0; width:100%; background:linear-gradient(to bottom, rgba(0,200,255,0.8), rgba(0,100,255,0.9)); transition:height 0.4s cubic-bezier(0.4, 0, 0.2, 1);'; w.style.height = (vols[i] / cap * 100) + '%';
                         let lbl = document.createElement('div'); lbl.style.cssText = 'position:absolute; width:100%; text-align:center; color:#fff; font-weight:bold; top:10px; z-index:2; font-family:monospace; font-size:1.2rem; text-shadow:0 0 5px #000;'; lbl.innerText = `${vols[i]}/${cap}`;
                         j.append(w, lbl);
@@ -625,7 +526,7 @@ class SolarGamesEngine {
                 for(let i=0; i<36; i++) {
                     let c = document.createElement('div'); c.className = 'interactive-element'; c.style.cssText = 'height:50px; background:#050505; cursor:pointer; transition:0.2s; border-radius:2px;';
                     c.onclick = () => {
-                        if(p.ans[this.stageState.clicks] === i) { c.style.background = 'var(--gold)'; c.style.boxShadow = '0 0 10px var(--gold)'; this.stageState.clicks++; if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 400); } 
+                        if(p.ans[this.stageState.clicks] === i) { c.style.background = 'var(--apple)'; c.style.boxShadow = '0 0 10px var(--apple)'; this.stageState.clicks++; if(this.stageState.clicks === p.ans.length) setTimeout(()=>this.winInteractive(), 400); } 
                         else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
                     }; bmWrap.appendChild(c);
                 }
@@ -633,59 +534,71 @@ class SolarGamesEngine {
                 innerStage.append(startMarker, bmWrap, endMarker); break;
             }
 
+            // الباب 13: الأسطوانة من اليسار لليمين
             case 'CRYPTEX': {
-                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8);';
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;';
                 let startWord = ['L','J','S','P','W','Z','L']; let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 for(let i=0; i<7; i++) {
                     let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
-                    let btnUp = document.createElement('button'); btnUp.className = 'interactive-element'; btnUp.innerText = '▲'; btnUp.style.cssText = 'background:#222; color:var(--gold); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
-                    let btnDn = document.createElement('button'); btnDn.className = 'interactive-element'; btnDn.innerText = '▼'; btnDn.style.cssText = 'background:#222; color:var(--gold); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
-                    let disp = document.createElement('div'); disp.style.cssText = 'width:50px; height:60px; background:linear-gradient(to bottom, #e3d2b2, #c4a976); border:2px solid #5c4a2a; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:#3e3124; font-family:monospace; border-radius:4px; box-shadow:inset 0 5px 10px rgba(0,0,0,0.2);'; disp.innerText = current[i];
+                    let btnUp = document.createElement('button'); btnUp.className = 'interactive-element'; btnUp.innerText = '▲'; btnUp.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
+                    let btnDn = document.createElement('button'); btnDn.className = 'interactive-element'; btnDn.innerText = '▼'; btnDn.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
+                    let disp = document.createElement('div'); disp.style.cssText = 'width:50px; height:60px; background:linear-gradient(to bottom, #d4edda, #a5d6a7); border:2px solid #5c8a24; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:#155724; font-family:monospace; border-radius:4px; box-shadow:inset 0 5px 10px rgba(0,0,0,0.2);'; disp.innerText = current[i];
                     const shift = (dir) => { let idx = alph.indexOf(current[i]); current[i] = alph[((idx + dir) % 26 + 26) % 26]; disp.innerText = current[i]; };
                     btnUp.onclick = () => shift(1); btnDn.onclick = () => shift(-1);
                     col.append(btnUp, disp, btnDn); wrap.appendChild(col);
                 }
-                let btn = generateSubmitButton(() => { if(current.join('') === p.ans) this.winInteractive(); else this.failRoom(); }, 'فتح القفل الأسطواني');
+                let btn = generateSubmitButton(() => { if(current.join('') === p.ans) this.winInteractive(); else this.failRoom(); }, 'فتح القفل');
                 innerStage.append(wrap, btn); break;
             }
 
             case 'SHARDS': {
                 this.stageState.round = 1;
                 let poets = [ { clues: ['سيف الدولة', 'أبو الطيب', 'الخيل والليل', 'قتلني شعري'], ans: 'المتنبي' }, { clues: ['عبس', 'الفروسية', 'جاهلي', 'عبلة'], ans: 'عنترة' }, { clues: ['مهندس الكلمة', 'زمان الصمت', 'البدر', 'أرفض المسافة'], ans: 'بدر بن عبدالمحسن' } ];
-                let roundDisp = document.createElement('h3'); roundDisp.style.cssText = 'color:var(--gold); margin-bottom:20px; font-size:1.8rem; border-bottom:2px solid #333; padding-bottom:10px;';
+                let roundDisp = document.createElement('h3'); roundDisp.style.cssText = 'color:var(--apple); margin-bottom:20px; font-size:1.8rem; border-bottom:2px solid #333; padding-bottom:10px;';
                 let mirWrap = document.createElement('div'); mirWrap.style.cssText = 'display:flex; flex-wrap:wrap; width:400px; gap:15px; justify-content:center; margin-bottom:30px;';
                 let inp = createInputBlock('اسم الشاعر...', '');
                 const loadRound = () => {
                     roundDisp.innerText = `-- الجولة ${this.stageState.round} من 3 --`; mirWrap.innerHTML = ''; inp.value = '';
                     poets[this.stageState.round-1].clues.forEach(clue => {
                         let shard = document.createElement('div'); shard.className = 'shard-btn interactive-element'; shard.style.cssText = 'width:180px; height:80px; background:linear-gradient(135deg, #1a1a1a, #0a0a0a); border:2px solid #444; display:flex; justify-content:center; align-items:center; text-align:center; font-weight:bold; font-size:1.2rem; cursor:pointer; color:transparent; transition:0.3s; clip-path: polygon(10% 0, 100% 10%, 90% 100%, 0 90%); user-select:none; box-shadow:0 10px 20px rgba(0,0,0,0.5);';
-                        shard.onclick = () => { shard.style.color = '#000'; shard.innerText = clue; shard.style.background = 'linear-gradient(135deg, var(--gold), #fff)'; shard.style.borderColor = '#fff'; }; mirWrap.appendChild(shard);
+                        shard.onclick = () => { shard.style.color = '#000'; shard.innerText = clue; shard.style.background = 'linear-gradient(135deg, var(--apple), #fff)'; shard.style.borderColor = '#fff'; }; mirWrap.appendChild(shard);
                     });
                 };
                 inp.oninput = () => { if(inp.value.trim().replace(/\s+/g, '') === poets[this.stageState.round-1].ans.replace(/\s+/g, '')) { this.playSound('success'); this.stageState.round++; if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500); else setTimeout(()=>loadRound(), 800); } };
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(mirWrap, innerStage.children[1]); loadRound(); break;
             }
 
-            case 'CONSTELLATION': {
-                let cWrap = document.createElement('div'); cWrap.style.cssText = 'position:relative; width:400px; height:400px; background:radial-gradient(circle at center, #1a1a2e, #0f0f1a); border:2px solid var(--gold); border-radius:8px; box-shadow:0 0 30px rgba(212,175,55,0.2); overflow:hidden;';
-                let positions = [ {t:100, l:200}, {t:300, l:320}, {t:320, l:80}, {t:150, l:80}, {t:80, l:300} ]; 
-                let clicks = [];
-                positions.forEach((pos, i) => {
-                    let star = document.createElement('div'); star.className = 'interactive-element'; star.style.cssText = `position:absolute; width:15px; height:15px; background:#fff; border-radius:50%; top:${pos.t}px; left:${pos.l}px; cursor:pointer; box-shadow:0 0 10px #fff; transition:0.3s; z-index:2;`;
-                    star.onclick = () => {
-                        if(clicks.includes(i)) return;
-                        clicks.push(i); star.style.background = 'var(--gold)'; star.style.boxShadow = '0 0 20px var(--gold)'; star.style.transform = 'scale(1.5)';
-                        if(clicks.length === 5) { if(JSON.stringify(clicks) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 500); else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); } }
-                    }; cWrap.appendChild(star);
-                }); innerStage.appendChild(cWrap); break;
+            // الباب 15: الصورة
+            case 'IMAGE_CHALLENGE': {
+                let imgWrap = document.createElement('div');
+                imgWrap.style.cssText = 'width:400px; height:400px; border:4px solid var(--apple); border-radius:8px; overflow:hidden; display:flex; justify-content:center; align-items:center; background:#111; box-shadow:0 10px 30px rgba(0,0,0,0.8); margin-bottom:20px;';
+                let img = document.createElement('img');
+                img.src = 'puzzle15.jpg'; // مسار الصورة المطلوبة
+                img.alt = 'قم بوضع ملف puzzle15.jpg في نفس المجلد';
+                img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                imgWrap.appendChild(img);
+                innerStage.appendChild(imgWrap);
+                createInputBlock('أدخل الجواب...', p.ans);
+                break;
             }
 
+            // الباب 16: البيانو
             case 'VIRTUAL_PIANO': {
-                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:flex; position:relative; background:#111; padding:20px; border-radius:12px; border:4px solid #222; box-shadow:0 20px 40px rgba(0,0,0,0.8); height:250px;';
+                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:flex; position:relative; background:#111; padding:20px; border-radius:12px; border:4px solid #222; box-shadow:0 20px 40px rgba(0,0,0,0.8); height:250px; transition:0.3s;';
                 let whiteKeys = []; let seq = [];
                 for(let i=0; i<7; i++) {
                     let wk = document.createElement('div'); wk.className = 'interactive-element'; wk.style.cssText = 'width:60px; height:100%; background:linear-gradient(to bottom, #fff, #eee); border:1px solid #ccc; border-radius:0 0 6px 6px; cursor:pointer; box-shadow:inset 0 -5px 5px rgba(0,0,0,0.2); transition:0.1s; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; font-weight:bold; color:#555;'; wk.innerText = ['C','D','E','F','G','A','B'][i];
-                    wk.onmousedown = () => { wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); if(seq.length === p.ans.length) { if(JSON.stringify(seq) === JSON.stringify(p.ans)) setTimeout(()=>this.winInteractive(), 400); else { this.failRoom(); seq = []; } } };
+                    wk.onmousedown = () => { 
+                        wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); 
+                        if(seq.length === p.ans.length) { 
+                            if(JSON.stringify(seq) === JSON.stringify(p.ans)) {
+                                this.playSound('success');
+                                pWrap.style.borderColor = '#00ff66';
+                                pWrap.style.boxShadow = '0 0 40px #00ff66';
+                                setTimeout(()=>this.winInteractive(), 1000); 
+                            } else { this.failRoom(); seq = []; } 
+                        } 
+                    };
                     wk.onmouseup = wk.onmouseleave = () => { wk.style.background = 'linear-gradient(to bottom, #fff, #eee)'; wk.style.transform = 'translateY(0)'; };
                     pWrap.appendChild(wk); whiteKeys.push(wk);
                 }
@@ -699,7 +612,7 @@ class SolarGamesEngine {
             case 'TIMELINE': {
                 let ccWrap = document.createElement('div'); ccWrap.style.cssText = 'width:100%; max-width:600px; display:flex; flex-direction:column; gap:20px; background:#111; padding:30px; border-radius:12px; border:2px solid #333; margin-bottom:20px; box-shadow:0 20px 40px rgba(0,0,0,0.9); position:relative;';
                 let targets = [15, 80, 45, 90, 20]; let sliders = [];
-                let syncDisp = document.createElement('div'); syncDisp.style.cssText = 'color:var(--gold); font-family:monospace; font-size:2rem; text-align:center; margin-bottom:15px; font-weight:bold;'; syncDisp.innerText = 'SYNC: 0%';
+                let syncDisp = document.createElement('div'); syncDisp.style.cssText = 'color:var(--apple); font-family:monospace; font-size:2rem; text-align:center; margin-bottom:15px; font-weight:bold;'; syncDisp.innerText = 'SYNC: 0%';
                 let marker = document.createElement('div'); marker.style.cssText = 'position:absolute; width:2px; height:100%; background:rgba(255,255,255,0.2); left:50%; top:0; pointer-events:none; z-index:0;'; ccWrap.append(marker, syncDisp);
                 let colors = ['#00ccff', '#ff3333', '#00ff66', '#ff00ff', '#ffff00'];
                 ['V1. Main', 'A1. Voice', 'A2. Music', 'V2. B-Roll', 'FX. Sound'].forEach((lbl, i) => {
@@ -721,18 +634,17 @@ class SolarGamesEngine {
                     let row = document.createElement('div'); row.style.cssText = 'display:flex; gap:30px; position:relative;';
                     let line = document.createElement('div'); line.style.cssText = 'position:absolute; width:60px; height:4px; background:#333; top:28px; left:30px; z-index:0;';
                     let left = document.createElement('div'); left.style.cssText = 'width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #555; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:2rem; color:#888; z-index:1; box-shadow:inset 0 0 10px #000;'; left.innerText = base;
-                    let right = document.createElement('div'); right.className = 'interactive-element'; right.style.cssText = 'width:60px; height:60px; border-radius:50%; background:#000; border:2px solid var(--gold); display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:2rem; color:var(--gold); cursor:pointer; z-index:1; box-shadow:0 0 15px rgba(212,175,55,0.4); user-select:none;'; right.innerText = 'A';
+                    let right = document.createElement('div'); right.className = 'interactive-element'; right.style.cssText = 'width:60px; height:60px; border-radius:50%; background:#000; border:2px solid var(--apple); display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:2rem; color:var(--apple); cursor:pointer; z-index:1; box-shadow:0 0 15px rgba(140, 198, 63, 0.4); user-select:none;'; right.innerText = 'A';
                     right.onclick = () => { let idx = bases.indexOf(right.innerText); idx = (idx + 1) % 4; right.innerText = bases[idx]; this.stageState.arr[i] = bases[idx]; };
                     row.append(line, left, right); dnaWrap.appendChild(row);
                 });
-                let btn = generateSubmitButton(() => { if(JSON.stringify(this.stageState.arr) === JSON.stringify(ansArray)) this.winInteractive(); else this.failRoom(); }, 'دمج السلسلة (MERGE)');
+                let btn = generateSubmitButton(() => { if(JSON.stringify(this.stageState.arr) === JSON.stringify(ansArray)) this.winInteractive(); else this.failRoom(); }, 'دمج السلسلة');
                 innerStage.append(dnaWrap, btn); break;
             }
 
             case 'KEYPAD': {
                 let kWrap = document.createElement('div'); kWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:15px; background:#111; padding:30px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8);';
-                // اصلاح التوسيط
-                let kDisp = document.createElement('div'); kDisp.style.cssText = 'grid-column:span 3; height:70px; background:#000; border:2px solid var(--gold); color:var(--gold); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-family:monospace; letter-spacing:15px; margin-bottom:15px; border-radius:6px; box-shadow:inset 0 0 20px rgba(212,175,55,0.2); white-space:nowrap; overflow:hidden; padding-left:15px;';
+                let kDisp = document.createElement('div'); kDisp.style.cssText = 'grid-column:span 3; height:70px; background:#000; border:2px solid var(--apple); color:var(--apple); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-family:monospace; letter-spacing:15px; margin-bottom:15px; border-radius:6px; box-shadow:inset 0 0 20px rgba(140, 198, 63, 0.2); white-space:nowrap; overflow:hidden; padding-left:15px;';
                 kDisp.innerText='_ _ _ _'; kWrap.appendChild(kDisp);
                 [1,2,3,4,5,6,7,8,9,'*',0,'#'].forEach((n) => {
                     let btn = document.createElement('div'); btn.className = 'interactive-element'; btn.style.cssText = 'width:80px; height:60px; background:linear-gradient(to bottom, #333, #111); border:1px solid #555; border-radius:6px; display:flex; justify-content:center; align-items:center; color:#fff; font-size:1.8rem; font-weight:bold; cursor:pointer; box-shadow:0 5px 10px rgba(0,0,0,0.5); user-select:none;'; btn.innerText = n;
@@ -746,15 +658,15 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(kWrap); break;
             }
 
-            // --- الباب 20 (القضية الكبرى من 5 راوندات ملحمية) ---
+            // الباب 20 (القضية الكبرى من 5 راوندات ملحمية)
             case 'EPIC_DETECTIVE': {
                 this.stageState.round = 1;
                 
                 let storyCard = document.createElement('div'); 
-                storyCard.style.cssText = 'width:100%; max-width:650px; background:#1a1a1a; padding:30px; border-radius:8px; border-right:6px solid var(--gold); color:#ddd; font-size:1.4rem; line-height:2; box-shadow:inset 0 0 30px #000; margin-bottom:20px; font-family:"Traditional Arabic", serif; text-align:right; direction:rtl; transition:0.3s;';
+                storyCard.style.cssText = 'width:100%; max-width:650px; background:#1a1a1a; padding:30px; border-radius:8px; border-right:6px solid var(--apple); color:#ddd; font-size:1.4rem; line-height:2; box-shadow:inset 0 0 30px #000; margin-bottom:20px; font-family:"Traditional Arabic", serif; text-align:right; direction:rtl; transition:0.3s;';
                 
                 let qTitle = document.createElement('h3'); 
-                qTitle.style.cssText = 'color:var(--gold); margin-bottom:15px; font-size:1.6rem; text-align:right; width:100%; max-width:650px; direction:rtl;';
+                qTitle.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.6rem; text-align:right; width:100%; max-width:650px; direction:rtl;';
                 
                 let inputContainer = document.createElement('div'); 
                 inputContainer.style.width = '100%';
@@ -775,14 +687,14 @@ class SolarGamesEngine {
                         
                         let selectedWords = new Set();
                         storyCard.querySelectorAll('.case-word').forEach((el, index) => {
-                            el.style.cssText = 'color:var(--gold); cursor:pointer; text-decoration:underline dashed #555; padding:0 5px;';
+                            el.style.cssText = 'color:var(--apple); cursor:pointer; text-decoration:underline dashed #555; padding:0 5px;';
                             el.onclick = () => {
-                                if(selectedWords.has(index)) { selectedWords.delete(index); el.style.background = 'transparent'; el.style.color = 'var(--gold)'; }
-                                else { selectedWords.add(index); el.style.background = 'var(--gold)'; el.style.color = '#000'; }
+                                if(selectedWords.has(index)) { selectedWords.delete(index); el.style.background = 'transparent'; el.style.color = 'var(--apple)'; }
+                                else { selectedWords.add(index); el.style.background = 'var(--apple)'; el.style.color = '#000'; }
                                 
                                 if(selectedWords.size === 2) {
                                     if(selectedWords.has(0) && selectedWords.has(1)) { this.playSound('success'); this.stageState.round++; loadRound(); } 
-                                    else { this.failRoom(); selectedWords.clear(); storyCard.querySelectorAll('.case-word').forEach(w => { w.style.background = 'transparent'; w.style.color = 'var(--gold)'; }); }
+                                    else { this.failRoom(); selectedWords.clear(); storyCard.querySelectorAll('.case-word').forEach(w => { w.style.background = 'transparent'; w.style.color = 'var(--apple)'; }); }
                                 }
                             };
                         });
@@ -792,9 +704,7 @@ class SolarGamesEngine {
                         qTitle.innerText = `الراوند 3: استنتج من هو القاتل؟`;
                         let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
                         ['أحمد', 'خالد', 'سعد'].forEach((suspect, i) => {
-                            let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--gold); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.2rem;';
-                            // الحل: خالد هو القاتل. لو خالد صادق (ما قتل) وأحمد كاذب وسعد كاذب (أحمد ما يكذب)، تناقض.
-                            // الوحيد اللي يخلي عبارة وحدة صح هو أن (سعد يقول الحقيقة أن أحمد يكذب)، وخالد كاذب (يعني هو القاتل).
+                            let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--apple); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.2rem;';
                             btn.onclick = () => { if(i === 1) { this.playSound('success'); this.stageState.round++; loadRound(); } else { this.failRoom(); } };
                             btnWrap.appendChild(btn);
                         });
@@ -803,7 +713,7 @@ class SolarGamesEngine {
                     else if(this.stageState.round === 4) {
                         storyCard.innerHTML = `<strong>الرسالة المشفرة:</strong><br>وجدنا في جيب القاتل (خالد) ملاحظة تقول: "الغرفة رقم 10110". هذا الرقم بنظام الباينري (الثنائي).`;
                         qTitle.innerText = `الراوند 4: حول الرقم الثنائي إلى عشري لمعرفة رقم الغرفة الصحيح.`;
-                        let inp = createInputBlock('أدخل رقم الغرفة...', '22'); // 10110 in binary is 22
+                        let inp = createInputBlock('أدخل رقم الغرفة...', '22'); 
                         inp.oninput = () => { if(inp.value.trim() === '22' || inp.value.trim() === '٢٢') { this.playSound('success'); this.stageState.round++; loadRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
@@ -821,7 +731,7 @@ class SolarGamesEngine {
             }
 
             default:
-                let defaultMsg = document.createElement('div'); defaultMsg.style.cssText = "color:var(--gold); font-family:monospace; font-size:1.5rem;"; defaultMsg.innerText = "Error: Protocol Missing"; innerStage.appendChild(defaultMsg); break;
+                let defaultMsg = document.createElement('div'); defaultMsg.style.cssText = "color:var(--apple); font-family:monospace; font-size:1.5rem;"; defaultMsg.innerText = "Error: Protocol Missing"; innerStage.appendChild(defaultMsg); break;
         }
     }
 
@@ -845,8 +755,7 @@ class SolarGamesEngine {
         if (answerInput === this.activeGate.txtA) {
             this.playSound('success'); 
             this.solvedGates.add(this.activeGate.id);
-            this.addCoins(15);
-            this.showToast('تم اختراق الروم بنجاح! +15 بيانات', '#00ff66');
+            this.showToast('تم اختراق الروم بنجاح!', '#00ff66');
             this.returnToLobby();
         } else {
             this.failRoom();
@@ -870,7 +779,6 @@ class SolarGamesEngine {
         
         this.toggleAdminSidebar(false); 
         this.solvedGates.add(this.activeGate.id);
-        this.addCoins(15); 
         this.showToast('تم تخطي الروم إجبارياً!', '#00ff66'); 
         this.returnToLobby();
     }
