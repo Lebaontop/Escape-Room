@@ -243,7 +243,7 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
-            case 'SIMON': {
+         case 'SIMON': {
                 let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(3, 100px); gap:15px; justify-content:center;';
                 let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800'];
                 let boxes = [];
@@ -254,15 +254,16 @@ class SolarGamesEngine {
                         if(!this.stageState.playing) return;
                         if(this.stageState.sequence[this.stageState.clicks] === i) {
                             b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000';
-                            setTimeout(()=>{ b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 15px ${colors[i]}`; }, 200);
+                            setTimeout(()=>{ b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 15px ${colors[i]}`; }, 150);
                             this.stageState.clicks++;
                             if(this.stageState.clicks === this.stageState.sequence.length) {
                                 this.stageState.round++;
-                                if(this.stageState.round > 2) setTimeout(() => this.winInteractive(), 200); else setTimeout(()=>playRound(), 2000);
+                                if(this.stageState.round > 2) setTimeout(() => this.winInteractive(), 200); else setTimeout(()=>playRound(), 1000);
                             }
                         } else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
                     }; smGrid.appendChild(b); boxes.push(b);
                 } innerStage.appendChild(smGrid); this.stageState.round = 1;
+                
                 const playRound = () => {
                     this.stageState.playing = false; this.stageState.clicks = 0;
                     let count = this.stageState.round === 1 ? 4 : 6;
@@ -272,13 +273,16 @@ class SolarGamesEngine {
                         if(step < count) {
                             let idx = this.stageState.sequence[step];
                             boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000';
-                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 500);
+                            
+                            // تم تقليل وقت الإطفاء إلى 200 جزء من الثانية ليكون الوميض أسرع
+                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 200);
                             step++;
                         } else { clearInterval(this.stageState.timer); this.stageState.playing = true; }
-                    }, 1500);
-                }; setTimeout(()=>playRound(), 1000); break;
+                        
+                    // تم تقليل وقت الانتقال بين المربعات من 1500 إلى 700 (سريعة جداً وتتطلب تركيز عالي)
+                    }, 700);
+                }; setTimeout(()=>playRound(), 800); break;
             }
-
             case 'MASTERMIND': {
                 let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:500px;';
                 let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px; direction:ltr;';
