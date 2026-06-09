@@ -22,18 +22,18 @@
         </div>
     </section>
 
-    <!-- الهيدر العام مع المؤقت الخارجي -->
     <header id="main-nav" class="hidden">
         <div class="nav-content">
-            <div style="display:flex; align-items:center; gap:20px;">
+            <div style="display:flex; align-items:center; gap:15px;">
                 <div class="stat-box">
                     <span class="label">المؤقت الخارجي</span>
-                    <div class="value timer-txt" id="timer-display">15:00</div>
+                    <div class="value timer-txt" id="timer-display">01:00</div>
                 </div>
-                <!-- تحكم بالوقت -->
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="timer-input" value="15:00" style="background:#000; color:var(--apple); border:1px solid #333; padding:5px; text-align:center; width:80px; font-family:monospace; font-size:1.2rem; border-radius:4px;">
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="timer-input" value="01:00" style="background:#000; color:var(--apple); border:1px solid #333; padding:5px; text-align:center; width:60px; font-family:monospace; font-size:1.1rem; border-radius:4px;">
                     <button class="action-btn" onclick="game.setTimer()">تحديث الوقت</button>
+                    <button class="action-btn" onclick="game.setSpecificTimer(30)" style="border-color:var(--apple);">30 ثانية</button>
+                    <button class="action-btn" onclick="game.setSpecificTimer(60)" style="border-color:var(--apple);">1 دقيقة</button>
                     <button class="action-btn" onclick="game.toggleTimer()" style="border-color:#ff3333; color:#ff3333;">تشغيل / إيقاف</button>
                 </div>
             </div>
@@ -44,7 +44,6 @@
         </div>
     </header>
 
-    <!-- زر التخطي أسفل اليسار -->
     <button class="btn-skip hidden" id="btn-skip" onclick="game.adminInstantSolveGate()">Next Room ⏭</button>
 
     <section id="screen-lobby" class="screen hidden">
