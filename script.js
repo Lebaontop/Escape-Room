@@ -9,61 +9,34 @@ function checkEntryCode() {
 
 class SolarGamesEngine {
     constructor() {
-        this.roomTimers = {}; 
-        this.roomAllocatedTime = {}; // لحفظ الوقت المخصص للريستارت
-        this.isTimerRunning = false;
         this.activeGate = null;
         this.solvedGates = new Set();
-        this.audioCtx = null;
+        
+        // مؤقت خارجي بسيط
+        this.externalTimerSeconds = 900; // 15 دقيقة افتراضي
+        this.isTimerRunning = false;
+        this.timerInterval = null;
         
         this.gameConfig = this.buildPuzzles();
         this.init();
-        this.setupClickListeners();
         
-        // المحرك الأساسي للوقت (يشتغل كل ثانية)
+        // تحديث المؤقت كل ثانية
         setInterval(() => {
-            if(this.isTimerRunning && this.activeGate && this.roomTimers[this.activeGate.id] > 0) {
-                this.roomTimers[this.activeGate.id]--;
-                this.updateGlobalTimerUI();
-                
-                // إذا وصل الوقت 0، سوي ريستارت للغرفة
-                if(this.roomTimers[this.activeGate.id] === 0) {
-                    this.handleRoomTimeout();
-                }
+            if(this.isTimerRunning && this.externalTimerSeconds > 0) {
+                this.externalTimerSeconds--;
+                this.updateTimerDisplay();
             }
         }, 1000);
     }
 
     init() { 
         this.renderLobby(); 
+        this.updateTimerDisplay();
     }
 
-    initAudio() {
-        if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-    }
-
+    // إزالة الأصوات تماماً بناءً على طلبك
     playSound(type) {
-        if (!this.audioCtx) return;
-        const osc = this.audioCtx.createOscillator(); 
-        const gain = this.audioCtx.createGain();
-        osc.connect(gain); 
-        gain.connect(this.audioCtx.destination); 
-        const now = this.audioCtx.currentTime;
-        
-        if(type === 'click') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(350, now);
-            gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-            osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'success') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); 
-            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
-            osc.start(now); osc.stop(now + 0.4);
-        } else if (type === 'error') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now);
-            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
-            osc.start(now); osc.stop(now + 0.3);
-        }
+        return; 
     }
     
     showToast(msg, color = 'var(--apple)') {
@@ -82,13 +55,30 @@ class SolarGamesEngine {
             setTimeout(()=>c.classList.remove('error-glitch'), 400); 
         } 
     }
+
+    // دوال المؤقت الخارجي
+    setTimer() {
+        let val = document.getElementById('timer-input').value;
+        let parts = val.split(':');
+        if(parts.length === 2) {
+            let m = parseInt(parts[0]);
+            let s = parseInt(parts[1]);
+            if(!isNaN(m) && !isNaN(s)) {
+                this.externalTimerSeconds = (m * 60) + s;
+                this.updateTimerDisplay();
+                this.showToast('تم تحديث المؤقت');
+            }
+        }
+    }
     
-    setupClickListeners() { 
-        document.addEventListener('click', (e) => { 
-            if(e.target.tagName==='BUTTON' || e.target.classList.contains('interactive-element')) { 
-                this.initAudio(); this.playSound('click'); 
-            } 
-        }); 
+    toggleTimer() {
+        this.isTimerRunning = !this.isTimerRunning;
+    }
+    
+    updateTimerDisplay() {
+        let m = Math.floor(this.externalTimerSeconds / 60).toString().padStart(2,'0');
+        let s = (this.externalTimerSeconds % 60).toString().padStart(2,'0');
+        document.getElementById('timer-display').innerText = `${m}:${s}`;
     }
 
     buildPuzzles() {
@@ -120,23 +110,23 @@ class SolarGamesEngine {
             let m = { id: i, type: `GAME_${i}` };
             
             if(i===1) { m.uiType = 'WIRES'; m.desc="اقطع 3 أسلاك محددة."; m.data=['#8cc63f','#ff3333','#333','#fff','#00ccff','#ff3333']; m.ans=[1,3,4]; }
-            else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: تتبع الأنماط المضيئة وكررها (جولتين)."; m.data=4; }
-            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (أخضر=صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; }
-            else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات وطابق 10 أزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; }
+            else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: 6 ألوان، لاحظ المربع الذي ينطفئ وكرر النمط (جولتين)."; m.data=6; }
+            else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (أخضر=مكان صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; }
+            else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات (المرقمة من 1-20) وطابق الأزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; }
             else if(i===5) { m.uiType = 'COMPASS'; m.desc="توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
-            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى *** بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
-            else if(i===7) { m.uiType = 'MAGIC_SQUARE'; m.desc="المربع السحري: أدخل الأرقام من 1 إلى 9 بحيث يكون المجموع 15."; }
-            else if(i===8) { m.uiType = 'SLIDER'; m.desc="اللوحة المكسورة: رتب القطع الخشبية المبعثرة بالترتيب التصاعدي."; }
-            else if(i===9) { m.uiType = 'HARDCORE_WIRES'; m.desc="اللوحة المعقدة: 6 أسلاك. وصل 3 واقطع 3 بدقة متناهية."; }
-            else if(i===10) { m.uiType = 'PATTERN_LOCK'; m.desc="القفل النمطي: اضغط على النقاط بالتسلسل الصحيح لرسم رمز الدخول."; m.ans=[0,1,2,4,6,7,8]; }
+            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
+            else if(i===7) { m.uiType = 'TIC_TAC_TOE'; m.desc="لعبة الـ X O: اضغط لتغيير الرمز، ارسم نمط (حرف X كبير) يغطي الزوايا والمنتصف."; m.ans=['X','','X', '','X','', 'X','','X']; }
+            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): في كل جولة هناك لغم واحد عشوائي، اضغط على جميع الأرقام الآمنة لتفوز."; }
+            else if(i===9) { m.uiType = 'HIDE_BOMB'; m.desc="الغميضة المتفجرة: اختاروا أرقام القنابل، ثم ابحثوا في الشبكة."; }
+            else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق بالترتيب المخفي في السيرفر."; m.ans=[4, 1, 5, 2, 6]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
             else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
-            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; }
-            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشاعر."; }
-            else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور: تفحص الصورة جيداً."; m.ans='رسم'; }
-            else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل الصوتي."; m.ans=[0, 2, 4, 0]; }
-            else if(i===17) { m.uiType = 'TIMELINE'; m.desc="تايم لاين المونتاج: اسحب مسارات الفيديو والصوت لتتزامن بنسبة 100%."; }
-            else if(i===18) { m.uiType = 'DNA'; m.desc="الحمض النووي: طابق A مع T، و C مع G للتركيبة المخفية."; m.ans='TGCA'; }
+            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; }
+            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية."; }
+            else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور (3 جولات): تفحص الصورة واستنتج الجواب."; }
+            else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
+            else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً لضبط النمط الصحيح."; }
+            else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="قصة اللوحة: اقرأ القصة وتفحص الصورة المرفقة لاستنتاج الإجابة."; m.ans='ليبا'; }
             else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1936'; }
             else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف القضية الأسود (5 مراحل): ابحث عن الأدلة لتعرف القاتل الحقيقي."; }
 
@@ -147,75 +137,20 @@ class SolarGamesEngine {
         return mechanics;
     }
 
-    toggleGlobalTimer() { 
-        this.playSound('click'); 
-        this.isTimerRunning = !this.isTimerRunning; 
-        this.showToast(this.isTimerRunning ? "تم استئناف الوقت" : "تم إيقاف الوقت مؤقتاً");
-    }
-    
-    modifyGlobalTimer(secs) { 
-        this.playSound('click');
-        if(this.activeGate) {
-            this.roomTimers[this.activeGate.id] = Math.max(0, this.roomTimers[this.activeGate.id] + secs); 
-            this.updateGlobalTimerUI(); 
-        }
-    }
-
-    // دالة تحديد وقت مخصص للغرفة (وتبدأ تعد فوراً)
-    setCustomTime(seconds) {
-        if(isNaN(seconds) || seconds <= 0) return;
-        this.playSound('click');
-        if(this.activeGate) {
-            this.roomTimers[this.activeGate.id] = seconds;
-            this.roomAllocatedTime[this.activeGate.id] = seconds;
-            this.updateGlobalTimerUI();
-            this.setupStage(); 
-            this.isTimerRunning = true; // العداد يكمل فوراً
-            this.showToast(`تم ضبط الغرفة على: ${seconds} ثانية`, 'var(--apple)');
-        } else {
-            this.showToast('يجب أن تدخل الغرفة أولاً لضبط وقتها!', '#ff3333');
-        }
-    }
-
-    // دالة الريستارت عند انتهاء الوقت
-    handleRoomTimeout() {
-        this.playSound('error');
-        this.triggerVisualGlitch();
-        this.showToast('انتهى الوقت! إغلاق النظام وإعادة التشغيل...', '#ff3333');
-        
-        this.isTimerRunning = false; 
-        
-        // بعد ثانية ونص، يسوي ريستارت ويبدأ العداد يحسب من جديد
-        setTimeout(() => {
-            this.roomTimers[this.activeGate.id] = this.roomAllocatedTime[this.activeGate.id];
-            this.updateGlobalTimerUI();
-            this.setupStage(); 
-            this.isTimerRunning = true; // يبدأ يحسب تلقائي بعد الريستارت
-        }, 1500); 
-    }
-    
-    updateGlobalTimerUI() {
-        if(!this.activeGate) return;
-        let t = this.roomTimers[this.activeGate.id];
-        let m = Math.floor(t / 60).toString().padStart(2,'0');
-        let s = (t % 60).toString().padStart(2,'0');
-        
-        let displays = ['global-timer-display', 'puzzle-global-timer'];
-        displays.forEach(id => {
-            let el = document.getElementById(id);
-            if(el) { el.innerText = `${m}:${s}`; }
-        });
-    }
-
     switchScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById(`screen-${id}`).classList.remove('hidden');
         document.getElementById('main-nav').classList.toggle('hidden', id === 'welcome');
+        
+        // إظهار وإخفاء زر سكيب الغرفة
+        if(id === 'puzzle') {
+            document.getElementById('btn-skip').classList.remove('hidden');
+        } else {
+            document.getElementById('btn-skip').classList.add('hidden');
+        }
     }
 
     startLobby() { 
-        this.initAudio(); 
-        this.playSound('click'); 
         this.switchScreen('lobby'); 
     }
 
@@ -239,8 +174,8 @@ class SolarGamesEngine {
             let status = document.createElement('span'); 
             status.className = 'channel-status';
             
-            if(isSolved) { status.innerText = 'HACKED'; status.style.color = 'var(--green)'; }
-            else { status.innerText = 'متاح للدخول'; status.style.color = 'var(--apple)'; }
+            if(isSolved) { status.innerText = 'HACKED'; status.style.color = 'var(--apple)'; }
+            else { status.innerText = 'متاح للدخول'; status.style.color = '#ccc'; }
 
             info.append(title, status); 
             btn.appendChild(info);
@@ -253,16 +188,6 @@ class SolarGamesEngine {
     handleGateClick(id) {
         if(this.solvedGates.has(id)) return;
         this.activeGate = this.gameConfig.find(x => x.id === id);
-        
-        // الوقت الافتراضي 30 ثانية لأي غرفة يدخلها
-        if(this.roomTimers[id] === undefined) {
-            this.roomAllocatedTime[id] = 30; 
-            this.roomTimers[id] = 30;
-        }
-        
-        // يبدأ الوقت يحسب فوراً أول ما يدخل
-        this.isTimerRunning = true; 
-        this.updateGlobalTimerUI();
         
         document.getElementById('interactive-stage-container').classList.remove('hidden');
         document.getElementById('text-stage').classList.add('hidden');
@@ -281,10 +206,6 @@ class SolarGamesEngine {
             clearTimeout(this.stageState.timer);
             this.stageState.timer = null;
         }
-        if(this.stageState && this.stageState.animFrame) {
-            cancelAnimationFrame(this.stageState.animFrame);
-            this.stageState.animFrame = null;
-        }
     }
 
     setupStage() {
@@ -296,7 +217,7 @@ class SolarGamesEngine {
         stage.innerHTML = `<div class="lux-panel" id="lux-inner-stage" style="width:100%; min-height:400px; background:#050505; border:2px solid var(--apple); border-radius:8px; padding:20px; box-shadow:inset 0 0 20px #000; position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center;"></div>`;
         const innerStage = document.getElementById('lux-inner-stage');
         
-        this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true, timer: null, animFrame: null };
+        this.stageState = { clicks: 0, arr: [], val: 0, attempts: 0, playing: true, timer: null };
 
         const generateSubmitButton = (callback, text = 'تأكيد (Execute)') => {
             let btn = document.createElement('button'); 
@@ -310,17 +231,14 @@ class SolarGamesEngine {
         const createInputBlock = (placeholder, ans) => {
             let wrap = document.createElement('div'); 
             wrap.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; z-index:10;';
-            
             let inp = document.createElement('input'); 
             inp.type = 'text'; 
             inp.className = 'cyber-input interactive-element'; 
             inp.placeholder = placeholder;
-            
             wrap.append(inp, generateSubmitButton(() => { 
                 if(inp.value.trim().toUpperCase() === ans.toUpperCase()) this.winInteractive(); 
                 else this.failRoom(); 
             }));
-            
             innerStage.appendChild(wrap);
             return inp;
         };
@@ -342,42 +260,49 @@ class SolarGamesEngine {
             }
 
             case 'SIMON': {
-                let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(2, 100px); gap:15px; justify-content:center;';
-                let colors = ['#ff3333', '#00ff66', '#00ccff', 'var(--apple)']; let boxes = [];
-                for(let i=0; i<4; i++) {
+                let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(3, 100px); gap:15px; justify-content:center;';
+                let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800']; // 6 distinct colors
+                let boxes = [];
+                for(let i=0; i<6; i++) {
                     let b = document.createElement('div'); b.className = 'interactive-element';
-                    b.style.cssText = `width:100px; height:100px; background:#111; border:4px solid #333; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:inset 0 0 15px #000;`;
+                    // عكس المنطق: المربعات مضاءة بالأصل
+                    b.style.cssText = `width:100px; height:100px; background:${colors[i]}; border:4px solid #fff; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:0 0 15px ${colors[i]};`;
                     b.onclick = () => {
                         if(!this.stageState.playing) return;
                         if(this.stageState.sequence[this.stageState.clicks] === i) {
-                            b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 30px ${colors[i]}`; 
-                            setTimeout(()=>{ b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000'; }, 300);
+                            // عند الضغط الصح، يطفي أسود ويرجع يشتغل
+                            b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000';
+                            setTimeout(()=>{ b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 15px ${colors[i]}`; }, 200);
+                            
                             this.stageState.clicks++;
                             if(this.stageState.clicks === this.stageState.sequence.length) {
                                 this.stageState.round++;
-                                if(this.stageState.round > 2) setTimeout(() => this.winInteractive(), 500); else setTimeout(()=>playRound(), 1500);
+                                if(this.stageState.round > 2) setTimeout(() => this.winInteractive(), 500); else setTimeout(()=>playRound(), 2000);
                             }
                         } else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
                     }; smGrid.appendChild(b); boxes.push(b);
                 } innerStage.appendChild(smGrid); this.stageState.round = 1;
+                
                 const playRound = () => {
                     this.stageState.playing = false; this.stageState.clicks = 0;
                     let count = this.stageState.round === 1 ? 4 : 6;
-                    this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 4));
+                    this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 6));
                     let step = 0;
+                    // تقليل السرعة (ثانية ونصف بين كل ضغطة)
                     this.stageState.timer = setInterval(() => {
                         if(step < count) {
                             let idx = this.stageState.sequence[step];
-                            boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 30px ${colors[idx]}`; this.playSound('click');
-                            setTimeout(()=> { boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000'; }, 600);
+                            // يطفي اللون للأسود ثم يرجع
+                            boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000';
+                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 500);
                             step++;
                         } else { clearInterval(this.stageState.timer); this.stageState.playing = true; }
-                    }, 1000);
-                }; setTimeout(()=>playRound(), 800); break;
+                    }, 1500);
+                }; setTimeout(()=>playRound(), 1000); break;
             }
 
             case 'MASTERMIND': {
-                let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:400px;';
+                let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:500px;';
                 let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px; direction:ltr;';
                 let mboxes = [];
                 for(let i=0; i<4; i++) { 
@@ -385,42 +310,84 @@ class SolarGamesEngine {
                     inp.style.cssText = 'width:60px; height:70px; background:#000; border:2px solid var(--apple); color:var(--apple); font-size:2.5rem; text-align:center; border-radius:8px; outline:none; font-family:monospace; box-shadow:inset 0 0 15px rgba(140, 198, 63, 0.2);'; 
                     inp.maxLength=1; inputs.appendChild(inp); mboxes.push(inp); 
                 }
+                
                 let historyWrap = document.createElement('div');
-                historyWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; height:160px; overflow-y:auto; background:#111; padding:10px; border-radius:8px; border:2px solid #333;';
+                historyWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; height:200px; overflow-y:auto; background:#111; padding:10px; border-radius:8px; border:2px solid #333; direction:ltr;';
+                
                 let btn = generateSubmitButton(() => {
                     let guess = mboxes.map(b => parseInt(b.value));
                     if(guess.some(isNaN)) return;
                     this.stageState.attempts++;
-                    let tempAns = [...p.ans]; let tempGuess = [...guess]; let pegs = [];
-                    for(let i=0; i<4; i++) { if(tempGuess[i] === tempAns[i]) { pegs.push('#00ff66'); tempAns[i]=null; tempGuess[i]=-1; } }
-                    for(let i=0; i<4; i++) { if(tempGuess[i] !== -1 && tempAns.includes(tempGuess[i])) { pegs.push('#ffa500'); tempAns[tempAns.indexOf(tempGuess[i])]=null; } }
-                    while(pegs.length < 4) pegs.push('#ff3333'); 
                     
-                    let hRow = document.createElement('div'); hRow.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 15px; background:#222; border-radius:6px; border:1px solid #444; direction:ltr;';
-                    let hNums = document.createElement('div'); hNums.innerText = guess.join(' '); hNums.style.cssText = 'color:#fff; font-size:1.5rem; font-family:monospace; letter-spacing:5px;';
-                    let hPegs = document.createElement('div'); hPegs.style.cssText = 'display:flex; gap:8px; direction:ltr;'; 
-                    pegs.forEach(c => { let pg = document.createElement('div'); pg.style.cssText = `width:18px; height:18px; border-radius:50%; background:${c}; border:1px solid #111; box-shadow:0 0 5px ${c};`; hPegs.appendChild(pg); });
-                    hRow.append(hNums, hPegs); historyWrap.prepend(hRow); mboxes.forEach(b => b.value = '');
-                    if(pegs.every(c=>c==='#00ff66') && pegs.length===4) { setTimeout(()=>this.winInteractive(), 500); } else if (this.stageState.attempts >= 8) { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
+                    let secret = [...p.ans]; // [3, 7, 1, 9]
+                    let secretMarked = [false, false, false, false];
+                    let guessMarked = [false, false, false, false];
+                    let resultColors = ['#ff3333', '#ff3333', '#ff3333', '#ff3333'];
+
+                    // فحص الأخضر أولاً (نفس الرقم ونفس المكان)
+                    for(let i=0; i<4; i++) {
+                        if(guess[i] === secret[i]) {
+                            resultColors[i] = '#00ff66';
+                            secretMarked[i] = true;
+                            guessMarked[i] = true;
+                        }
+                    }
+
+                    // فحص البرتقالي (رقم صحيح لكن مكان غلط)
+                    for(let i=0; i<4; i++) {
+                        if(!guessMarked[i]) {
+                            for(let j=0; j<4; j++) {
+                                if(!secretMarked[j] && guess[i] === secret[j]) {
+                                    resultColors[i] = '#ffa500';
+                                    secretMarked[j] = true;
+                                    guessMarked[i] = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // تصميم الـ Row بحيث كل رقم تحته الدائرة الخاصة فيه
+                    let hRow = document.createElement('div'); hRow.style.cssText = 'display:flex; justify-content:center; gap:20px; padding:10px; background:#222; border-radius:6px; border:1px solid #444;';
+                    for(let i=0; i<4; i++) {
+                        let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:5px;';
+                        let num = document.createElement('div'); num.innerText = guess[i]; num.style.cssText = 'color:#fff; font-size:1.5rem; font-family:monospace; font-weight:bold;';
+                        let peg = document.createElement('div'); peg.style.cssText = `width:15px; height:15px; border-radius:50%; background:${resultColors[i]}; border:1px solid #000; box-shadow:0 0 5px ${resultColors[i]};`;
+                        col.append(num, peg);
+                        hRow.appendChild(col);
+                    }
+                    
+                    historyWrap.prepend(hRow); mboxes.forEach(b => b.value = '');
+                    
+                    if(guess.join('') === secret.join('')) { setTimeout(()=>this.winInteractive(), 500); } 
+                    else if (this.stageState.attempts >= 8) { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
                 }, 'فحص الكود');
+                
                 container.append(inputs, historyWrap, btn); innerStage.appendChild(container); break;
             }
 
             case 'MATCH': {
                 let crdGrid = document.createElement('div'); crdGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 60px); gap:10px; justify-content:center; perspective:1000px;';
                 let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5); let flipped = [];
-                symbols.forEach((sym) => {
+                symbols.forEach((sym, idx) => {
                     let card = document.createElement('div'); card.className = 'interactive-element'; card.style.cssText = 'width:60px; height:60px; perspective:1000px; cursor:pointer; position:relative;';
                     let inner = document.createElement('div'); inner.style.cssText = 'width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d; position:absolute;';
-                    let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px;';
+                    
+                    // الواجهة الأمامية (قبل القلب) وضعنا فيها أرقام
+                    let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold;'; 
+                    front.innerText = idx + 1; // ترقيم 1 لـ 20
+                    
+                    // الواجهة الخلفية (بعد القلب) فيها الإيموجي
                     let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
+                    
                     inner.append(front, back); card.appendChild(inner);
                     card.onclick = () => {
                         if(inner.style.transform === 'rotateY(180deg)' || flipped.length >= 2) return;
                         inner.style.transform = 'rotateY(180deg)'; flipped.push({c:inner, s:sym});
                         if(flipped.length === 2) {
                             setTimeout(() => {
-                                if(flipped[0].s === flipped[1].s) { this.stageState.clicks += 2; if(this.stageState.clicks === 20) this.winInteractive(); } else { flipped[0].c.style.transform = 'rotateY(0deg)'; flipped[1].c.style.transform = 'rotateY(0deg)'; }
+                                if(flipped[0].s === flipped[1].s) { this.stageState.clicks += 2; if(this.stageState.clicks === 20) this.winInteractive(); } 
+                                else { flipped[0].c.style.transform = 'rotateY(0deg)'; flipped[1].c.style.transform = 'rotateY(0deg)'; }
                                 flipped = [];
                             }, 600);
                         }
@@ -455,86 +422,140 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(sclWrap); break;
             }
 
-            case 'MAGIC_SQUARE': {
+            // لعبة إكس أو (تغيير المتغيرات)
+            case 'TIC_TAC_TOE': {
                 let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--apple); box-shadow:0 10px 30px rgba(140, 198, 63, 0.2);';
-                let inputs = [];
+                let cells = [];
+                let marks = ['', 'X', 'O'];
                 for(let i=0; i<9; i++) {
-                    let inp = document.createElement('input'); inp.type = 'number'; inp.className = 'interactive-element';
-                    inp.style.cssText = 'width:80px; height:80px; background:#000; border:2px solid #444; color:#fff; font-size:2.5rem; text-align:center; border-radius:8px; outline:none; transition:0.2s;';
-                    inp.onfocus = () => inp.style.borderColor = 'var(--apple)'; inp.onblur = () => inp.style.borderColor = '#444';
-                    inputs.push(inp); msWrap.appendChild(inp);
+                    let cell = document.createElement('div'); cell.className = 'interactive-element';
+                    cell.style.cssText = 'width:80px; height:80px; background:#000; border:2px solid #444; color:#fff; font-size:3rem; font-weight:bold; display:flex; justify-content:center; align-items:center; border-radius:8px; cursor:pointer; user-select:none; transition:0.2s;';
+                    cell.dataset.state = 0; // index in marks array
+                    cell.onclick = () => {
+                        let ns = (parseInt(cell.dataset.state) + 1) % 3;
+                        cell.dataset.state = ns;
+                        cell.innerText = marks[ns];
+                        cell.style.color = ns === 1 ? 'var(--apple)' : (ns === 2 ? '#ff3333' : '#fff');
+                    };
+                    cells.push(cell); msWrap.appendChild(cell);
                 }
                 let btn = generateSubmitButton(() => {
-                    let vals = inputs.map(inp => parseInt(inp.value));
-                    if(vals.includes(NaN) || new Set(vals).size !== 9 || vals.some(v => v < 1 || v > 9)) { this.failRoom(); return; }
-                    let lines = [ [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6] ];
-                    let win = lines.every(line => (vals[line[0]] + vals[line[1]] + vals[line[2]]) === 15);
-                    if(win) { inputs.forEach(inp => { inp.style.background = 'var(--apple)'; inp.style.color = '#000'; }); setTimeout(()=>this.winInteractive(), 800); } else this.failRoom();
-                }, 'تأكيد التوازن');
+                    let currentPattern = cells.map(c => marks[parseInt(c.dataset.state)]);
+                    if(JSON.stringify(currentPattern) === JSON.stringify(p.ans)) {
+                        cells.forEach(c => { c.style.background = 'var(--apple)'; c.style.color = '#000'; });
+                        setTimeout(()=>this.winInteractive(), 800); 
+                    } else this.failRoom();
+                }, 'تأكيد التشفير');
                 innerStage.append(msWrap, btn); break;
             }
 
-            case 'SLIDER': {
-                let pzWrap = document.createElement('div'); pzWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:4px; background:#222; padding:8px; border:2px solid #555; border-radius:6px; box-shadow:0 15px 25px rgba(0,0,0,0.9);';
-                let tiles = [1,2,3,4,6,5,7,0,8]; 
-                const renderPuzzle = () => {
-                    pzWrap.innerHTML = '';
-                    tiles.forEach((t, i) => {
-                        let cell = document.createElement('div'); cell.className = 'interactive-element';
-                        if(t === 0) { cell.style.cssText = 'width:80px; height:80px; background:transparent; border:1px dashed #444; border-radius:4px;'; } 
-                        else { cell.style.cssText = 'width:80px; height:80px; background:linear-gradient(135deg, var(--apple), #5c8a24); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-weight:bold; color:#000; cursor:pointer; border-radius:4px; box-shadow:inset 0 0 10px rgba(0,0,0,0.3); transition:0.1s; user-select:none; border:1px solid #fff;'; cell.innerText = t; }
-                        cell.onclick = () => {
-                            let emptyIdx = tiles.indexOf(0); let validMoves = [emptyIdx-1, emptyIdx+1, emptyIdx-3, emptyIdx+3];
-                            if(emptyIdx%3 === 0 && i === emptyIdx-1) return; if(emptyIdx%3 === 2 && i === emptyIdx+1) return;
-                            if(validMoves.includes(i)) { tiles[emptyIdx] = t; tiles[i] = 0; renderPuzzle(); if(tiles.join('') === '123456780') setTimeout(()=>this.winInteractive(), 400); }
-                        }; pzWrap.appendChild(cell);
-                    });
-                }; renderPuzzle(); innerStage.appendChild(pzWrap); break;
-            }
-
-            case 'HARDCORE_WIRES': {
-                let hwWrap = document.createElement('div'); hwWrap.style.cssText = 'display:flex; flex-direction:column; gap:8px; width:100%; max-width:500px; background:#111; padding:20px; border-radius:12px; border:3px solid #333; box-shadow:0 15px 30px rgba(0,0,0,0.9);';
-                let colors = ['#ff3333', '#00ccff', '#00ff66', '#ffff00', '#ffffff', '#333333'];
-                let states = new Array(6).fill(0); 
-                let correctStates = [1, -1, 1, -1, 1, -1]; 
+            // لعبة كاسحة الألغام
+            case 'MINES': {
+                let mWrap = document.createElement('div'); mWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--apple);';
+                let roundDisp = document.createElement('h3'); roundDisp.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.5rem;';
+                innerStage.appendChild(roundDisp);
                 
-                colors.forEach((col, i) => {
-                    let row = document.createElement('div'); row.style.cssText = 'display:flex; align-items:center; gap:15px; background:#050505; padding:8px 15px; border-radius:6px; border:1px solid #222;';
-                    let wireDisp = document.createElement('div'); wireDisp.style.cssText = `flex-grow:1; height:15px; background:${col}; border-radius:8px; border:1px solid #000; box-shadow:inset 0 2px 5px rgba(255,255,255,0.3); transition:0.3s;`;
-                    let btnCut = document.createElement('button'); btnCut.className = 'interactive-element'; btnCut.innerHTML = '✂️ قطع'; btnCut.style.cssText = 'background:#440000; color:#ff3333; border:1px solid #ff3333; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
-                    let btnConn = document.createElement('button'); btnConn.className = 'interactive-element'; btnConn.innerHTML = '🔌 توصيل'; btnConn.style.cssText = 'background:#003300; color:#00ff66; border:1px solid #00ff66; padding:5px 10px; border-radius:4px; cursor:pointer; font-weight:bold;';
+                this.stageState.round = 1;
+                const loadRound = () => {
+                    mWrap.innerHTML = '';
+                    roundDisp.innerText = `الجولة ${this.stageState.round} من 3`;
+                    let mineIndex = Math.floor(Math.random() * 9);
+                    let safeClicks = 0;
                     
-                    const updateWireVisual = () => {
-                        btnCut.style.background = states[i] === -1 ? '#ff3333' : '#440000'; btnCut.style.color = states[i] === -1 ? '#fff' : '#ff3333';
-                        btnConn.style.background = states[i] === 1 ? '#00ff66' : '#003300'; btnConn.style.color = states[i] === 1 ? '#000' : '#00ff66';
-                        if(states[i] === -1) { wireDisp.style.opacity = '0.3'; wireDisp.style.borderStyle = 'dashed'; } else if(states[i] === 1) { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = `0 0 15px ${col}`; wireDisp.style.borderStyle = 'solid'; } else { wireDisp.style.opacity = '1'; wireDisp.style.boxShadow = 'inset 0 2px 5px rgba(255,255,255,0.3)'; wireDisp.style.borderStyle = 'solid'; }
-                    };
-                    btnCut.onclick = () => { states[i] = -1; updateWireVisual(); }; btnConn.onclick = () => { states[i] = 1; updateWireVisual(); };
-                    row.append(wireDisp, btnCut, btnConn); hwWrap.appendChild(row);
-                });
-                
-                let checkBtn = generateSubmitButton(() => {
-                    if(states.includes(0)) { this.showToast('قم بتحديد حالة جميع الأسلاك الستة أولاً!', '#ffa500'); return; }
-                    if(JSON.stringify(states) === JSON.stringify(correctStates)) { setTimeout(()=>this.winInteractive(), 500); } else { this.failRoom(); setTimeout(()=>this.setupStage(), 1000); }
-                }, 'تنفيذ الأمر (EXECUTE)');
-                innerStage.append(hwWrap, checkBtn); break;
+                    for(let i=0; i<9; i++) {
+                        let cell = document.createElement('div'); cell.className = 'interactive-element';
+                        cell.style.cssText = 'width:80px; height:80px; background:#222; border:2px solid #555; display:flex; justify-content:center; align-items:center; font-size:2rem; color:#fff; border-radius:8px; cursor:pointer; font-weight:bold;';
+                        cell.innerText = i + 1;
+                        cell.dataset.clicked = "0";
+                        
+                        cell.onclick = () => {
+                            if(cell.dataset.clicked === "1") return;
+                            cell.dataset.clicked = "1";
+                            if(i === mineIndex) {
+                                cell.style.background = '#ff3333'; cell.innerText = '💣';
+                                this.failRoom(); setTimeout(()=>loadRound(), 1000); // إعاده نفس الجوله
+                            } else {
+                                cell.style.background = '#00ff66'; cell.style.color = '#000';
+                                safeClicks++;
+                                if(safeClicks === 8) { // كل المربعات الآمنة انضغطت
+                                    this.stageState.round++;
+                                    if(this.stageState.round > 3) { setTimeout(()=>this.winInteractive(), 500); }
+                                    else { setTimeout(()=>loadRound(), 1000); }
+                                }
+                            }
+                        };
+                        mWrap.appendChild(cell);
+                    }
+                };
+                innerStage.appendChild(mWrap);
+                loadRound();
+                break;
             }
 
-            case 'PATTERN_LOCK': {
-                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:20px; background:#111; padding:30px; border-radius:15px; border:2px solid #333; position:relative;';
-                let dots = []; let currentLine = [];
-                for(let i=0; i<9; i++) {
-                    let dot = document.createElement('div'); dot.className = 'interactive-element'; dot.style.cssText = 'width:80px; height:80px; background:#222; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; border:4px solid #444; transition:0.2s; box-shadow:inset 0 0 10px #000;';
-                    let innerDot = document.createElement('div'); innerDot.style.cssText = 'width:20px; height:20px; background:#555; border-radius:50%; transition:0.2s;'; dot.appendChild(innerDot);
-                    dot.onclick = () => {
-                        if(currentLine.includes(i)) return;
-                        currentLine.push(i); innerDot.style.background = 'var(--apple)'; innerDot.style.boxShadow = '0 0 15px var(--apple)'; dot.style.borderColor = 'var(--apple)';
-                        if(currentLine.length === p.ans.length) {
-                            if(JSON.stringify(currentLine) === JSON.stringify(p.ans)) { setTimeout(()=>this.winInteractive(), 500); } 
-                            else { this.failRoom(); setTimeout(()=>this.setupStage(), 800); }
+            // لعبة الغميضة بين فريقين
+            case 'HIDE_BOMB': {
+                let setupWrap = document.createElement('div'); setupWrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px;';
+                let title = document.createElement('h3'); title.innerText = "إعداد القنابل السري"; title.style.color = 'var(--apple)';
+                let t1 = document.createElement('input'); t1.type = 'password'; t1.placeholder = 'رقم قنبلة الفريق الأول (1-20)'; t1.style.cssText = 'padding:15px; background:#000; border:2px solid #555; color:#fff; border-radius:6px; font-size:1.2rem; text-align:center;';
+                let t2 = document.createElement('input'); t2.type = 'password'; t2.placeholder = 'رقم قنبلة الفريق الثاني (1-20)'; t2.style.cssText = 'padding:15px; background:#000; border:2px solid #555; color:#fff; border-radius:6px; font-size:1.2rem; text-align:center;';
+                
+                let startBtn = generateSubmitButton(() => {
+                    let b1 = parseInt(t1.value); let b2 = parseInt(t2.value);
+                    if(b1 >= 1 && b1 <= 20 && b2 >= 1 && b2 <= 20 && b1 !== b2) {
+                        setupWrap.style.display = 'none';
+                        playGrid(b1, b2);
+                    } else { this.showToast('أدخل أرقام صحيحة من 1 إلى 20 ومختلفة عن بعض!', '#ff3333'); }
+                }, 'بدء البحث');
+                setupWrap.append(title, t1, t2, startBtn);
+                innerStage.appendChild(setupWrap);
+
+                const playGrid = (bomb1, bomb2) => {
+                    let grid = document.createElement('div'); grid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 70px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--apple);';
+                    let safeCount = 0;
+                    for(let i=1; i<=20; i++) {
+                        let cell = document.createElement('div'); cell.className = 'interactive-element';
+                        cell.innerText = i;
+                        cell.style.cssText = 'width:70px; height:70px; background:#222; border:2px solid #555; display:flex; justify-content:center; align-items:center; font-size:1.5rem; font-weight:bold; color:#fff; border-radius:8px; cursor:pointer;';
+                        cell.onclick = () => {
+                            if(i === bomb1 || i === bomb2) {
+                                cell.innerText = '💣'; cell.style.background = '#ff3333';
+                                this.failRoom(); // انفجرت القنبلة
+                            } else {
+                                cell.innerText = '✅'; cell.style.background = '#003300'; cell.style.color = '#00ff66'; cell.style.borderColor = '#00ff66';
+                                cell.style.pointerEvents = 'none';
+                                safeCount++;
+                                if(safeCount === 18) { setTimeout(()=>this.winInteractive(), 500); } // فوز عند إيجاد كل المربعات الآمنة
+                            }
+                        };
+                        grid.appendChild(cell);
+                    }
+                    // زر إنهاء إجباري إذا بغى الهوست ينقلهم
+                    let forceWinBtn = generateSubmitButton(() => { this.winInteractive(); }, 'إنهاء اللعبة (للهوست)');
+                    innerStage.append(grid, forceWinBtn);
+                }
+                break;
+            }
+
+            case 'ELEVATOR': {
+                let eWrap = document.createElement('div'); eWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; background:#222; padding:30px; border-radius:10px; border:4px solid #555;';
+                let eDisplay = document.createElement('div'); eDisplay.style.cssText = 'width:100%; height:50px; background:#000; border:2px solid var(--apple); color:var(--apple); font-family:monospace; font-size:2rem; display:flex; justify-content:center; align-items:center; border-radius:6px; margin-bottom:10px;'; eDisplay.innerText = '---';
+                let btnGrid = document.createElement('div'); btnGrid.style.cssText = 'display:grid; grid-template-columns:repeat(2, 60px); gap:15px;';
+                let sequence = [];
+                for(let i=6; i>=1; i--) { // ترتيب الطوابق من فوق لتحت
+                    let btn = document.createElement('button'); btn.className = 'interactive-element';
+                    btn.innerText = i; btn.style.cssText = 'width:60px; height:60px; border-radius:50%; background:radial-gradient(circle, #eee, #ccc); border:2px solid #999; font-size:1.5rem; font-weight:bold; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.5);';
+                    btn.onclick = () => {
+                        sequence.push(i);
+                        eDisplay.innerText = sequence.join(' ');
+                        btn.style.background = 'var(--apple)'; setTimeout(()=>btn.style.background = 'radial-gradient(circle, #eee, #ccc)', 300);
+                        if(sequence.length === p.ans.length) {
+                            if(JSON.stringify(sequence) === JSON.stringify(p.ans)) { setTimeout(()=>this.winInteractive(), 500); }
+                            else { this.failRoom(); sequence = []; eDisplay.innerText = 'ERR'; setTimeout(()=>eDisplay.innerText = '---', 1000); }
                         }
-                    }; dots.push(dot); pWrap.appendChild(dot);
-                } innerStage.appendChild(pWrap); break;
+                    };
+                    btnGrid.appendChild(btn);
+                }
+                eWrap.append(eDisplay, btnGrid); innerStage.appendChild(eWrap); break;
             }
 
             case 'JUGS': {
@@ -570,7 +591,7 @@ class SolarGamesEngine {
             }
 
             case 'CRYPTEX': {
-                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;';
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;'; // من اليسار لليمين
                 let startWord = ['L','J','S','P','W','Z','L']; let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 for(let i=0; i<7; i++) {
                     let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
@@ -587,10 +608,15 @@ class SolarGamesEngine {
 
             case 'SHARDS': {
                 this.stageState.round = 1;
-                let poets = [ { clues: ['سيف الدولة', 'أبو الطيب', 'الخيل والليل', 'قتلني شعري'], ans: 'المتنبي' }, { clues: ['عبس', 'الفروسية', 'جاهلي', 'عبلة'], ans: 'عنترة' }, { clues: ['مهندس الكلمة', 'زمان الصمت', 'البدر', 'أرفض المسافة'], ans: 'بدر بن عبدالمحسن' } ];
+                // تغيير الشخصيات (دكستر، عنترة، ثيو هرنانديز)
+                let poets = [ 
+                    { clues: ['مختبر', 'دماء', 'ميامي', 'مسلسل جنائي'], ans: 'دكستر' }, 
+                    { clues: ['عبس', 'الفروسية', 'جاهلي', 'عبلة'], ans: 'عنترة' }, 
+                    { clues: ['فرنسي', 'ظهير أيسر', 'ميلان', 'لاعب الهلال'], ans: 'ثيو هرنانديز' } 
+                ];
                 let roundDisp = document.createElement('h3'); roundDisp.style.cssText = 'color:var(--apple); margin-bottom:20px; font-size:1.8rem; border-bottom:2px solid #333; padding-bottom:10px;';
                 let mirWrap = document.createElement('div'); mirWrap.style.cssText = 'display:flex; flex-wrap:wrap; width:400px; gap:15px; justify-content:center; margin-bottom:30px;';
-                let inp = createInputBlock('اسم الشاعر...', '');
+                let inp = createInputBlock('اسم الشخصية...', '');
                 const loadRound = () => {
                     roundDisp.innerText = `-- الجولة ${this.stageState.round} من 3 --`; mirWrap.innerHTML = ''; inp.value = '';
                     poets[this.stageState.round-1].clues.forEach(clue => {
@@ -598,20 +624,41 @@ class SolarGamesEngine {
                         shard.onclick = () => { shard.style.color = '#000'; shard.innerText = clue; shard.style.background = 'linear-gradient(135deg, var(--apple), #fff)'; shard.style.borderColor = '#fff'; }; mirWrap.appendChild(shard);
                     });
                 };
-                inp.oninput = () => { if(inp.value.trim().replace(/\s+/g, '') === poets[this.stageState.round-1].ans.replace(/\s+/g, '')) { this.playSound('success'); this.stageState.round++; if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500); else setTimeout(()=>loadRound(), 800); } };
+                inp.oninput = () => { if(inp.value.trim() === poets[this.stageState.round-1].ans) { this.stageState.round++; if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500); else setTimeout(()=>loadRound(), 800); } };
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(mirWrap, innerStage.children[1]); loadRound(); break;
             }
 
             case 'IMAGE_CHALLENGE': {
+                this.stageState.round = 1;
+                let images = ['puzzle15_1.jpg', 'puzzle15_2.jpg', 'puzzle15_3.jpg'];
+                let answers = ['رسم', 'مجلس التعاون', 'مومباي'];
+                
+                let roundDisp = document.createElement('h3'); roundDisp.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.5rem;';
                 let imgWrap = document.createElement('div');
                 imgWrap.style.cssText = 'width:400px; height:400px; border:4px solid var(--apple); border-radius:8px; overflow:hidden; display:flex; justify-content:center; align-items:center; background:#111; box-shadow:0 10px 30px rgba(0,0,0,0.8); margin-bottom:20px;';
-                let img = document.createElement('img');
-                img.src = 'puzzle15.jpg'; 
-                img.alt = 'قم بوضع ملف puzzle15.jpg في نفس المجلد';
-                img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                let img = document.createElement('img'); img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
                 imgWrap.appendChild(img);
-                innerStage.appendChild(imgWrap);
-                createInputBlock('أدخل الجواب...', p.ans);
+                
+                let inp = createInputBlock('أدخل الجواب...', '');
+                
+                const loadRound = () => {
+                    roundDisp.innerText = `الصورة ${this.stageState.round} من 3`;
+                    img.src = images[this.stageState.round-1];
+                    img.alt = `يرجى إضافة ${images[this.stageState.round-1]}`;
+                    inp.value = '';
+                };
+                
+                inp.oninput = () => {
+                    if(inp.value.trim() === answers[this.stageState.round-1]) {
+                        this.stageState.round++;
+                        if(this.stageState.round > 3) setTimeout(()=>this.winInteractive(), 500); else loadRound();
+                    }
+                };
+                
+                innerStage.lastChild.lastChild.style.display = 'none'; // hide execute
+                innerStage.insertBefore(roundDisp, innerStage.firstChild);
+                innerStage.insertBefore(imgWrap, innerStage.children[1]);
+                loadRound();
                 break;
             }
 
@@ -624,9 +671,8 @@ class SolarGamesEngine {
                         wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); 
                         if(seq.length === p.ans.length) { 
                             if(JSON.stringify(seq) === JSON.stringify(p.ans)) {
-                                this.playSound('success');
-                                pWrap.style.borderColor = '#00ff66';
-                                pWrap.style.boxShadow = '0 0 40px #00ff66';
+                                pWrap.style.borderColor = 'var(--apple)';
+                                pWrap.style.boxShadow = '0 0 40px var(--apple)';
                                 setTimeout(()=>this.winInteractive(), 1000); 
                             } else { this.failRoom(); seq = []; } 
                         } 
@@ -641,37 +687,45 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(pWrap); break;
             }
 
-            case 'TIMELINE': {
-                let ccWrap = document.createElement('div'); ccWrap.style.cssText = 'width:100%; max-width:600px; display:flex; flex-direction:column; gap:20px; background:#111; padding:30px; border-radius:12px; border:2px solid #333; margin-bottom:20px; box-shadow:0 20px 40px rgba(0,0,0,0.9); position:relative;';
-                let targets = [15, 80, 45, 90, 20]; let sliders = [];
-                let syncDisp = document.createElement('div'); syncDisp.style.cssText = 'color:var(--apple); font-family:monospace; font-size:2rem; text-align:center; margin-bottom:15px; font-weight:bold;'; syncDisp.innerText = 'SYNC: 0%';
-                let marker = document.createElement('div'); marker.style.cssText = 'position:absolute; width:2px; height:100%; background:rgba(255,255,255,0.2); left:50%; top:0; pointer-events:none; z-index:0;'; ccWrap.append(marker, syncDisp);
-                let colors = ['#00ccff', '#ff3333', '#00ff66', '#ff00ff', '#ffff00'];
-                ['V1. Main', 'A1. Voice', 'A2. Music', 'V2. B-Roll', 'FX. Sound'].forEach((lbl, i) => {
-                    let tRow = document.createElement('div'); tRow.style.cssText = 'display:flex; align-items:center; gap:15px; height:40px; position:relative; z-index:2;';
-                    let tName = document.createElement('div'); tName.style.cssText = 'width:90px; color:#aaa; font-size:0.9rem; font-weight:bold; text-align:right; font-family:monospace;'; tName.innerText = lbl;
-                    let sWrap = document.createElement('div'); sWrap.style.cssText = 'flex-grow:1; height:100%; background:#050505; border:1px solid #222; border-radius:4px; position:relative; display:flex; align-items:center;';
-                    let s = document.createElement('input'); s.type = 'range'; s.min = 0; s.max = 100; s.value = 50; s.className = 'interactive-element'; s.style.cssText = `-webkit-appearance: none; width:100%; background:transparent; outline:none; cursor:pointer; position:absolute; z-index:5;`;
-                    let style = document.createElement('style'); style.innerHTML = `input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 30px; width: 60px; border-radius: 4px; background: ${colors[i]}; cursor: pointer; border: 2px solid #fff; opacity: 0.8; }`; innerStage.appendChild(style);
-                    s.oninput = () => { let diff = 0; sliders.forEach((sl, idx) => { diff += Math.abs(sl.value - targets[idx]); }); let sync = Math.max(0, 100 - (diff / 2.5)); syncDisp.innerText = `SYNC: ${Math.floor(sync)}%`; if(sync >= 98) { syncDisp.innerText = 'SYNC: 100%'; syncDisp.style.color = '#00ff66'; setTimeout(()=>this.winInteractive(), 800); } };
-                    sliders.push(s); sWrap.appendChild(s); tRow.append(tName, sWrap); ccWrap.appendChild(tRow);
-                }); innerStage.appendChild(ccWrap); break;
+            // باب 17: الدفع أسهم يمين ويسار
+            case 'ARROW_LOCK': {
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px;';
+                let target = [-2, 1, 3, -1]; // المواقع المطلوبة
+                let state = [0, 0, 0, 0];
+                
+                for(let i=0; i<4; i++) {
+                    let row = document.createElement('div'); row.style.cssText = 'display:flex; align-items:center; justify-content:center; gap:15px;';
+                    let btnL = document.createElement('button'); btnL.innerText = '◀'; btnL.style.cssText = 'padding:10px 15px; background:#222; border:1px solid #555; color:var(--apple); cursor:pointer; border-radius:4px;';
+                    let btnR = document.createElement('button'); btnR.innerText = '▶'; btnR.style.cssText = 'padding:10px 15px; background:#222; border:1px solid #555; color:var(--apple); cursor:pointer; border-radius:4px;';
+                    
+                    let track = document.createElement('div'); track.style.cssText = 'width:200px; height:30px; background:#111; position:relative; border-radius:15px; border:2px solid #333;';
+                    let block = document.createElement('div'); block.style.cssText = 'width:30px; height:30px; background:var(--apple); position:absolute; left:83px; border-radius:50%; transition:0.2s; top:-2px;'; 
+                    track.appendChild(block);
+                    
+                    btnL.onclick = () => { if(state[i] > -3) state[i]--; block.style.left = (83 + state[i]*25) + 'px'; };
+                    btnR.onclick = () => { if(state[i] < 3) state[i]++; block.style.left = (83 + state[i]*25) + 'px'; };
+                    
+                    row.append(btnL, track, btnR); wrap.appendChild(row);
+                }
+                let check = generateSubmitButton(() => {
+                    if(JSON.stringify(state) === JSON.stringify(target)) setTimeout(()=>this.winInteractive(), 500); else this.failRoom();
+                }, 'تأكيد الوزن');
+                wrap.appendChild(check); innerStage.appendChild(wrap); break;
             }
 
-            case 'DNA': {
-                let dnaWrap = document.createElement('div'); dnaWrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; align-items:center; margin-bottom:30px;';
-                let bases = ['A','C','G','T']; this.stageState.arr = ['A','A','A','A'];
-                let leftStrand = ['A', 'C', 'T', 'G']; let ansArray = ['T', 'G', 'A', 'C'];
-                leftStrand.forEach((base, i) => {
-                    let row = document.createElement('div'); row.style.cssText = 'display:flex; gap:30px; position:relative;';
-                    let line = document.createElement('div'); line.style.cssText = 'position:absolute; width:60px; height:4px; background:#333; top:28px; left:30px; z-index:0;';
-                    let left = document.createElement('div'); left.style.cssText = 'width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #555; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:2rem; color:#888; z-index:1; box-shadow:inset 0 0 10px #000;'; left.innerText = base;
-                    let right = document.createElement('div'); right.className = 'interactive-element'; right.style.cssText = 'width:60px; height:60px; border-radius:50%; background:#000; border:2px solid var(--apple); display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:2rem; color:var(--apple); cursor:pointer; z-index:1; box-shadow:0 0 15px rgba(140, 198, 63, 0.4); user-select:none;'; right.innerText = 'A';
-                    right.onclick = () => { let idx = bases.indexOf(right.innerText); idx = (idx + 1) % 4; right.innerText = bases[idx]; this.stageState.arr[i] = bases[idx]; };
-                    row.append(line, left, right); dnaWrap.appendChild(row);
-                });
-                let btn = generateSubmitButton(() => { if(JSON.stringify(this.stageState.arr) === JSON.stringify(ansArray)) this.winInteractive(); else this.failRoom(); }, 'دمج السلسلة');
-                innerStage.append(dnaWrap, btn); break;
+            // باب 18: صورة وقصة
+            case 'STORY_IMAGE': {
+                let sWrap = document.createElement('div'); sWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:500px;';
+                
+                let imgWrap = document.createElement('div'); imgWrap.style.cssText = 'width:100%; height:250px; border:4px solid var(--apple); border-radius:8px; overflow:hidden;';
+                let img = document.createElement('img'); img.src = 'puzzle18.jpg'; img.alt = 'يرجى وضع ملف puzzle18.jpg'; img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                imgWrap.appendChild(img);
+                
+                let story = document.createElement('div'); story.style.cssText = 'background:#111; padding:20px; border-right:4px solid var(--apple); color:#ccc; font-size:1.3rem; line-height:1.8; font-family:"Traditional Arabic", serif; text-align:right; border-radius:6px;';
+                story.innerText = 'تفحص الصورة جيداً واربطها بالقصة التي سردها لك الهوست. المكان أو الشخص الذي تبحث عنه هو كلمة السر.';
+                
+                sWrap.append(imgWrap, story); innerStage.appendChild(sWrap);
+                createInputBlock('أدخل الجواب...', p.ans); break;
             }
 
             case 'KEYPAD': {
@@ -694,10 +748,11 @@ class SolarGamesEngine {
                 this.stageState.round = 1;
                 
                 let storyCard = document.createElement('div'); 
-                storyCard.style.cssText = 'width:100%; max-width:650px; background:#1a1a1a; padding:30px; border-radius:8px; border-right:6px solid var(--apple); color:#ddd; font-size:1.4rem; line-height:2; box-shadow:inset 0 0 30px #000; margin-bottom:20px; font-family:"Traditional Arabic", serif; text-align:right; direction:rtl; transition:0.3s;';
+                // تكبير الكلام كما طلبت (font-size: 1.8rem)
+                storyCard.style.cssText = 'width:100%; max-width:700px; background:#1a1a1a; padding:30px; border-radius:8px; border-right:6px solid var(--apple); color:#ddd; font-size:1.8rem; line-height:2.2; box-shadow:inset 0 0 30px #000; margin-bottom:20px; font-family:"Traditional Arabic", serif; text-align:right; direction:rtl; transition:0.3s;';
                 
                 let qTitle = document.createElement('h3'); 
-                qTitle.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.6rem; text-align:right; width:100%; max-width:650px; direction:rtl;';
+                qTitle.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.8rem; text-align:right; width:100%; max-width:700px; direction:rtl;';
                 
                 let inputContainer = document.createElement('div'); 
                 inputContainer.style.width = '100%';
@@ -706,10 +761,10 @@ class SolarGamesEngine {
                     inputContainer.innerHTML = '';
                     
                     if(this.stageState.round === 1) {
-                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي ).</strong>`;
+                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي في رسالة الدعم الفني).</strong>`;
                         qTitle.innerText = `الراوند 1: فك تشفير الملف.`;
                         let inp = createInputBlock('أدخل الكود (مثال: ECHO)...', 'ECHO'); 
-                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ECHO') { this.playSound('success'); this.stageState.round++; loadRound(); } };
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ECHO') { this.stageState.round++; loadRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.round === 2) {
@@ -718,13 +773,13 @@ class SolarGamesEngine {
                         
                         let selectedWords = new Set();
                         storyCard.querySelectorAll('.case-word').forEach((el, index) => {
-                            el.style.cssText = 'color:var(--apple); cursor:pointer; text-decoration:underline dashed #555; padding:0 5px;';
+                            el.style.cssText = 'color:var(--apple); cursor:pointer; text-decoration:underline dashed #555; padding:0 5px; font-size: 2rem; font-weight:bold;'; // تكبير الكلمات المحددة
                             el.onclick = () => {
                                 if(selectedWords.has(index)) { selectedWords.delete(index); el.style.background = 'transparent'; el.style.color = 'var(--apple)'; }
                                 else { selectedWords.add(index); el.style.background = 'var(--apple)'; el.style.color = '#000'; }
                                 
                                 if(selectedWords.size === 2) {
-                                    if(selectedWords.has(0) && selectedWords.has(1)) { this.playSound('success'); this.stageState.round++; loadRound(); } 
+                                    if(selectedWords.has(0) && selectedWords.has(1)) { this.stageState.round++; loadRound(); } 
                                     else { this.failRoom(); selectedWords.clear(); storyCard.querySelectorAll('.case-word').forEach(w => { w.style.background = 'transparent'; w.style.color = 'var(--apple)'; }); }
                                 }
                             };
@@ -735,8 +790,8 @@ class SolarGamesEngine {
                         qTitle.innerText = `الراوند 3: استنتج من هو القاتل؟`;
                         let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
                         ['أحمد', 'خالد', 'سعد'].forEach((suspect, i) => {
-                            let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--apple); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.2rem;';
-                            btn.onclick = () => { if(i === 1) { this.playSound('success'); this.stageState.round++; loadRound(); } else { this.failRoom(); } };
+                            let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--apple); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.5rem;';
+                            btn.onclick = () => { if(i === 1) { this.stageState.round++; loadRound(); } else { this.failRoom(); } };
                             btnWrap.appendChild(btn);
                         });
                         inputContainer.appendChild(btnWrap);
@@ -745,14 +800,14 @@ class SolarGamesEngine {
                         storyCard.innerHTML = `<strong>الرسالة المشفرة:</strong><br>وجدنا في جيب القاتل (خالد) ملاحظة تقول: "الغرفة رقم 10110". هذا الرقم بنظام الباينري (الثنائي).`;
                         qTitle.innerText = `الراوند 4: حول الرقم الثنائي إلى عشري لمعرفة رقم الغرفة الصحيح.`;
                         let inp = createInputBlock('أدخل رقم الغرفة...', '22'); 
-                        inp.oninput = () => { if(inp.value.trim() === '22' || inp.value.trim() === '٢٢') { this.playSound('success'); this.stageState.round++; loadRound(); } };
+                        inp.oninput = () => { if(inp.value.trim() === '22' || inp.value.trim() === '٢٢') { this.stageState.round++; loadRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.round === 5) {
                         storyCard.innerHTML = `<strong>إغلاق القضية:</strong><br>اكتملت الأدلة، القاتل هو خالد، في الغرفة رقم 22، والدافع مخفي في اسم اللعبة التي تلعبونها الآن.`;
                         qTitle.innerText = `الراوند 5 (الأخير): أدخل الرمز النهائي الـ (MASTER PASSWORD).`;
                         let inp = createInputBlock('MASTER PASSWORD...', 'SOLAR');
-                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ESCAPE ROOM') { setTimeout(()=>this.winInteractive(), 500); } };
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'SOLAR') { setTimeout(()=>this.winInteractive(), 500); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                 };
@@ -769,7 +824,6 @@ class SolarGamesEngine {
     winInteractive() {
         this.clearTimers();
         this.stageState.playing = false;
-        this.playSound('success'); 
         
         document.getElementById('interactive-stage-container').classList.add('hidden');
         document.getElementById('puzzle-desc').innerText = this.activeGate.txtQ;
@@ -780,11 +834,9 @@ class SolarGamesEngine {
     }
 
     checkResult() {
-        this.playSound('click');
         let answerInput = document.getElementById('user-input').value.trim();
         
         if (answerInput === this.activeGate.txtA) {
-            this.playSound('success'); 
             this.solvedGates.add(this.activeGate.id);
             this.showToast('تم اختراق الغرفة بنجاح!', '#00ff66');
             this.returnToLobby();
@@ -794,30 +846,19 @@ class SolarGamesEngine {
     }
     
     failRoom() { 
-        this.playSound('error'); 
         this.triggerVisualGlitch(); 
-    }
-
-    toggleAdminSidebar(open) { 
-        this.playSound('click'); 
-        const sidebar = document.getElementById('admin-sidebar'); 
-        open ? sidebar.classList.add('open') : sidebar.classList.remove('open'); 
     }
     
     adminInstantSolveGate() {
-        this.playSound('click'); 
         if(!this.activeGate) return;
-        
-        this.toggleAdminSidebar(false); 
         this.solvedGates.add(this.activeGate.id);
-        this.showToast('تم تخطي الغرفة إجبارياً!', '#00ff66'); 
+        this.showToast('تم تخطي الغرفة!', '#00ff66'); 
         this.returnToLobby();
     }
 
     returnToLobby() { 
         this.clearTimers();
         this.stageState.playing = false;
-        this.playSound('click'); 
         this.switchScreen('lobby'); 
         this.renderLobby(); 
     }
