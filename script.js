@@ -725,7 +725,7 @@ class SolarGamesEngine {
                 imgWrap.appendChild(img);
                 
                 let story = document.createElement('div'); story.style.cssText = 'background:#111; padding:20px; border-right:4px solid var(--apple); color:#ccc; font-size:1.3rem; line-height:1.8; font-family:"Traditional Arabic", serif; text-align:right; border-radius:6px;';
-                story.innerText = 'تفحص الصورة جيداً واربطها بالقصة التي سردها لك الهوست. المكان أو الشخص الذي تبحث عنه هو كلمة السر.';
+                story.innerText = 'تفحص الصوره جيدا واربطها بقصة (تاج + قنبلة  + عربية سوبر ماركت  .';
                 
                 sWrap.append(imgWrap, story); innerStage.appendChild(sWrap);
                 createInputBlock('أدخل الجواب...', p.ans); break;
