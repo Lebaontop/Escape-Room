@@ -94,7 +94,7 @@ class SolarGamesEngine {
             {q: "لها عقارب ولكن لا تلدغ？", a: "الساعة"},
             {q: "مليء بالثقوب ولكنه يحتفظ بالماء؟", a: "الاسفنج"},
             {q: "لا يمكنك الاحتفاظ به إلا بعد إعطائه؟", a: "الوعد"},
-            {q: "إذا نطقت باسمه كسرته؟", a: "الصمت"}, 
+            {q: "إذا نطقت باسمه كسرته？", a: "الصمت"}, 
             {q: "كلما جففت شيئًا، أصبحت أكثر بللًا؟", a: "المنشفة"}, 
             {q: "فيها مدن بلا منازل، وغابات بلا أشجار؟", a: "الخريطة"},
             {q: "يمشي بلا أرجل ويبكي بلا أعين؟", a: "السحاب"},
@@ -124,14 +124,14 @@ class SolarGamesEngine {
             else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق الثلاثة بالترتيب الصحيح. الخطأ يصفر اللوحة."; m.ans=[4, 1, 5]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
             else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
-            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول للكلمة."; m.ans='ECLIPSE'; }
+            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول لكلمة."; m.ans='ECLIPSE'; }
             else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية (دكستر، عنترة، ثيو)."; }
             else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور (3 جولات): تفحص الصورة واستنتج الجواب الصحيح للراوند."; }
             else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
             else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً وراقب نسبة التطابق لـ 100%."; }
             else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="قصة اللوحة: اقرأ الملاحظة وتفحص الصورة المرفقة (puzzle18.jpg) لاستنتاج الدولة الجواب."; m.ans='ليبا'; }
             else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1957'; }
-            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي الأسود (5 مراحل): قضية تحقيق جنائية مستوحاة من عالم دكستر ."; }
+            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي  (5 مراحل): قضية تحقيق جنائية مستوحاة من عالم دكستر     ."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -267,7 +267,6 @@ class SolarGamesEngine {
                         } else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
                     }; smGrid.appendChild(b); boxes.push(b);
                 } innerStage.appendChild(smGrid); this.stageState.round = 1;
-                
                 const playRound = () => {
                     this.stageState.playing = false; this.stageState.clicks = 0;
                     let count = this.stageState.round === 1 ? 4 : 6;
@@ -326,7 +325,7 @@ class SolarGamesEngine {
                 symbols.forEach((sym, idx) => {
                     let card = document.createElement('div'); card.className = 'interactive-element'; card.style.cssText = 'width:60px; height:60px; perspective:1000px; cursor:pointer; position:relative;';
                     let inner = document.createElement('div'); inner.style.cssText = 'width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d; position:absolute;';
-                    let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold;'; front.innerText = idx + 1;
+                    let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold; front.innerText = idx + 1;';
                     let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
                     inner.append(front, back); card.appendChild(inner);
                     card.onclick = () => {
@@ -659,7 +658,7 @@ class SolarGamesEngine {
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.detectiveRound === 3) {
-                        storyCard.innerHTML = `<strong>الراوند 3: التركيبة والنمط الرقمي لمخدر M99</strong><br>وجد المحققون زجاجة فارغة من مادة شل الحركة M99. لفتح نظام الصيدلية ومعرفة من استخرجها، يجب إكمال النمط الرياضي المعقد التالي لتوازن المركب الكيميائي:<br><br><center style="font-family:monospace; font-size:2.5rem; color:var(--apple); letter-spacing:5px;">3, 8, 15, 24, 35, ?</center>`;
+                        storyCard.innerHTML = `<strong>الراوند 3: التركيبة والنمط الرقمي لمخدر M99</strong><br>وجد المحققون زجاجة فارغة من مادة شل الحركة M99. لفتح نظام الصيدلية ومعرفة من استخرجها، يجب إكمال النمط الرياضي المعقد التالي لتوازن المركب الكيميائي:<br><br><center style="font-family:monospace; font-size:2.5rem; color:var(--apple);">3, 8, 15, 24, 35, ?</center>`;
                         qTitle.innerText = "اللاعبين: فكوا النمط الحسابي المعقد لاستخراج الرقم المفقود.";
                         let inp = createInputBlock('أدخل الرقم المفقود يدوياً...', '48');
                         inp.oninput = () => { if(inp.value.trim() === '48') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
@@ -676,7 +675,7 @@ class SolarGamesEngine {
                         }); inputContainer.appendChild(btnWrap);
                     }
                     else if(this.stageState.detectiveRound === 5) {
-                        storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (قانون هاري)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية مخبأً بدقة داخل نظام التكييف. القفل الجنائي يتطلب إدخال كلمة السر النهائية للنظام لفك تشفير جزار ميامي بالكامل وإغلاق ملف القضية.`;
+                        storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (قانون هاري)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية مخبأً بدقة داخل نظام التكييف. القفل الجنائي يتطلب إدخال كلمة السر النهائية للنظام لفك تشفير جزار ميامي بالكامل وإغلاق ملف القضية بنجاح.`;
                         qTitle.innerText = "اللاعبين: ما هي الكلمة المفتاحية لنظام الحماية النهائي المشتق من اسم اللعبة الكبرى التي تلعبونها؟";
                         let inp = createInputBlock('أدخل كلمة السر النهائية...', 'SOLAR');
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'SOLAR') { setTimeout(()=>this.winInteractive(), 500); } };
@@ -733,14 +732,21 @@ class SolarGamesEngine {
         this.switchScreen('lobby'); 
         this.renderLobby(); 
 
-        // إظهار شاشة الفوز إذا تم حل جميع الأبواب
         if(this.solvedGates.size === 20) {
-            const winScreen = document.getElementById('win-screen');
-            if(winScreen) {
-                winScreen.classList.remove('hidden');
-            } else {
-                alert("تم اختراق النظام بالكامل! 🟢 لقد أنهيتم جميع الأبواب بنجاح.");
-            }
+            let winOverlay = document.createElement('div');
+            winOverlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); lighten:0.1; z-index:99999; display:flex; justify-content:center; align-items:center; text-align:center; direction:rtl;';
+            
+            let winText = document.createElement('h1');
+            winText.style.cssText = 'color:var(--apple); font-size:4rem; font-family: Changa, sans-serif; text-shadow:0 0 30px var(--apple); line-height:1.8; font-weight:800;';
+            winText.innerHTML = 'تم اختراق النظام بالكامل!<br>🟢<br>لقد أنجزتم جميع الأبواب بنجاح';
+            
+            winOverlay.appendChild(winText);
+            document.body.appendChild(winOverlay);
+            
+            
+            setTimeout(() => {
+                winOverlay.remove();
+            }, 10000);
         }
     }
 }
