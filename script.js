@@ -858,20 +858,18 @@ class SolarGamesEngine {
         this.returnToLobby();
     }
 
-    returnToLobby() { 
-        this.clearTimers();
-        this.stageState.playing = false;
-        this.switchScreen('lobby'); 
-        this.renderLobby(); returnToLobby() { 
+returnToLobby() { 
         this.clearTimers();
         this.stageState.playing = false;
         this.switchScreen('lobby'); 
         this.renderLobby(); 
+
+      
         if(this.solvedGates.size === 20) {
-        
+       
             alert("تم اختراق النظام بالكامل! 🟢 لقد أنهيتم جميع الأبواب بنجاح.");
             
-            
+            /ff66');
         }
     }
     }
