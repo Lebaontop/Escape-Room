@@ -12,14 +12,12 @@ class SolarGamesEngine {
         this.activeGate = null;
         this.solvedGates = new Set();
         
-        // مؤقت خارجي بسيط يبدأ من 60 ثانية
         this.externalTimerSeconds = 60; 
         this.isTimerRunning = false;
         
         this.gameConfig = this.buildPuzzles();
         this.init();
         
-        // تحديث المؤقت كل ثانية
         setInterval(() => {
             if(this.isTimerRunning && this.externalTimerSeconds > 0) {
                 this.externalTimerSeconds--;
@@ -33,7 +31,7 @@ class SolarGamesEngine {
         this.updateTimerDisplay();
     }
 
-    playSound(type) { return; } // بدون صوت
+    playSound(type) { return; }  
     
     showToast(msg, color = 'var(--apple)') {
         const t = document.createElement('div'); 
@@ -52,7 +50,6 @@ class SolarGamesEngine {
         } 
     }
 
-    // دوال المؤقت الخارجي السريع
     setTimer() {
         let val = document.getElementById('timer-input').value;
         let parts = val.split(':');
@@ -67,7 +64,6 @@ class SolarGamesEngine {
         }
     }
 
-    // دالة الأزرار الجديدة (30 ثانية و 1 دقيقة)
     setSpecificTimer(secs) {
         this.externalTimerSeconds = secs;
         this.updateTimerDisplay();
@@ -116,12 +112,12 @@ class SolarGamesEngine {
             else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: 6 ألوان، لاحظ المربع الذي ينطفئ وكرر النمط (جولتين)."; m.data=6; }
             else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (أخضر=مكان صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; }
             else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات (المرقمة من 1-20) وطابق الأزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; }
-            else if(i===5) { m.uiType = 'COMPASS'; m.desc="توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
-            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
+            else if(i===5) { m.uiType = 'COMPASS'; m.desc=" 45 , 225 , *** توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
+            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى *** بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
             else if(i===7) { m.uiType = 'TIC_TAC_TOE'; m.desc="لعبة الـ X O: اضغط لتغيير الرمز لعمل خط كامل."; m.ans=['X','','X', '','X','', 'X','','X']; }
             else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): في كل جولة هناك لغم واحد عشوائي، اضغط على جميع الأرقام الآمنة لتفوز."; }
             else if(i===9) { m.uiType = 'HIDE_BOMB'; m.desc="الغميضة المتفجرة: اختاروا أرقام القنابل، ثم ابحثوا في الشبكة."; }
-            else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق بالترتيب المخفي في السيرفر."; m.ans=[4, 1, 5]; } // 3 أرقام فقط
+            else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق بالترتيب المخفي في السيرفر."; m.ans=[4, 1, 5]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
             else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
             else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول لكلمة (ECLIPSE)."; m.ans='ECLIPSE'; }
@@ -130,7 +126,7 @@ class SolarGamesEngine {
             else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
             else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً لتصل النسبة لـ 100%."; }
             else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="قصة اللوحة: اقرأ القصة وتفحص الصورة المرفقة لاستنتاج الإجابة."; m.ans='ليبا'; }
-            else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1936'; }
+            else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1957'; }
             else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف القضية الأسود (5 مراحل): ابحث عن الأدلة لتعرف القاتل الحقيقي."; }
 
             m.txtQ = riddles[i-1].q;
@@ -414,7 +410,6 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(sclWrap); break;
             }
 
-            // لعبة إكس أو وتأكيد الهوست للفوز
             case 'TIC_TAC_TOE': {
                 let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--apple); box-shadow:0 10px 30px rgba(140, 198, 63, 0.2);';
                 let cells = [];
@@ -534,7 +529,6 @@ class SolarGamesEngine {
                 break;
             }
 
-            // المصعد: 3 أرقام وإذا أخطأ في الـ 3 يعطيه خطأ
             case 'ELEVATOR': {
                 let eWrap = document.createElement('div'); eWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; background:#222; padding:30px; border-radius:10px; border:4px solid #555;';
                 let eDisplay = document.createElement('div'); eDisplay.style.cssText = 'width:100%; height:50px; background:#000; border:2px solid var(--apple); color:var(--apple); font-family:monospace; font-size:2rem; display:flex; justify-content:center; align-items:center; border-radius:6px; margin-bottom:10px;'; eDisplay.innerText = '---';
@@ -589,8 +583,6 @@ class SolarGamesEngine {
                 innerStage.append(startMarker, bmWrap, endMarker); break;
             }
 
-            // الباب 13: الأسطوانة - حروف مرتبة ومخربطة بنسبة بسيطة (E C L I P S E)
-            // الحروف المبدئية: E, A, L, I, P, Q, E (أغلبها صح، بس C و S يبيلهم تعديل)
             case 'CRYPTEX': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;'; 
                 let startWord = ['E','A','L','I','P','Q','E']; 
@@ -656,7 +648,7 @@ class SolarGamesEngine {
                     }
                 };
                 
-                innerStage.lastChild.lastChild.style.display = 'none'; // hide execute
+                innerStage.lastChild.lastChild.style.display = 'none'; 
                 innerStage.insertBefore(roundDisp, innerStage.firstChild);
                 innerStage.insertBefore(imgWrap, innerStage.children[1]);
                 loadRound();
@@ -688,7 +680,6 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(pWrap); break;
             }
 
-            // باب 17: الدفع أسهم يمين ويسار مع نسبة التوافق
             case 'ARROW_LOCK': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px; align-items:center;';
                 let target = [-2, 1, 3, -1]; 
@@ -700,7 +691,7 @@ class SolarGamesEngine {
                 const updatePercent = () => {
                     let diff = 0;
                     for(let j=0; j<4; j++) diff += Math.abs(state[j] - target[j]);
-                    let percent = Math.floor(100 - (diff / 24 * 100)); // 24 is max possible diff
+                    let percent = Math.floor(100 - (diff / 24 * 100)); 
                     syncDisp.innerText = `التطابق: ${percent}%`;
                 };
                 updatePercent();
