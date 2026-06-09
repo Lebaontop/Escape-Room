@@ -763,7 +763,7 @@ class SolarGamesEngine {
                     inputContainer.innerHTML = '';
                     
                     if(this.stageState.round === 1) {
-                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي في رسالة الدعم الفني).</strong>`;
+                        storyCard.innerHTML = `<strong>التقرير الأولي:</strong><br>تم العثور على ملف القضية الأسود مقفلاً. للبدء في التحقيق، عليك العثور على الكود السري المكون من 4 أحرف إنجليزية. <strong>(اذهب إلى رومات الديسكورد وابحث عن الكود المخفي في رومات الالعاب).</strong>`;
                         qTitle.innerText = `الراوند 1: فك تشفير الملف.`;
                         let inp = createInputBlock('أدخل الكود (مثال: ECHO)...', 'ECHO'); 
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ECHO') { this.stageState.round++; loadRound(); } };
