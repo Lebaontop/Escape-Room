@@ -1,7 +1,7 @@
 :root { 
     --dark: #000000; --mid: #0a0a0a; --light: #111111;
     --accent: #ffffff; --green: #00ff66; --red: #ff3333;
-    /* التعديل هنا: تحويل المتغيرات إلى تفاحي مع الحفاظ على مسميات الكلاسات لتعمل اللعبة بدون أخطاء */
+    
     --apple: #8cc63f; 
     --dark-apple: #5c8a24;
     --gold: var(--apple); 
@@ -109,3 +109,36 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 .error-glitch { animation: glitchShake 0.15s infinite; border-color: var(--red) !important; }
 @keyframes glitchShake { 0% { transform: translate(0); } 50% { transform: translate(-4px, 2px); } 100% { transform: translate(4px, -2px); } }
+/* الألوان الأساسية الخاصة بالتفاحي */
+:root { 
+    --dark: #000000; --mid: #0a0a0a; --light: #111111;
+    --accent: #ffffff; --green: #00ff66; --red: #ff3333;
+    --apple: #8cc63f; 
+    --dark-apple: #5c8a24;
+    --gold: var(--apple); 
+    --dark-gold: var(--dark-apple);
+}
+
+
+.btn-skip {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5000;
+    background: #000;
+    color: var(--apple);
+    border: 2px solid var(--apple);
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    transition: 0.2s;
+    font-size: 1.1rem;
+}
+.btn-skip:hover {
+    background: var(--apple);
+    color: #000;
+}
+
+
