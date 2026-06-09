@@ -654,8 +654,8 @@ class SolarGamesEngine {
                         storyCard.appendChild(mapGrid);
 
                         qTitle.innerText = "اللاعبين: حللوا مسار الهروب (المربعات التي تحتوي على المراسي ⚓) واكتشفوا رمز العبور الإحداثي المكتوب في لوحة المفاتيح المعلقة.";
-                        let inp = createInputBlock('أدخل كود الإحداثيات البحري...', 'ROUTE99');
-                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ROUTE99') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
+                        let inp = createInputBlock('أدخل كود الإحداثيات البحري...', '70');
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === '70') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.detectiveRound === 3) {
