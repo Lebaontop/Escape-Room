@@ -12,7 +12,6 @@ class SolarGamesEngine {
         this.activeGate = null;
         this.solvedGates = new Set();
         
-        // الوقت الافتراضي عند بداية اللعبة (60 ثانية = دقيقة)
         this.externalTimerSeconds = 60; 
         this.isTimerRunning = false;
         
@@ -65,7 +64,6 @@ class SolarGamesEngine {
         }
     }
 
-    // دالة الأزرار السريعة (30 ثانية و 1 دقيقة)
     setSpecificTimer(secs) {
         this.externalTimerSeconds = secs;
         this.updateTimerDisplay();
@@ -117,7 +115,7 @@ class SolarGamesEngine {
             else if(i===5) { m.uiType = 'COMPASS'; m.desc=" 45 , 225 , 135 توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
             else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى 150 بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
             else if(i===7) { m.uiType = 'TIC_TAC_TOE'; m.desc="لعبة الـ X O: اضغط لتغيير الرمز لعمل خط كامل."; m.ans=['X','','X', '','X','', 'X','','X']; }
-            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): في كل جولة هناك لغم واحد عشوائي، اضغط على جميع الأرقام الآمنة لتفوز."; }
+            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): في كل جولة هناك لغم واحد عشوائي، ابحث عن اللغم واضغط عليه لتتجاوز الجولة."; }
             else if(i===9) { m.uiType = 'HIDE_BOMB'; m.desc="الغميضة المتفجرة: اختاروا أرقام القنابل، ثم ابحثوا في الشبكة."; }
             else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق بالترتيب المخفي في السيرفر."; m.ans=[4, 1, 5]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
@@ -312,7 +310,7 @@ class SolarGamesEngine {
                     if(guess.some(isNaN)) return;
                     this.stageState.attempts++;
                     
-                    let secret = [...p.ans]; 
+                    let secret = [...p.ans]; // [3, 7, 1, 9]
                     let secretMarked = [false, false, false, false];
                     let guessMarked = [false, false, false, false];
                     let resultColors = ['#ff3333', '#ff3333', '#ff3333', '#ff3333'];
@@ -326,7 +324,6 @@ class SolarGamesEngine {
                         }
                     }
 
-                    // فحص البرتقالي
                     for(let i=0; i<4; i++) {
                         if(!guessMarked[i]) {
                             for(let j=0; j<4; j++) {
@@ -412,7 +409,6 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(sclWrap); break;
             }
 
-            // تعديل باب 7: X O ليقبل أي 3 متشابهين في خط واحد
             case 'TIC_TAC_TOE': {
                 let msWrap = document.createElement('div'); msWrap.style.cssText = 'display:grid; grid-template-columns:repeat(3, 80px); gap:10px; background:#111; padding:20px; border-radius:12px; border:2px solid var(--apple); box-shadow:0 10px 30px rgba(140, 198, 63, 0.2);';
                 let cells = [];
@@ -458,7 +454,6 @@ class SolarGamesEngine {
                     mWrap.innerHTML = '';
                     roundDisp.innerText = `الجولة ${this.stageState.round} من 3`;
                     let mineIndex = Math.floor(Math.random() * 9);
-                    let safeClicks = 0;
                     
                     for(let i=0; i<9; i++) {
                         let cell = document.createElement('div'); cell.className = 'interactive-element';
@@ -471,15 +466,11 @@ class SolarGamesEngine {
                             cell.dataset.clicked = "1";
                             if(i === mineIndex) {
                                 cell.style.background = '#ff3333'; cell.innerText = '💣';
-                                this.failRoom(); setTimeout(()=>loadRound(), 1000); 
+                                this.stageState.round++;
+                                if(this.stageState.round > 3) { setTimeout(()=>this.winInteractive(), 500); }
+                                else { setTimeout(()=>loadRound(), 1000); }
                             } else {
                                 cell.style.background = '#00ff66'; cell.style.color = '#000';
-                                safeClicks++;
-                                if(safeClicks === 8) { 
-                                    this.stageState.round++;
-                                    if(this.stageState.round > 3) { setTimeout(()=>this.winInteractive(), 500); }
-                                    else { setTimeout(()=>loadRound(), 1000); }
-                                }
                             }
                         };
                         mWrap.appendChild(cell);
@@ -532,10 +523,9 @@ class SolarGamesEngine {
                 break;
             }
 
-            // تعديل الباب 10: 3 أرقام خاطئة = تصفير وكلمة "خطأ"
             case 'ELEVATOR': {
                 let eWrap = document.createElement('div'); eWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; background:#222; padding:30px; border-radius:10px; border:4px solid #555;';
-                let eDisplay = document.createElement('div'); eDisplay.style.cssText = 'width:100%; height:50px; background:#000; border:2px solid var(--apple); color:var(--apple); font-family:monospace; font-size:2rem; display:flex; justify-content:center; align-items:center; border-radius:6px; margin-bottom:10px;'; eDisplay.innerText = '---';
+                let eDisplay = document.createElement('div'); eDisplay.style.cssText = 'width:100%; height:50px; background:#000; border:2px solid var(--apple); color:var(--apple); font-family:monospace; font-size:2rem; display:flex; justify-content:center; align-items:center; border-radius:6px; margin-bottom:10px; transition:0.2s;'; eDisplay.innerText = '---';
                 let btnGrid = document.createElement('div'); btnGrid.style.cssText = 'display:grid; grid-template-columns:repeat(2, 60px); gap:15px;';
                 let sequence = [];
                 for(let i=6; i>=1; i--) { 
@@ -546,14 +536,14 @@ class SolarGamesEngine {
                         eDisplay.innerText = sequence.join(' ');
                         btn.style.background = 'var(--apple)'; setTimeout(()=>btn.style.background = 'radial-gradient(circle, #eee, #ccc)', 300);
                         if(sequence.length === 3) {
-                            if(JSON.stringify(sequence) === JSON.stringify(p.ans)) { 
-                                setTimeout(()=>this.winInteractive(), 500); 
-                            } else { 
+                            if(JSON.stringify(sequence) === JSON.stringify(p.ans)) { setTimeout(()=>this.winInteractive(), 500); }
+                            else { 
                                 this.failRoom(); 
                                 sequence = []; 
                                 eDisplay.style.color = '#ff3333'; 
+                                eDisplay.style.borderColor = '#ff3333'; 
                                 eDisplay.innerText = 'خطأ'; 
-                                setTimeout(()=>{ eDisplay.style.color = 'var(--apple)'; eDisplay.innerText = '---'; }, 1000); 
+                                setTimeout(()=>{ eDisplay.style.color = 'var(--apple)'; eDisplay.style.borderColor = 'var(--apple)'; eDisplay.innerText = '---'; }, 1000); 
                             }
                         }
                     };
@@ -594,11 +584,9 @@ class SolarGamesEngine {
                 innerStage.append(startMarker, bmWrap, endMarker); break;
             }
 
-            // تعديل الباب 13: الأسطوانة (ترتيب أسهل للحروف مع خربطة بسيطة)
             case 'CRYPTEX': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;'; 
-                // الحروف الحالية E C M I P R E -> حرفين مخربطين بس والباقي صحيح في مكانه
-                let startWord = ['E','C','M','I','P','R','E']; 
+                let startWord = ['E','A','L','I','P','Q','E']; 
                 let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 for(let i=0; i<7; i++) {
                     let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
@@ -618,7 +606,7 @@ class SolarGamesEngine {
                 let poets = [ 
                     { clues: ['مختبر', 'دماء', 'ميامي', 'مسلسل جنائي'], ans: 'دكستر' }, 
                     { clues: ['عبس', 'الفروسية', 'جاهلي', 'عبلة'], ans: 'عنترة' }, 
-                    { clues: ['فرنسي', 'ظهير أيسر', 'ميلان', 'لاعب الهلال'], ans: 'ثيو هرنانديز' } 
+                    { clues: ['فرنسي', 'ظهير أيسر', 'ميلان', 'لاعب الهلال'], ans: 'ثيو' } 
                 ];
                 let roundDisp = document.createElement('h3'); roundDisp.style.cssText = 'color:var(--apple); margin-bottom:20px; font-size:1.8rem; border-bottom:2px solid #333; padding-bottom:10px;';
                 let mirWrap = document.createElement('div'); mirWrap.style.cssText = 'display:flex; flex-wrap:wrap; width:400px; gap:15px; justify-content:center; margin-bottom:30px;';
@@ -693,20 +681,21 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(pWrap); break;
             }
 
-            // تعديل الباب 17: إضافة نسبة مئوية للحساس
             case 'ARROW_LOCK': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px; align-items:center;';
                 let target = [-2, 1, 3, -1]; 
                 let state = [0, 0, 0, 0];
                 
                 let syncDisp = document.createElement('div');
-                syncDisp.style.cssText = 'color:var(--apple); font-size:2rem; margin-bottom:10px; font-weight:bold; font-family:monospace;';
+                syncDisp.style.cssText = 'color:var(--apple); font-size:2rem; margin-bottom:10px; font-weight:bold; font-family:monospace; transition:0.3s;';
                 
                 const updatePercent = () => {
                     let diff = 0;
                     for(let j=0; j<4; j++) diff += Math.abs(state[j] - target[j]);
                     let percent = Math.max(0, Math.floor(100 - (diff / 16 * 100))); 
                     syncDisp.innerText = `التطابق: ${percent}%`;
+                    if(percent === 100) syncDisp.style.color = '#00ff66';
+                    else syncDisp.style.color = 'var(--apple)';
                 };
                 updatePercent();
                 wrap.appendChild(syncDisp);
@@ -739,7 +728,7 @@ class SolarGamesEngine {
                 imgWrap.appendChild(img);
                 
                 let story = document.createElement('div'); story.style.cssText = 'background:#111; padding:20px; border-right:4px solid var(--apple); color:#ccc; font-size:1.3rem; line-height:1.8; font-family:"Traditional Arabic", serif; text-align:right; border-radius:6px;';
-                story.innerText = 'تفحص الصوره جيدا واربطها بقصة (تاج + قنبلة  + عربية سوبر ماركت) .';
+                story.innerText = 'تفحص الصوره جيدا واربطها بقصة (تاج + قنبلة  + عربية سوبر ماركت).';
                 
                 sWrap.append(imgWrap, story); innerStage.appendChild(sWrap);
                 createInputBlock('أدخل الجواب...', p.ans); break;
