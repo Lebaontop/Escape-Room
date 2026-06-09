@@ -12,14 +12,12 @@ class SolarGamesEngine {
         this.activeGate = null;
         this.solvedGates = new Set();
         
-        // المؤقت الخارجي يبدأ بـ 60 ثانية (دقيقة واحدة)
         this.externalTimerSeconds = 60; 
         this.isTimerRunning = false;
         
         this.gameConfig = this.buildPuzzles();
         this.init();
         
-        // محرك المؤقت الخارجي
         setInterval(() => {
             if(this.isTimerRunning && this.externalTimerSeconds > 0) {
                 this.externalTimerSeconds--;
@@ -33,7 +31,6 @@ class SolarGamesEngine {
         this.updateTimerDisplay();
     }
 
-    // إزالة الأصوات تماماً من اللعبة
     playSound(type) { return; }  
     
     showToast(msg, color = 'var(--apple)') {
@@ -53,7 +50,6 @@ class SolarGamesEngine {
         } 
     }
 
-    // دوال التحكم بالمؤقت الخارجي
     setTimer() {
         let val = document.getElementById('timer-input').value;
         let parts = val.split(':');
@@ -125,11 +121,11 @@ class SolarGamesEngine {
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
             else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
             else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول لكلمة."; m.ans='ECLIPSE'; }
-            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية (دكستر، عنترة، ثيو)."; }
+            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية ."; }
             else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور (3 جولات): تفحص الصورة واستنتج الجواب الصحيح للراوند."; }
             else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
             else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً وراقب نسبة التطابق لـ 100%."; }
-            else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="قصة اللوحة: اقرأ الملاحظة وتفحص الصورة المرفقة (puzzle18.jpg) لاستنتاج الدولة الجواب."; m.ans='ليبا'; }
+            else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="كون قصة: اقرأ الملاحظة وتفحص الصورة و كون القصة ."; m.ans='ليبا'; }
             else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1957'; }
             else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي  (5 مراحل): قضية تحقيق جنائية مستوحاة من عالم دكستر     ."; }
 
@@ -319,14 +315,21 @@ class SolarGamesEngine {
                 container.append(inputs, historyWrap, btn); innerStage.appendChild(container); break;
             }
 
-            case 'MATCH': {
+           case 'MATCH': {
                 let crdGrid = document.createElement('div'); crdGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 60px); gap:10px; justify-content:center; perspective:1000px;';
                 let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5); let flipped = [];
                 symbols.forEach((sym, idx) => {
                     let card = document.createElement('div'); card.className = 'interactive-element'; card.style.cssText = 'width:60px; height:60px; perspective:1000px; cursor:pointer; position:relative;';
                     let inner = document.createElement('div'); inner.style.cssText = 'width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d; position:absolute;';
-                    let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold; front.innerText = idx + 1;';
-                    let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
+                    
+                    let front = document.createElement('div'); 
+                    front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold;'; 
+                    front.innerText = idx + 1; 
+                    
+                    let back = document.createElement('div'); 
+                    back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; 
+                    back.innerText = sym;
+                    
                     inner.append(front, back); card.appendChild(inner);
                     card.onclick = () => {
                         if(inner.style.transform === 'rotateY(180deg)' || flipped.length >= 2) return;
