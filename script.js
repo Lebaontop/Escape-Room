@@ -115,7 +115,7 @@ class SolarGamesEngine {
             else if(i===5) { m.uiType = 'COMPASS'; m.desc=" 45 , 225 , *** توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
             else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى *** بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
             else if(i===7) { m.uiType = 'TIC_TAC_TOE'; m.desc="لعبة الـ X O: اضغط لتغيير الرمز لعمل خط كامل."; m.ans=['X','','X', '','X','', 'X','','X']; }
-            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): في كل جولة هناك لغم واحد عشوائي، ابحث عن اللغم واضغط عليه لتتجاوز الجولة."; }
+            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): في كل جولة هناك لغم واحد عشوائي، اضغط على جميع الأرقام الآمنة لتفوز."; }
             else if(i===9) { m.uiType = 'HIDE_BOMB'; m.desc="الغميضة المتفجرة: اختاروا أرقام القنابل، ثم ابحثوا في الشبكة."; }
             else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق بالترتيب المخفي في السيرفر."; m.ans=[4, 1, 5]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
@@ -310,12 +310,11 @@ class SolarGamesEngine {
                     if(guess.some(isNaN)) return;
                     this.stageState.attempts++;
                     
-                    let secret = [...p.ans]; // [3, 7, 1, 9]
+                    let secret = [...p.ans]; 
                     let secretMarked = [false, false, false, false];
                     let guessMarked = [false, false, false, false];
                     let resultColors = ['#ff3333', '#ff3333', '#ff3333', '#ff3333'];
 
-                    // فحص الأخضر
                     for(let i=0; i<4; i++) {
                         if(guess[i] === secret[i]) {
                             resultColors[i] = '#00ff66';
@@ -868,7 +867,24 @@ class SolarGamesEngine {
         this.renderLobby(); 
 
         if(this.solvedGates.size === 20) {
-            alert("تم اختراق النظام بالكامل! 🟢 لقد أنهيتم جميع الأبواب بنجاح.");
+            let winScreen = document.getElementById('win-screen-overlay');
+            if(!winScreen) {
+                winScreen = document.createElement('div');
+                winScreen.id = 'win-screen-overlay';
+                winScreen.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; justify-content:center; align-items:center; text-align:center; flex-direction:column;';
+                winScreen.innerHTML = `
+                    <h1 style="color:var(--apple); font-size: 5rem; font-family: 'Rajdhani', sans-serif; text-shadow: 0 0 50px var(--apple);">
+                        تم اختراق النظام بالكامل!<br>🟢<br>لقد أنجزتم جميع الأبواب بنجاح
+                    </h1>
+                `;
+                document.body.appendChild(winScreen);
+            }
+            winScreen.classList.remove('hidden');
+            
+            // يختفي بعد 10 ثواني (إذا تبيه يجلس على طول امسح الـ 3 سطور الجاية)
+            setTimeout(() => {
+                winScreen.classList.add('hidden');
+            }, 10000);
         }
     }
 }
