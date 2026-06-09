@@ -259,7 +259,7 @@ class SolarGamesEngine {
                 let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(3, 100px); gap:15px; justify-content:center;';
                 let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800'];
                 let boxes = [];
-                for(let i=0; i<6; i++) {
+                for(let i=0; i<4; i++) {
                     let b = document.createElement('div'); b.className = 'interactive-element';
                     b.style.cssText = `width:100px; height:100px; background:${colors[i]}; border:4px solid #fff; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:0 0 15px ${colors[i]};`;
                     b.onclick = () => {
