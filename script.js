@@ -124,14 +124,14 @@ class SolarGamesEngine {
             else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق الثلاثة بالترتيب الصحيح. الخطأ يصفر اللوحة."; m.ans=[4, 1, 5]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
             else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
-            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول لكلمة."; m.ans='ECLIPSE'; }
+            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول للكلمة."; m.ans='ECLIPSE'; }
             else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية (دكستر، عنترة، ثيو)."; }
             else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور (3 جولات): تفحص الصورة واستنتج الجواب الصحيح للراوند."; }
             else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
             else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً وراقب نسبة التطابق لـ 100%."; }
             else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="قصة اللوحة: اقرأ الملاحظة وتفحص الصورة المرفقة (puzzle18.jpg) لاستنتاج الدولة الجواب."; m.ans='ليبا'; }
             else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1957'; }
-            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي الأسود (5 مراحل): قضية تحقيق جنائية متكاملة مستوحاة من عالم دكستر بالكامل داخل الروم للتحليل الجماعي."; }
+            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي الأسود (5 مراحل): قضية تحقيق جنائية مستوحاة من عالم دكستر ."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -267,6 +267,7 @@ class SolarGamesEngine {
                         } else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
                     }; smGrid.appendChild(b); boxes.push(b);
                 } innerStage.appendChild(smGrid); this.stageState.round = 1;
+                
                 const playRound = () => {
                     this.stageState.playing = false; this.stageState.clicks = 0;
                     let count = this.stageState.round === 1 ? 4 : 6;
@@ -491,7 +492,8 @@ class SolarGamesEngine {
 
             case 'CRYPTEX': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;'; 
-                let startWord = ['E','C','M','I','P','R','E']; let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                let startWord = ['E','C','L','I','P','S','E']; 
+                let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 for(let i=0; i<7; i++) {
                     let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
                     let btnUp = document.createElement('button'); btnUp.className = 'interactive-element'; btnUp.innerText = '▲'; btnUp.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
@@ -549,10 +551,14 @@ class SolarGamesEngine {
                     wk.onmousedown = () => { 
                         wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); 
                         if(seq.length === p.ans.length) { 
-                            if(JSON.stringify(seq) === JSON.stringify(p.ans)) { pWrap.style.borderColor = '#00ff66'; pWrap.style.boxShadow = '0 0 40px #00ff66'; setTimeout(()=>this.winInteractive(), 1000); } 
-                            else { this.failRoom(); seq = []; } 
+                            if(JSON.stringify(seq) === JSON.stringify(p.ans)) {
+                                pWrap.style.borderColor = '#00ff66';
+                                pWrap.style.boxShadow = '0 0 40px #00ff66';
+                                setTimeout(()=>this.winInteractive(), 1000); 
+                            } else { this.failRoom(); seq = []; } 
                         } 
-                    }; wk.onmouseup = wk.onmouseleave = () => { wk.style.background = 'linear-gradient(to bottom, #fff, #eee)'; wk.style.transform = 'translateY(0)'; };
+                    };
+                    wk.onmouseup = wk.onmouseleave = () => { wk.style.background = 'linear-gradient(to bottom, #fff, #eee)'; wk.style.transform = 'translateY(0)'; };
                     pWrap.appendChild(wk); whiteKeys.push(wk);
                 }
                 [1, 2, 4, 5, 6].forEach((pos) => { 
@@ -612,15 +618,10 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(kWrap); break;
             }
 
-            // =======================================================
-            // الباب 20 الملحمي: قضية جزار ميامي المتكاملة (5 راوندات داخلية)
-            // =======================================================
             case 'EPIC_DETECTIVE': {
                 this.stageState.detectiveRound = 1;
-                
                 let storyCard = document.createElement('div'); 
                 storyCard.style.cssText = 'width:100%; max-width:700px; background:#1a1a1a; padding:30px; border-radius:8px; border-right:6px solid var(--apple); color:#ddd; font-size:1.6rem; line-height:2.2; box-shadow:inset 0 0 30px #000; margin-bottom:20px; font-family:"Traditional Arabic", serif; text-align:right; direction:rtl;';
-                
                 let qTitle = document.createElement('h3'); 
                 qTitle.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.7rem; text-align:right; width:100%; max-width:700px; direction:rtl;';
                 let inputContainer = document.createElement('div'); inputContainer.style.width = '100%';
@@ -636,21 +637,36 @@ class SolarGamesEngine {
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.detectiveRound === 2) {
-                        storyCard.innerHTML = `<strong>الراوند 2: خريطة الهروب وقارب دكستر</strong><br>هرب القاتل عبر الميناء البحري. أمامكم مسار الخريطة الافتراضي. للتجاوز بنجاح، يجب إدخال مسار الهروب الآمن الذي يتجنب كشافات ضوء خفر السواحل بالكامل.`;
-                        qTitle.innerText = "اللاعبين: حللوا الخريطة البحرية وأعطوا الهوست رمز الإحداثيات السري للعبور المباشر.";
-                        let inp = createInputBlock('أدخل كود الإحداثيات البحري المتفق عليه...', 'ROUTE99');
+                        storyCard.innerHTML = `<strong>الراوند 2: خريطة الهروب وقارب دكستر</strong><br>هرب القاتل عبر الميناء البحري. أمامكم خريطة الرادار البحري الافتراضية مقسمة لشبكة مربعات. للتجاوز بنجاح، يجب فك الشفرة وإدخال الرمز السري لخريطة العبور الآمنة التي تتجنب المنارات الصفراء.`;
+                        
+                        let mapGrid = document.createElement('div');
+                        mapGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 50px); gap:5px; background:#000; padding:15px; border:2px solid var(--apple); border-radius:8px; margin:20px auto; width:270px; box-shadow:0 0 20px rgba(140,198,63,0.2); font-family:monospace;';
+                        for(let g=1; g<=25; g++) {
+                            let cell = document.createElement('div');
+                            cell.style.cssText = 'width:50px; height:50px; border:1px solid #222; display:flex; justify-content:center; align-items:center; font-size:0.8rem;';
+                            if([3, 7, 13, 19, 21].includes(g)) {
+                                cell.innerHTML = '🟡'; cell.style.background = '#1a1a00';
+                            } else if([1, 2, 8, 14, 20, 25].includes(g)) {
+                                cell.innerHTML = '⚓'; cell.style.color = 'var(--apple)'; cell.style.background = '#001a00';
+                            } else { cell.innerText = g; cell.style.color = '#333'; }
+                            mapGrid.appendChild(cell);
+                        }
+                        storyCard.appendChild(mapGrid);
+
+                        qTitle.innerText = "اللاعبين: حللوا مسار الهروب (المربعات التي تحتوي على المراسي ⚓) واكتشفوا رمز العبور الإحداثي المكتوب في لوحة المفاتيح المعلقة.";
+                        let inp = createInputBlock('أدخل كود الإحداثيات البحري...', 'ROUTE99');
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'ROUTE99') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.detectiveRound === 3) {
-                        storyCard.innerHTML = `<strong>الراوند 3: التركيبة والنمط الرقمي لمخدر M99</strong><br>وجد المحققون زجاجة فارغة من مادة شل الحركة M99. لفتح نظام الصيدلية ومعرفة من استخرجها، يجب إكمال النمط الرياضي المعقد التالي لتوازن المركب الكيميائي:<br><br><center style="font-family:monospace; font-size:2.5rem; color:var(--apple);">3, 8, 15, 24, 35, ?</center>`;
+                        storyCard.innerHTML = `<strong>الراوند 3: التركيبة والنمط الرقمي لمخدر M99</strong><br>وجد المحققون زجاجة فارغة من مادة شل الحركة M99. لفتح نظام الصيدلية ومعرفة من استخرجها، يجب إكمال النمط الرياضي المعقد التالي لتوازن المركب الكيميائي:<br><br><center style="font-family:monospace; font-size:2.5rem; color:var(--apple); letter-spacing:5px;">3, 8, 15, 24, 35, ?</center>`;
                         qTitle.innerText = "اللاعبين: فكوا النمط الحسابي المعقد لاستخراج الرقم المفقود.";
                         let inp = createInputBlock('أدخل الرقم المفقود يدوياً...', '48');
                         inp.oninput = () => { if(inp.value.trim() === '48') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.detectiveRound === 4) {
-                        storyCard.innerHTML = `<strong>الراوند 4: غرفة الاستجواب وتفكيك الأكاذيب</strong><br>تم استجواب ثلاثة من زملاء المختبر:<br>- فينس يقول: "كنت في الميناء الجاف الساعة 9 مساءً لأفحص قارب الضحية".<br>- باتيستا يقول: "أنا لم أقتل أحداً وكنت مع ديبرا طوال الليل".<br>- ماسوكا يقول: "فينس يكذب، الميناء الجاف مغلق للصيانة منذ العصر!"<br><br>واحد فقط من الطاقم هو الكاذب وهو القاتل الحقيقي!`;
+                        storyCard.innerHTML = `<strong>الراوند 4: غرفة الاستجواب وتفكيك الأكاذيب</strong><br>تم استجواب ثلاثة من زملاء المختبر لتحديد المتواجد وقت الجريمة:<br>- فينس يقول: "كنت في الميناء الجاف الساعة 9 مساءً لأفحص قارب الضحية".<br>- باتيستا يقول: "أنا لم أقتل أحداً وكنت مع ديبرا طوال الليل".<br>- ماسوكا يقول: "فينس يكذب، الميناء الجاف مغلق تماماً للصيانة منذ العصر!"<br><br>ملاحظة: واحد فقط من الطاقم هو الكاذب وهو القاتل الحقيقي!`;
                         qTitle.innerText = "اللاعبين: حللوا الشهادات واكتشفوا الشخص الكاذب والمستغل للثغرة الزمنية.";
                         let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
                         ['فينس', 'باتيستا', 'ماسوكا'].forEach((suspect, idx) => {
@@ -660,8 +676,8 @@ class SolarGamesEngine {
                         }); inputContainer.appendChild(btnWrap);
                     }
                     else if(this.stageState.detectiveRound === 5) {
-                        storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (قانون هاري)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية مخبأً بدقة. القفل يتطلب إدخال كلمة السر النهائية للنظام لفك تشفير جزار ميامي بالكامل وإغلاق ملف القضية.`;
-                        qTitle.innerText = "اللاعبين: ما هي الكلمة المفتاحية لنظام الحماية النهائي المشتق من اسم اللعبة؟";
+                        storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (قانون هاري)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية مخبأً بدقة داخل نظام التكييف. القفل الجنائي يتطلب إدخال كلمة السر النهائية للنظام لفك تشفير جزار ميامي بالكامل وإغلاق ملف القضية.`;
+                        qTitle.innerText = "اللاعبين: ما هي الكلمة المفتاحية لنظام الحماية النهائي المشتق من اسم اللعبة الكبرى التي تلعبونها؟";
                         let inp = createInputBlock('أدخل كلمة السر النهائية...', 'SOLAR');
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'SOLAR') { setTimeout(()=>this.winInteractive(), 500); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
@@ -717,6 +733,7 @@ class SolarGamesEngine {
         this.switchScreen('lobby'); 
         this.renderLobby(); 
 
+        // إظهار شاشة الفوز إذا تم حل جميع الأبواب
         if(this.solvedGates.size === 20) {
             const winScreen = document.getElementById('win-screen');
             if(winScreen) {
