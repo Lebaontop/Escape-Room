@@ -675,7 +675,7 @@ class SolarGamesEngine {
                         storyCard.innerHTML = `<strong>الراوند 4: غرفة الاستجواب وتفكيك الأكاذيب</strong><br>تم استجواب ثلاثة من زملاء المختبر لتحديد المتواجد وقت الجريمة:<br>- فينس يقول: "كنت في الميناء الجاف الساعة 9 مساءً لأفحص قارب الضحية".<br>- باتيستا يقول: "أنا لم أقتل أحداً وكنت مع ديبرا طوال الليل".<br>- ماسوكا يقول: "فينس يكذب، الميناء الجاف مغلق تماماً للصيانة منذ العصر!"<br><br>ملاحظة: واحد فقط من الطاقم هو الكاذب وهو القاتل الحقيقي!`;
                         qTitle.innerText = "اللاعبين: حللوا الشهادات واكتشفوا الشخص الكاذب والمستغل للثغرة الزمنية.";
                         let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
-                        ['فينس', 'باتيستا', 'ماسوكا'].forEach((suspect, idx) => {
+                        ['فينس', 'باتيستا', 'دوكس'].forEach((suspect, idx) => {
                             let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--apple); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.3rem;';
                             btn.onclick = () => { if(idx === 0) { this.stageState.detectiveRound++; loadDetectiveRound(); } else { this.failRoom(); } };
                             btnWrap.appendChild(btn);
@@ -684,8 +684,8 @@ class SolarGamesEngine {
                     else if(this.stageState.detectiveRound === 5) {
                         storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (قانون هاري)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية مخبأً بدقة داخل نظام التكييف. القفل الجنائي يتطلب إدخال كلمة السر النهائية للنظام لفك تشفير جزار ميامي بالكامل وإغلاق ملف القضية بنجاح.`;
                         qTitle.innerText = "اللاعبين: ما هي الكلمة المفتاحية لنظام الحماية النهائي المشتق من اسم اللعبة الكبرى التي تلعبونها؟";
-                        let inp = createInputBlock('أدخل كلمة السر النهائية...', 'SOLAR');
-                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'SOLAR') { setTimeout(()=>this.winInteractive(), 500); } };
+                        let inp = createInputBlock('أدخل كلمة السر النهائية...', 'KILLER');
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'KILLER') { setTimeout(()=>this.winInteractive(), 500); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                 };
