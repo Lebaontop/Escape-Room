@@ -839,28 +839,39 @@ class SolarGamesEngine {
                         inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'MIAMI') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
-                    else if(this.stageState.detectiveRound === 2) {
-                        storyCard.innerHTML = `<strong>الراوند 2: خريطة الهروب وقارب دكستر</strong><br>هرب القاتل عبر الميناء البحري. أمامكم خريطة الرادار البحري الافتراضية مقسمة لشبكة مربعات. للتجاوز بنجاح، يجب فك الشفرة وإدخال الرمز السري لخريطة العبور الآمنة التي تتجنب المنارات الصفراء.`;
-                        
-                        let mapGrid = document.createElement('div');
-                        mapGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 50px); gap:5px; background:#000; padding:15px; border:2px solid var(--apple); border-radius:8px; margin:20px auto; width:270px; box-shadow:0 0 20px rgba(140,198,63,0.2); font-family:monospace;';
-                        for(let g=1; g<=25; g++) {
-                            let cell = document.createElement('div');
-                            cell.style.cssText = 'width:50px; height:50px; border:1px solid #222; display:flex; justify-content:center; align-items:center; font-size:0.8rem;';
-                            if([3, 7, 13, 19, 21].includes(g)) {
-                                cell.innerHTML = '🟡'; cell.style.background = '#1a1a00';
-                            } else if([1, 2, 8, 14, 20, 25].includes(g)) {
-                                cell.innerHTML = '⚓'; cell.style.color = 'var(--apple)'; cell.style.background = '#001a00';
-                            } else { cell.innerText = g; cell.style.color = '#333'; }
-                            mapGrid.appendChild(cell);
-                        }
-                        storyCard.appendChild(mapGrid);
+                 else if(this.stageState.detectiveRound === 2) {
+                        storyCard.innerHTML = `<strong>الراوند 2: خريطة الهروب وقارب دكستر</strong><br>هرب القاتل عبر الميناء البحري. أمامكم خريطة الرادار البحري الافتراضية مقسمة لشبكة مربعات. للتجاوز بنجاح، يجب فك الشفرة وإدخال الرمز السري لخريطة العبور الآمنة التي تتجنب المنارات الصفراء.`;
+                        
+                        let mapGrid = document.createElement('div');
+                        // تم التعديل هنا: استخدام fit-content و ltr لضبط الخريطة داخل الإطار 100%
+                        mapGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 50px); gap:5px; background:#000; padding:15px; border:2px solid var(--apple); border-radius:8px; margin:20px auto; width:fit-content; box-shadow:0 0 20px rgba(140,198,63,0.2); font-family:monospace; direction:ltr;';
+                        
+                        for(let g=1; g<=25; g++) {
+                            let cell = document.createElement('div');
+                            cell.style.cssText = 'width:50px; height:50px; border:1px solid #222; display:flex; justify-content:center; align-items:center; font-size:1.2rem; border-radius:4px;';
+                            
+                            if([3, 7, 13, 19, 21].includes(g)) {
+                                cell.innerHTML = '🟡'; 
+                                cell.style.background = '#1a1a00';
+                            } else if([1, 2, 8, 14, 20, 25].includes(g)) {
+                                cell.innerHTML = '⚓'; 
+                                cell.style.color = 'var(--apple)'; 
+                                cell.style.background = '#001a00';
+                                cell.style.borderColor = 'rgba(140,198,63,0.3)';
+                            } else { 
+                                cell.innerText = g; 
+                                cell.style.color = '#555'; 
+                                cell.style.background = '#0a0a0a'; 
+                            }
+                            mapGrid.appendChild(cell);
+                        }
+                        storyCard.appendChild(mapGrid);
 
-                        qTitle.innerText = "اللاعبين: حللوا مسار الهروب (المربعات التي تحتوي على المراسي ⚓) واكتشفوا رمز العبور الإحداثي المكتوب في لوحة المفاتيح المعلقة.";
-                        let inp = createInputBlock('أدخل كود الإحداثيات البحري...', '70');
-                        inp.oninput = () => { if(inp.value.trim() === '70' || inp.value.trim() === '٧٠') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
-                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
-                    }
+                        qTitle.innerText = "اللاعبين: حللوا مسار الهروب (المربعات التي تحتوي على المراسي ⚓) واكتشفوا رمز العبور الإحداثي المكتوب في لوحة المفاتيح المعلقة.";
+                        let inp = createInputBlock('أدخل رمز العبور الإحداثي...', '70');
+                        inp.oninput = () => { if(inp.value.trim() === '70' || inp.value.trim() === '٧٠') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
+                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
+                    }
                     else if(this.stageState.detectiveRound === 3) {
                         storyCard.innerHTML = `<strong>الراوند 3: التركيبة والنمط الرقمي لمخدر M99</strong><br>وجد المحققون زجاجة فارغة من مادة شل الحركة M99. لفتح نظام الصيدلية ومعرفة من استخرجها، يجب إكمال النمط الرياضي المعقد التالي لتوازن المركب الكيميائي:<br><br><center style="font-family:monospace; font-size:2.5rem; color:var(--apple); letter-spacing:5px;">3, 8, 15, 24, 35, ?</center>`;
                         qTitle.innerText = "اللاعبين: فكوا النمط الحسابي المعقد لاستخراج الرقم المفقود لفتح الأنظمة الجنائية.";
