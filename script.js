@@ -546,57 +546,96 @@ class SolarGamesEngine {
             }
 
             // تعديل الباب 13: 3 كلمات (ROOM, RITA, LEBA)
-            case 'CRYPTEX': {
-                this.stageState.round = 1;
-                let targets = ['ROOM', 'RITA', 'LEBA'];
-                let starts = ['MORO', 'TARI', 'ALEB']; // الحروف المبعثرة اللي يبدؤون منها
+          case 'CRYPTEX': {
+                this.stageState.round = 1;
+                let targets = ['ROOM', 'RITA', 'LEBA'];
 
-                let rDisp = document.createElement('h3');
-                rDisp.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.5rem;';
+                let wrap = document.createElement('div');
+                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:500px; padding:20px;';
 
-                let cryptexWrap = document.createElement('div');
-                cryptexWrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;';
+                let rDisp = document.createElement('h3');
+                rDisp.style.cssText = 'color:var(--apple); font-size:1.8rem; margin-bottom:10px;';
 
-                let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                let currentArr = [];
+                let slotsWrap = document.createElement('div');
+                slotsWrap.style.cssText = 'display:flex; gap:10px; margin-bottom: 20px; direction:ltr;';
 
-                let btn = generateSubmitButton(() => {
-                    let currentWord = currentArr.join('');
-                    if(currentWord === targets[this.stageState.round - 1]) {
-                        this.stageState.round++;
-                        if(this.stageState.round > 3) {
-                            setTimeout(() => this.winInteractive(), 500);
-                        } else {
-                            loadRound();
-                        }
-                    } else {
-                        this.failRoom();
-                    }
-                }, 'فتح القفل');
+                let lettersWrap = document.createElement('div');
+                lettersWrap.style.cssText = 'display:flex; gap:15px; flex-wrap:wrap; justify-content:center; direction:ltr;';
 
-                const loadRound = () => {
-                    cryptexWrap.innerHTML = '';
-                    rDisp.innerText = `الجولة ${this.stageState.round} من 3`;
-                    currentArr = starts[this.stageState.round - 1].split('');
+                let btnClear = generateSubmitButton(() => { loadRound(); }, 'تفريغ وإعادة ترتيب (Reset)');
+                btnClear.style.background = '#333';
+                btnClear.style.borderColor = '#555';
+                btnClear.style.color = '#fff';
+                btnClear.style.marginTop = '10px';
 
-                    for(let i=0; i<currentArr.length; i++) {
-                        let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
-                        let btnUp = document.createElement('button'); btnUp.className = 'interactive-element'; btnUp.innerText = '▲'; btnUp.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
-                        let btnDn = document.createElement('button'); btnDn.className = 'interactive-element'; btnDn.innerText = '▼'; btnDn.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
-                        let disp = document.createElement('div'); disp.style.cssText = 'width:50px; height:60px; background:linear-gradient(to bottom, #d4edda, #a5d6a7); border:2px solid #5c8a24; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:#155724; font-family:monospace; border-radius:4px; box-shadow:inset 0 5px 10px rgba(0,0,0,0.2);';
-                        disp.innerText = currentArr[i];
+                const loadRound = () => {
+                    slotsWrap.innerHTML = '';
+                    lettersWrap.innerHTML = '';
+                    this.stageState.currentAttempt = '';
+                    
+                    rDisp.innerText = `الجولة ${this.stageState.round} من 3`;
+                    let word = targets[this.stageState.round - 1];
+                    
+                    // إنشاء المربعات الفارغة للكلمة
+                    for(let i = 0; i < word.length; i++) {
+                        let slot = document.createElement('div');
+                        slot.id = `slot-${i}`;
+                        slot.style.cssText = 'width:60px; height:70px; background:#000; border:2px solid #555; color:var(--apple); display:flex; justify-content:center; align-items:center; font-size:2.5rem; font-weight:bold; border-radius:8px; box-shadow:inset 0 0 10px rgba(0,0,0,0.8); transition:0.3s;';
+                        slotsWrap.appendChild(slot);
+                    }
+                    
+                    // بعثرة الحروف
+                    let shuffled = word.split('').sort(() => Math.random() - 0.5);
+                    
+                    shuffled.forEach((char) => {
+                        let lBtn = document.createElement('button');
+                        lBtn.className = 'interactive-element';
+                        lBtn.innerText = char;
+                        lBtn.style.cssText = 'width:60px; height:60px; background:linear-gradient(135deg, #222, #111); color:#fff; border:2px solid var(--apple); font-size:2rem; font-weight:bold; border-radius:8px; cursor:pointer; box-shadow:0 5px 10px rgba(0,0,0,0.5); transition:0.2s;';
+                        
+                        lBtn.onclick = () => {
+                            if (lBtn.disabled) return;
+                            let currentLen = this.stageState.currentAttempt.length;
+                            if (currentLen < word.length) {
+                                // إضافة الحرف للمربع
+                                this.stageState.currentAttempt += char;
+                                let activeSlot = document.getElementById(`slot-${currentLen}`);
+                                activeSlot.innerText = char;
+                                activeSlot.style.borderColor = 'var(--apple)';
+                                activeSlot.style.boxShadow = '0 0 15px rgba(140, 198, 63, 0.4)';
+                                
+                                // إخفاء الزر اللي انضغط
+                                lBtn.style.opacity = '0.2';
+                                lBtn.disabled = true;
+                                lBtn.style.cursor = 'default';
+                                
+                                // فحص الكلمة إذا اكتملت
+                                if (this.stageState.currentAttempt.length === word.length) {
+                                    setTimeout(() => {
+                                        if (this.stageState.currentAttempt === word) {
+                                            this.stageState.round++;
+                                            if (this.stageState.round > 3) {
+                                                setTimeout(() => this.winInteractive(), 300);
+                                            } else {
+                                                loadRound();
+                                            }
+                                        } else {
+                                            this.failRoom();
+                                            setTimeout(() => loadRound(), 800); // ريستارت للجولة لحالها لو كانت غلط
+                                        }
+                                    }, 400);
+                                }
+                            }
+                        };
+                        lettersWrap.appendChild(lBtn);
+                    });
+                };
 
-                        const shift = (dir) => { let idx = alph.indexOf(currentArr[i]); currentArr[i] = alph[((idx + dir) % 26 + 26) % 26]; disp.innerText = currentArr[i]; };
-                        btnUp.onclick = () => shift(1); btnDn.onclick = () => shift(-1);
-                        col.append(btnUp, disp, btnDn); cryptexWrap.appendChild(col);
-                    }
-                };
-
-                innerStage.append(rDisp, cryptexWrap, btn);
-                loadRound();
-                break;
-            }
-
+                wrap.append(rDisp, slotsWrap, lettersWrap, btnClear);
+                innerStage.appendChild(wrap);
+                loadRound();
+                break;
+            }
             case 'SHARDS': {
                 this.stageState.round = 1;
                 let poets = [ 
