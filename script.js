@@ -12,13 +12,14 @@ class SolarGamesEngine {
         this.activeGate = null;
         this.solvedGates = new Set();
         
-        // المؤقت الخارجي
+        // المؤقت الخارجي يبدأ بـ 60 ثانية (دقيقة واحدة)
         this.externalTimerSeconds = 60; 
         this.isTimerRunning = false;
         
         this.gameConfig = this.buildPuzzles();
         this.init();
         
+        // محرك المؤقت الخارجي
         setInterval(() => {
             if(this.isTimerRunning && this.externalTimerSeconds > 0) {
                 this.externalTimerSeconds--;
@@ -30,57 +31,9 @@ class SolarGamesEngine {
     init() { 
         this.renderLobby(); 
         this.updateTimerDisplay();
-        this.createScoreboard(); // تشغيل لوحة النقاط العائمة
     }
 
-    // بناء لوحة النقاط العائمة (تظهر في اللوبي وداخل الغرف)
-    createScoreboard() {
-        if(document.getElementById('scoreboard-ui')) return; // عشان ما تتكرر
-        
-        let sb = document.createElement('div');
-        sb.id = 'scoreboard-ui';
-        sb.style.cssText = 'position:fixed; top:80px; right:20px; background:rgba(0,0,0,0.85); border:2px solid #444; border-radius:8px; padding:15px; z-index:9000; display:flex; flex-direction:column; gap:12px; font-family:"Rajdhani", sans-serif; box-shadow:0 10px 20px rgba(0,0,0,0.5); backdrop-filter:blur(5px); direction:ltr;';
-
-        let title = document.createElement('div');
-        title.innerText = '🏆 TEAM SCORES';
-        title.style.cssText = 'color:var(--apple); text-align:center; font-weight:bold; font-size:1.2rem; margin-bottom:5px; border-bottom:1px solid #333; padding-bottom:5px;';
-        sb.appendChild(title);
-
-        this.scores = { dexter: 0, brian: 0 };
-
-        const makeTeamRow = (teamId, teamName, color) => {
-            let row = document.createElement('div');
-            row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px;';
-
-            let nameLbl = document.createElement('span');
-            nameLbl.innerText = teamName;
-            nameLbl.style.cssText = `color:${color}; font-weight:bold; font-size:1.2rem; width:70px; text-transform:uppercase;`;
-
-            let btnMinus = document.createElement('button');
-            btnMinus.innerText = '-';
-            btnMinus.style.cssText = 'background:#222; color:#fff; border:1px solid #555; border-radius:4px; width:30px; height:30px; cursor:pointer; font-weight:bold;';
-            btnMinus.onclick = () => { this.scores[teamId]--; document.getElementById(`score-${teamId}`).innerText = this.scores[teamId]; };
-
-            let scoreLbl = document.createElement('span');
-            scoreLbl.id = `score-${teamId}`;
-            scoreLbl.innerText = '0';
-            scoreLbl.style.cssText = 'color:#fff; font-size:1.6rem; font-weight:bold; width:35px; text-align:center;';
-
-            let btnPlus = document.createElement('button');
-            btnPlus.innerText = '+';
-            btnPlus.style.cssText = 'background:#222; color:#fff; border:1px solid #555; border-radius:4px; width:30px; height:30px; cursor:pointer; font-weight:bold;';
-            btnPlus.onclick = () => { this.scores[teamId]++; document.getElementById(`score-${teamId}`).innerText = this.scores[teamId]; };
-
-            row.append(nameLbl, btnMinus, scoreLbl, btnPlus);
-            return row;
-        };
-
-        sb.appendChild(makeTeamRow('dexter', 'Dexter', '#00ccff')); // أزرق
-        sb.appendChild(makeTeamRow('brian', 'Brian', '#ff3333'));  // أحمر
-
-        document.body.appendChild(sb);
-    }
-
+    // إزالة الأصوات تماماً من اللعبة
     playSound(type) { return; }  
     
     showToast(msg, color = 'var(--apple)') {
@@ -100,6 +53,7 @@ class SolarGamesEngine {
         } 
     }
 
+    // دوال التحكم بالمؤقت الخارجي
     setTimer() {
         let val = document.getElementById('timer-input').value;
         let parts = val.split(':');
@@ -162,22 +116,22 @@ class SolarGamesEngine {
             else if(i===2) { m.uiType = 'SIMON'; m.desc="الذاكرة البصرية: 6 ألوان، لاحظ المربع الذي ينطفئ وكرر النمط (جولتين)."; m.data=6; }
             else if(i===3) { m.uiType = 'MASTERMIND'; m.desc="الاستنتاج: أدخل 4 أرقام. (تحتها مباشرة: أخضر=مكان صحيح، برتقالي=مكان خطأ، أحمر=غير موجود)."; m.ans=[3,7,1,9]; }
             else if(i===4) { m.uiType = 'MATCH'; m.desc="التطابق: اقلب البطاقات (المرقمة من 1-20) وطابق الأزواج."; m.data=['🪐','☄️','🌑','🔭','🛸','🛰️','🌌','🌠','🚀','👨‍🚀']; }
-            else if(i===5) { m.uiType = 'COMPASS'; m.desc="توجيه البوصلة: اضبط الزوايا الثلاث (***, 225, 45) ثم اضغط تأكيد."; m.ans=[135, 225, 45]; }
-            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: فعل الأوزان ليصل المجموع إلى *** بالضبط. (يوجد حل رياضي واحد فقط)."; m.data=[12,25,38,54,71,93]; m.target=163; }
+            else if(i===5) { m.uiType = 'COMPASS'; m.desc=" 45 , 225 , *** توجيه البوصلة: اضبط الزوايا الثلاث لتتجه نحو المسار المخفي."; m.ans=[135, 225, 45]; }
+            else if(i===6) { m.uiType = 'SCALES'; m.desc="الميزان: قم بتفعيل الأوزان الصحيحة ليصل المجموع إلى *** بالضبط."; m.data=[50,70,30,80,20]; m.target=150; }
             else if(i===7) { m.uiType = 'TIC_TAC_TOE'; m.desc="لعبة الـ X O: اضغط لتغيير الرمز لعمل خط كامل عمودي، أفقي، أو قطري ثم يضغط الهوست تأكيد."; }
-            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): حاول تتجنب اللغم قد ماتقدر."; }
+            else if(i===8) { m.uiType = 'MINES'; m.desc="كاسحة الألغام (3 جولات): ابحث عن اللغم المخفي واضغط عليه فوراً لتتجاوز الجولة بنجاح."; }
             else if(i===9) { m.uiType = 'HIDE_BOMB'; m.desc="الغميضة المتفجرة: يقوم كل فريق بكتابة رقم قنبلته سرياً، ثم تبدأ المواجهة على الخريطة."; }
             else if(i===10) { m.uiType = 'ELEVATOR'; m.desc="المصعد: اضغط على الطوابق الثلاثة بالترتيب الصحيح. الخطأ يصفر اللوحة."; m.ans=[4, 1, 5]; }
             else if(i===11) { m.uiType = 'JUGS'; m.desc="الكيمياء: انقل السوائل بين الدوارق (8, 5, 3) لتحصل على 4 لتر."; }
             else if(i===12) { m.uiType = 'BLIND_MAZE'; m.desc="المتاهة العمياء: هناك مسار واحد آمن في الشبكة."; m.ans=[0,6,12,13,14,20,26,32,33,34,35]; }
-            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة الكلمات (3 جولات): رتب الحروف المبعثرة عمودياً لاكتشاف الكلمة المخفية."; }
-            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية ."; }
+            else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة قيصر: حرك الأحرف (من اليسار لليمين) للوصول لكلمة."; m.ans='ECLIPSE'; }
+            else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية (دكستر، عنترة، ثيو)."; }
             else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور (3 جولات): تفحص الصورة واستنتج الجواب الصحيح للراوند."; }
             else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
             else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً وراقب نسبة التطابق لـ 100%."; }
-            else if(i===18) { m.uiType = 'CONNECT4'; m.desc="لعبة وصل (5x5): تنافس بين فريق Dexter (أزرق) و Brian (أحمر). 4 كوينز متصلة للفوز."; }
+            else if(i===18) { m.uiType = 'STORY_IMAGE'; m.desc="قصة اللوحة: اقرأ الملاحظة وتفحص الصورة المرفقة (puzzle18.jpg) لاستنتاج الدولة الجواب."; m.ans='ليبا'; }
             else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1957'; }
-            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي الأسود (5 مراحل): قضية تحقيق جنائية متكاملة مستوحاة من عالم دكستر."; }
+            else if(i===20) { m.uiType = 'EPIC_DETECTIVE'; m.desc="ملف جزار ميامي الأسود (5 مراحل): قضية تحقيق جنائية متكاملة مستوحاة من عالم دكستر بالكامل داخل الروم للتحليل الجماعي."; }
 
             m.txtQ = riddles[i-1].q;
             m.txtA = riddles[i-1].a;
@@ -322,10 +276,10 @@ class SolarGamesEngine {
                         if(step < count) {
                             let idx = this.stageState.sequence[step];
                             boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000';
-                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 200);
+                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 500);
                             step++;
                         } else { clearInterval(this.stageState.timer); this.stageState.playing = true; }
-                    }, 700);
+                    }, 1500);
                 }; setTimeout(()=>playRound(), 1000); break;
             }
 
@@ -387,7 +341,6 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(crdGrid); break;
             }
 
-            // تعديل الباب 5: زر تأكيد للإحداثيات بدون ريستارت
             case 'COMPASS': { 
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:30px;'; let angles = [0, 0, 0];
                 for(let i=0; i<3; i++) {
@@ -395,27 +348,17 @@ class SolarGamesEngine {
                     let ndl = document.createElement('div'); ndl.style.cssText = 'width:4px; height:80px; background:linear-gradient(to bottom, #ff3333 50%, #fff 50%); position:absolute; border-radius:2px;';
                     let center = document.createElement('div'); center.style.cssText = 'width:12px; height:12px; background:var(--apple); border-radius:50%; z-index:2;';
                     cmp.append(ndl, center);
-                    cmp.onclick = () => { angles[i] = (angles[i] + 45) % 360; cmp.style.transform = `rotate(${angles[i]}deg)`; };
+                    cmp.onclick = () => { angles[i] = (angles[i] + 45) % 360; cmp.style.transform = `rotate(${angles[i]}deg)`; if(angles[0]===p.ans[0] && angles[1]===p.ans[1] && angles[2]===p.ans[2]) { setTimeout(()=>this.winInteractive(), 500); } };
                     wrap.appendChild(cmp);
-                } 
-                let checkBtn = generateSubmitButton(() => {
-                    if(angles[0]===p.ans[0] && angles[1]===p.ans[1] && angles[2]===p.ans[2]) {
-                        setTimeout(()=>this.winInteractive(), 500);
-                    } else {
-                        this.showToast('الإحداثيات غير متطابقة!', '#ff3333');
-                        this.triggerVisualGlitch(); // فقط اهتزاز بسيط بدون ريستارت للزوايا
-                    }
-                }, 'تأكيد الإحداثيات');
-                innerStage.append(wrap, checkBtn); break;
+                } innerStage.appendChild(wrap); break;
             }
 
-            // تعديل الباب 6: الميزان المعقد بحل واحد فقط
             case 'SCALES': {
                 let sclWrap = document.createElement('div'); sclWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px; border-bottom: 4px solid var(--apple); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center; margin-top:50px; position:relative;';
                 let balanceNeedle = document.createElement('div'); balanceNeedle.style.cssText = 'position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:15px solid #ff3333; transition:transform 0.3s;';
                 sclWrap.appendChild(balanceNeedle);
                 p.data.forEach((w) => {
-                    let btn = document.createElement('div'); btn.className = 'interactive-element'; btn.style.cssText = 'width:60px; background:linear-gradient(to bottom, #ccc, #888); border:2px solid #555; text-align:center; font-weight:bold; color:#000; cursor:pointer; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; transition:0.2s; border-radius:4px 4px 0 0; box-shadow:0 -5px 10px rgba(0,0,0,0.5);'; btn.innerText = w + 'kg'; btn.style.height = (w + 20) + 'px'; // تعديل الحجم لتناسب الأرقام الجديدة
+                    let btn = document.createElement('div'); btn.className = 'interactive-element'; btn.style.cssText = 'width:60px; background:linear-gradient(to bottom, #ccc, #888); border:2px solid #555; text-align:center; font-weight:bold; color:#000; cursor:pointer; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; transition:0.2s; border-radius:4px 4px 0 0; box-shadow:0 -5px 10px rgba(0,0,0,0.5);'; btn.innerText = w + 'kg'; btn.style.height = (w + 40) + 'px';
                     btn.onclick = () => {
                         btn.classList.toggle('active'); btn.style.background = btn.classList.contains('active') ? 'linear-gradient(to bottom, var(--apple), #5c8a24)' : 'linear-gradient(to bottom, #ccc, #888)'; btn.style.transform = btn.classList.contains('active') ? 'translateY(-10px)' : 'translateY(0)';
                         let sum = Array.from(sclWrap.children).reduce((acc, el, idx) => acc + (el.classList && el.classList.contains('active') ? p.data[idx-1] : 0), 0);
@@ -545,56 +488,21 @@ class SolarGamesEngine {
                 innerStage.append(startMarker, bmWrap, endMarker); break;
             }
 
-            // تعديل الباب 13: 3 كلمات (ROOM, RITA, LEBA)
             case 'CRYPTEX': {
-                this.stageState.round = 1;
-                let targets = ['ROOM', 'RITA', 'LEBA'];
-                let starts = ['MORO', 'TARI', 'ALEB']; // الحروف المبعثرة اللي يبدؤون منها
-
-                let rDisp = document.createElement('h3');
-                rDisp.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.5rem;';
-
-                let cryptexWrap = document.createElement('div');
-                cryptexWrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;';
-
-                let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                let currentArr = [];
-
-                let btn = generateSubmitButton(() => {
-                    let currentWord = currentArr.join('');
-                    if(currentWord === targets[this.stageState.round - 1]) {
-                        this.stageState.round++;
-                        if(this.stageState.round > 3) {
-                            setTimeout(() => this.winInteractive(), 500);
-                        } else {
-                            loadRound();
-                        }
-                    } else {
-                        this.failRoom();
-                    }
-                }, 'فتح القفل');
-
-                const loadRound = () => {
-                    cryptexWrap.innerHTML = '';
-                    rDisp.innerText = `الجولة ${this.stageState.round} من 3`;
-                    currentArr = starts[this.stageState.round - 1].split('');
-
-                    for(let i=0; i<currentArr.length; i++) {
-                        let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
-                        let btnUp = document.createElement('button'); btnUp.className = 'interactive-element'; btnUp.innerText = '▲'; btnUp.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
-                        let btnDn = document.createElement('button'); btnDn.className = 'interactive-element'; btnDn.innerText = '▼'; btnDn.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
-                        let disp = document.createElement('div'); disp.style.cssText = 'width:50px; height:60px; background:linear-gradient(to bottom, #d4edda, #a5d6a7); border:2px solid #5c8a24; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:#155724; font-family:monospace; border-radius:4px; box-shadow:inset 0 5px 10px rgba(0,0,0,0.2);';
-                        disp.innerText = currentArr[i];
-
-                        const shift = (dir) => { let idx = alph.indexOf(currentArr[i]); currentArr[i] = alph[((idx + dir) % 26 + 26) % 26]; disp.innerText = currentArr[i]; };
-                        btnUp.onclick = () => shift(1); btnDn.onclick = () => shift(-1);
-                        col.append(btnUp, disp, btnDn); cryptexWrap.appendChild(col);
-                    }
-                };
-
-                innerStage.append(rDisp, cryptexWrap, btn);
-                loadRound();
-                break;
+                let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:10px; margin-top:20px; background:#111; padding:20px; border-radius:12px; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.8); direction:ltr;'; 
+                let startWord = ['E','A','L','I','P','Q','E']; 
+                let current = [...startWord]; let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                for(let i=0; i<7; i++) {
+                    let col = document.createElement('div'); col.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:8px;';
+                    let btnUp = document.createElement('button'); btnUp.className = 'interactive-element'; btnUp.innerText = '▲'; btnUp.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
+                    let btnDn = document.createElement('button'); btnDn.className = 'interactive-element'; btnDn.innerText = '▼'; btnDn.style.cssText = 'background:#222; color:var(--apple); border:1px solid #555; cursor:pointer; padding:8px 15px; border-radius:4px; font-size:1.2rem;';
+                    let disp = document.createElement('div'); disp.style.cssText = 'width:50px; height:60px; background:linear-gradient(to bottom, #d4edda, #a5d6a7); border:2px solid #5c8a24; display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:bold; color:#155724; font-family:monospace; border-radius:4px; box-shadow:inset 0 5px 10px rgba(0,0,0,0.2);'; disp.innerText = current[i];
+                    const shift = (dir) => { let idx = alph.indexOf(current[i]); current[i] = alph[((idx + dir) % 26 + 26) % 26]; disp.innerText = current[i]; };
+                    btnUp.onclick = () => shift(1); btnDn.onclick = () => shift(-1);
+                    col.append(btnUp, disp, btnDn); wrap.appendChild(col);
+                }
+                let btn = generateSubmitButton(() => { if(current.join('') === p.ans) this.winInteractive(); else this.failRoom(); }, 'فتح القفل');
+                innerStage.append(wrap, btn); break;
             }
 
             case 'SHARDS': {
@@ -678,82 +586,14 @@ class SolarGamesEngine {
                 wrap.appendChild(check); innerStage.appendChild(wrap); break;
             }
 
-            // تعديل الباب 18: لعبة وصل (Connect 4)
-            case 'CONNECT4': {
-                let boardWrap = document.createElement('div');
-                boardWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;';
-
-                let turnDisp = document.createElement('h3');
-                this.stageState.turn = 'dexter';
-                const updateTurn = () => {
-                    if(this.stageState.turn === 'dexter') {
-                        turnDisp.innerText = "دور فريق: Dexter (أزرق)"; turnDisp.style.color = '#00ccff';
-                    } else {
-                        turnDisp.innerText = "دور فريق: Brian (أحمر)"; turnDisp.style.color = '#ff3333';
-                    }
-                };
-                updateTurn();
-
-                let grid = document.createElement('div');
-                grid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 60px); gap:5px; background:#111; padding:10px; border-radius:8px; border:3px solid #333;';
-
-                let state = Array(5).fill(null).map(() => Array(5).fill(null));
-                let cells = [];
-
-                for(let r=0; r<5; r++) {
-                    let rowCells = [];
-                    for(let c=0; c<5; c++) {
-                        let cell = document.createElement('div');
-                        cell.style.cssText = 'width:60px; height:60px; background:#050505; border-radius:50%; border:2px solid #222; box-shadow:inset 0 5px 10px rgba(0,0,0,0.8); cursor:pointer; transition:0.3s;';
-
-                        cell.onclick = () => {
-                            let targetRow = -1;
-                            for(let i=4; i>=0; i--) {
-                                if(state[i][c] === null) { targetRow = i; break; }
-                            }
-                            if(targetRow !== -1) {
-                                state[targetRow][c] = this.stageState.turn;
-                                let color = this.stageState.turn === 'dexter' ? '#00ccff' : '#ff3333';
-                                cells[targetRow][c].style.background = `radial-gradient(circle at 30% 30%, ${color}, #000)`;
-                                cells[targetRow][c].style.boxShadow = `0 0 10px ${color}`;
-
-                                if(checkWin(state, targetRow, c, this.stageState.turn)) {
-                                    this.showToast(`فاز فريق ${this.stageState.turn.toUpperCase()}!`, color);
-                                    setTimeout(() => this.winInteractive(), 1500);
-                                } else {
-                                    this.stageState.turn = this.stageState.turn === 'dexter' ? 'brian' : 'dexter';
-                                    updateTurn();
-                                }
-                            }
-                        };
-                        grid.appendChild(cell);
-                        rowCells.push(cell);
-                    }
-                    cells.push(rowCells);
-                }
-
-                const checkWin = (board, r, c, player) => {
-                    const dirs = [[0,1], [1,0], [1,1], [1,-1]];
-                    for(let [dr, dc] of dirs) {
-                        let count = 1;
-                        for(let i=1; i<4; i++) {
-                            let nr = r + dr*i, nc = c + dc*i;
-                            if(nr>=0 && nr<5 && nc>=0 && nc<5 && board[nr][nc] === player) count++; else break;
-                        }
-                        for(let i=1; i<4; i++) {
-                            let nr = r - dr*i, nc = c - dc*i;
-                            if(nr>=0 && nr<5 && nc>=0 && nc<5 && board[nr][nc] === player) count++; else break;
-                        }
-                        if(count >= 4) return true;
-                    }
-                    return false;
-                };
-
-                let skipBtn = generateSubmitButton(() => { this.winInteractive(); }, 'إنهاء اللعبة وتجاوز الروم');
-
-                boardWrap.append(turnDisp, grid, skipBtn);
-                innerStage.appendChild(boardWrap);
-                break;
+            case 'STORY_IMAGE': {
+                let sWrap = document.createElement('div'); sWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:500px;';
+                let imgWrap = document.createElement('div'); imgWrap.style.cssText = 'width:100%; height:250px; border:4px solid var(--apple); border-radius:8px; overflow:hidden;';
+                let img = document.createElement('img'); img.src = 'puzzle18.jpg'; img.alt = 'يرجى وضع ملف puzzle18.jpg'; img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                imgWrap.appendChild(img);
+                let story = document.createElement('div'); story.style.cssText = 'background:#111; padding:20px; border-right:4px solid var(--apple); color:#ccc; font-size:1.3rem; line-height:1.8; font-family:"Traditional Arabic", serif; text-align:right; border-radius:6px;';
+                story.innerText = 'تفحص الصوره جيدا واربطها بقصة (تاج + قنبلة  + عربية سوبر ماركت).';
+                sWrap.append(imgWrap, story); innerStage.appendChild(sWrap); createInputBlock('أدخل الجواب...', p.ans); break;
             }
 
             case 'KEYPAD': {
@@ -809,12 +649,12 @@ class SolarGamesEngine {
 
                         qTitle.innerText = "اللاعبين: حللوا مسار الهروب (المربعات التي تحتوي على المراسي ⚓) واكتشفوا رمز العبور الإحداثي المكتوب في لوحة المفاتيح المعلقة.";
                         let inp = createInputBlock('أدخل كود الإحداثيات البحري...', '70');
-                        inp.oninput = () => { if(inp.value.trim() === '70' || inp.value.trim() === '٧٠') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === '70' || inp.value.trim() === '٧٠') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
                     }
                     else if(this.stageState.detectiveRound === 3) {
                         storyCard.innerHTML = `<strong>الراوند 3: التركيبة والنمط الرقمي لمخدر M99</strong><br>وجد المحققون زجاجة فارغة من مادة شل الحركة M99. لفتح نظام الصيدلية ومعرفة من استخرجها، يجب إكمال النمط الرياضي المعقد التالي لتوازن المركب الكيميائي:<br><br><center style="font-family:monospace; font-size:2.5rem; color:var(--apple); letter-spacing:5px;">3, 8, 15, 24, 35, ?</center>`;
-                        qTitle.innerText = "اللاعبين: فكوا النمط الحسابي المعقد لاستخراج الرقم المفقود لفتح الأنظمة الجنائية.";
+                        qTitle.innerText = "اللاعبين: فكوا النمط الحسابي المعقد لاستخراج الرقم المفقود.";
                         let inp = createInputBlock('أدخل الرقم المفقود يدوياً...', '48');
                         inp.oninput = () => { if(inp.value.trim() === '48') { this.stageState.detectiveRound++; loadDetectiveRound(); } };
                         innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
@@ -823,7 +663,7 @@ class SolarGamesEngine {
                         storyCard.innerHTML = `<strong>الراوند 4: غرفة الاستجواب وتفكيك الأكاذيب</strong><br>تم استجواب ثلاثة من زملاء المختبر لتحديد المتواجد وقت الجريمة:<br>- ماسوكا يقول: "كنت في الميناء الجاف الساعة 9 مساءً لأفحص قارب الضحية والتقاط الأدلة".<br>- باتيستا يقول: "أنا لم أقتل أحداً وكنت مع ديبرا طوال الليل في المكتب الجنائي".<br>- براين يقول: "ماسوكا يكذب، الميناء الجاف مغلق تماماً للصيانة الدورية منذ العصر!"<br><br>ملاحظة: واحد فقط من الطاقم هو الكاذب وهو القاتل الحقيقي!`;
                         qTitle.innerText = "اللاعبين: حللوا الشهادات واكتشفوا الشخص الكاذب والمستغل للثغرة الزمنية.";
                         let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
-                        ['ماسوكا''باتيستا', 'براين'].forEach((suspect, idx) => {
+                        ['ماسوكا', 'باتيستا', 'براين'].forEach((suspect, idx) => {
                             let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--apple); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.3rem;';
                             btn.onclick = () => { if(idx === 0) { this.stageState.detectiveRound++; loadDetectiveRound(); } else { this.failRoom(); } };
                             btnWrap.appendChild(btn);
