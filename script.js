@@ -364,29 +364,67 @@ class SolarGamesEngine {
                 container.append(inputs, historyWrap, btn); innerStage.appendChild(container); break;
             }
 
-            case 'MATCH': {
-                let crdGrid = document.createElement('div'); crdGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 60px); gap:10px; justify-content:center; perspective:1000px;';
-                let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5); let flipped = [];
-                symbols.forEach((sym, idx) => {
-                    let card = document.createElement('div'); card.className = 'interactive-element'; card.style.cssText = 'width:60px; height:60px; perspective:1000px; cursor:pointer; position:relative;';
-                    let inner = document.createElement('div'); inner.style.cssText = 'width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d; position:absolute;';
-                    let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold;'; front.innerText = idx + 1;
-                    let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
-                    inner.append(front, back); card.appendChild(inner);
-                    card.onclick = () => {
-                        if(inner.style.transform === 'rotateY(180deg)' || flipped.length >= 2) return;
-                        inner.style.transform = 'rotateY(180deg)'; flipped.push({c:inner, s:sym});
-                        if(flipped.length === 2) {
-                            setTimeout(() => {
-                                if(flipped[0].s === flipped[1].s) { this.stageState.clicks += 2; if(this.stageState.clicks === 20) this.winInteractive(); } 
-                                else { flipped[0].c.style.transform = 'rotateY(0deg)'; flipped[1].c.style.transform = 'rotateY(0deg)'; }
-                                flipped = [];
-                            }, 600);
-                        }
-                    }; crdGrid.appendChild(card);
-                }); innerStage.appendChild(crdGrid); break;
-            }
-
+       case 'MATCH': {
+                this.stageState.round = 1;
+                
+                // نص يوضح رقم الجولة
+                let rDisp = document.createElement('h3');
+                rDisp.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.5rem;';
+                
+                let crdGrid = document.createElement('div'); 
+                crdGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 60px); gap:10px; justify-content:center; perspective:1000px;';
+                
+                const loadRound = () => {
+                    crdGrid.innerHTML = '';
+                    this.stageState.clicks = 0; // تصفير العداد لكل جولة
+                    rDisp.innerText = `الجولة ${this.stageState.round} من 2`;
+                    
+                    let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5); 
+                    let flipped = [];
+                    
+                    symbols.forEach((sym, idx) => {
+                        let card = document.createElement('div'); card.className = 'interactive-element'; card.style.cssText = 'width:60px; height:60px; perspective:1000px; cursor:pointer; position:relative;';
+                        let inner = document.createElement('div'); inner.style.cssText = 'width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d; position:absolute;';
+                        let front = document.createElement('div'); front.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:#111; border:2px solid #444; border-radius:6px; display:flex; justify-content:center; align-items:center; font-size:1.5rem; color:#fff; font-weight:bold;'; front.innerText = idx + 1;
+                        let back = document.createElement('div'); back.style.cssText = 'width:100%; height:100%; position:absolute; backface-visibility:hidden; background:var(--apple); transform:rotateY(180deg); display:flex; justify-content:center; align-items:center; font-size:25px; border-radius:6px; color:#000; border:2px solid #fff;'; back.innerText = sym;
+                        
+                        inner.append(front, back); card.appendChild(inner);
+                        
+                        card.onclick = () => {
+                            if(inner.style.transform === 'rotateY(180deg)' || flipped.length >= 2) return;
+                            inner.style.transform = 'rotateY(180deg)'; flipped.push({c:inner, s:sym});
+                            if(flipped.length === 2) {
+                                setTimeout(() => {
+                                    if(flipped[0].s === flipped[1].s) { 
+                                        this.stageState.clicks += 2; 
+                                        // إذا اكتملت الجولة (20 بطاقة)
+                                        if(this.stageState.clicks === 20) { 
+                                            this.stageState.round++;
+                                            if(this.stageState.round > 2) {
+                                                // إذا خلصوا الجولتين يفوزون
+                                                setTimeout(() => this.winInteractive(), 500);
+                                            } else {
+                                                // الانتقال للجولة الثانية بعد ثانية وحدة
+                                                setTimeout(() => loadRound(), 1000);
+                                            }
+                                        } 
+                                    } 
+                                    else { 
+                                        flipped[0].c.style.transform = 'rotateY(0deg)'; 
+                                        flipped[1].c.style.transform = 'rotateY(0deg)'; 
+                                    }
+                                    flipped = [];
+                                }, 600);
+                            }
+                        }; 
+                        crdGrid.appendChild(card);
+                    });
+                };
+                
+                innerStage.append(rDisp, crdGrid);
+                loadRound();
+                break;
+            }
             // تعديل الباب 5: زر تأكيد للإحداثيات بدون ريستارت
             case 'COMPASS': { 
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:30px;'; let angles = [0, 0, 0];
