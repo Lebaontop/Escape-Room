@@ -823,7 +823,7 @@ class SolarGamesEngine {
                         storyCard.innerHTML = `<strong>الراوند 4: غرفة الاستجواب وتفكيك الأكاذيب</strong><br>تم استجواب ثلاثة من زملاء المختبر لتحديد المتواجد وقت الجريمة:<br>- ماسوكا يقول: "كنت في الميناء الجاف الساعة 9 مساءً لأفحص قارب الضحية والتقاط الأدلة".<br>- باتيستا يقول: "أنا لم أقتل أحداً وكنت مع ديبرا طوال الليل في المكتب الجنائي".<br>- براين يقول: "ماسوكا يكذب، الميناء الجاف مغلق تماماً للصيانة الدورية منذ العصر!"<br><br>ملاحظة: واحد فقط من الطاقم هو الكاذب وهو القاتل الحقيقي!`;
                         qTitle.innerText = "اللاعبين: حللوا الشهادات واكتشفوا الشخص الكاذب والمستغل للثغرة الزمنية.";
                         let btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex; gap:15px; justify-content:center; width:100%; direction:rtl;';
-                        ['ماسوكا''باتيستا', 'براين'].forEach((suspect, idx) => {
+                        ['ماسوكا','باتيستا','براين'].forEach((suspect, idx) => {
                             let btn = document.createElement('button'); btn.className = 'interactive-element'; btn.innerText = suspect; btn.style.cssText = 'padding:15px 30px; background:#222; color:var(--apple); border:2px solid #555; border-radius:6px; cursor:pointer; font-weight:bold; font-size:1.3rem;';
                             btn.onclick = () => { if(idx === 0) { this.stageState.detectiveRound++; loadDetectiveRound(); } else { this.failRoom(); } };
                             btnWrap.appendChild(btn);
