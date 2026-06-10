@@ -549,6 +549,7 @@ class SolarGamesEngine {
           case 'CRYPTEX': {
                 this.stageState.round = 1;
                 let targets = ['ROOM', 'RITA', 'LEBA'];
+                let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // الأبجدية لاختيار حروف التمويه
 
                 let wrap = document.createElement('div');
                 wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:500px; padding:20px;';
@@ -576,7 +577,7 @@ class SolarGamesEngine {
                     rDisp.innerText = `الجولة ${this.stageState.round} من 3`;
                     let word = targets[this.stageState.round - 1];
                     
-                    // إنشاء المربعات الفارغة للكلمة
+                    // إنشاء المربعات الفارغة على قد عدد حروف الكلمة الصح
                     for(let i = 0; i < word.length; i++) {
                         let slot = document.createElement('div');
                         slot.id = `slot-${i}`;
@@ -584,8 +585,15 @@ class SolarGamesEngine {
                         slotsWrap.appendChild(slot);
                     }
                     
-                    // بعثرة الحروف
-                    let shuffled = word.split('').sort(() => Math.random() - 0.5);
+                    // إضافة حرفين عشوائيين للتمويه
+                    let lettersToShuffle = word.split('');
+                    for (let i = 0; i < 2; i++) {
+                        let randomChar = alph[Math.floor(Math.random() * alph.length)];
+                        lettersToShuffle.push(randomChar);
+                    }
+
+                    // بعثرة الحروف الأصلية + حروف التمويه
+                    let shuffled = lettersToShuffle.sort(() => Math.random() - 0.5);
                     
                     shuffled.forEach((char) => {
                         let lBtn = document.createElement('button');
@@ -596,6 +604,8 @@ class SolarGamesEngine {
                         lBtn.onclick = () => {
                             if (lBtn.disabled) return;
                             let currentLen = this.stageState.currentAttempt.length;
+                            
+                            // التأكد إنهم ما يضغطون أزرار أكثر من المربعات المتاحة
                             if (currentLen < word.length) {
                                 // إضافة الحرف للمربع
                                 this.stageState.currentAttempt += char;
@@ -609,7 +619,7 @@ class SolarGamesEngine {
                                 lBtn.disabled = true;
                                 lBtn.style.cursor = 'default';
                                 
-                                // فحص الكلمة إذا اكتملت
+                                // فحص الكلمة إذا تعبت كل المربعات
                                 if (this.stageState.currentAttempt.length === word.length) {
                                     setTimeout(() => {
                                         if (this.stageState.currentAttempt === word) {
@@ -621,7 +631,7 @@ class SolarGamesEngine {
                                             }
                                         } else {
                                             this.failRoom();
-                                            setTimeout(() => loadRound(), 800); // ريستارت للجولة لحالها لو كانت غلط
+                                            setTimeout(() => loadRound(), 800);  
                                         }
                                     }, 400);
                                 }
