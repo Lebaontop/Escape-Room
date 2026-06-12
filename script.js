@@ -720,7 +720,7 @@ class SolarGamesEngine {
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(imgWrap, innerStage.children[1]); loadRound(); break;
             }
 
-          case 'VIRTUAL_PIANO': { 
+          case 'ILLUSION_DOORS': { 
                 this.stageState.round = 1;
                 
                 let wrap = document.createElement('div');
