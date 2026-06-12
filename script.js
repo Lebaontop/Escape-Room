@@ -813,32 +813,43 @@ class SolarGamesEngine {
                         stageArea.append(text, doorsWrap);
                     }
                 // Level 5: الربط بذاكرة الجولة الأولى (10 أبواب ملونة بالكامل)
+                 // Level 5: لغز المنطق (الصادق والكاذب) بـ 10 أبواب خضراء
                     else if(this.stageState.round === 5) {
                         let text = document.createElement('div');
-                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none; line-height:1.6; margin-bottom:20px; font-family:"Changa", sans-serif;';
-                        text.innerHTML = `المخرج هو نفس لون النص الذي بالباب الاول`;
+                        text.style.cssText = 'font-size:1.6rem; color:#fff; text-align:center; user-select:none; line-height:1.6; margin-bottom:15px; font-family:"Changa", sans-serif;';
+                        text.innerHTML = `بما أن اللون الصحيح أخضر، جميع الأبواب خضراء!<br><span style="color:var(--apple); font-size:1.4rem;">ملاحظة: الباب الصحيح فقط هو من يقول الصدق، والبقية كاذبون.</span>`;
                         
                         let doorsGrid = document.createElement('div');
                         // شبكة من صفين، كل صف فيه 5 أبواب
                         doorsGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 100px); gap:12px; justify-content:center; width:100%; direction:ltr;';
 
-                        // 10 ألوان مختلفة للأبواب لزيادة التشتيت والتمويه
-                        // الباب الأول في الجولة 1 كان نصه (أخضر)، إذن الباب الأخضر (رقم 7) هو الحل
-                        let bgColors = ['#4a0000', '#001a4d', '#4d4d00', '#33004d', '#4d2600', '#003333', '#155724', '#4d0026', '#331a00', '#333333']; 
-                        let textColors = ['#ff3333', '#3366ff', '#ffff33', '#cc33ff', '#ff9933', '#33ffff', '#00ff66', '#ff66a3', '#cc6600', '#ffffff'];
+                        // نصوص الأبواب (الباب 7 في الاندكس 6 هو الحل الوحيد المنطقي)
+                        let doorTexts = [
+                            'الباب 8<br>هو الصح', // 1
+                            'أنا<br>الصح',      // 2 (كذاب لأن الباب 3 يشير إليه)
+                            'الباب 2<br>هو الصح', // 3 
+                            'الباب 10<br>هو الصح',// 4
+                            'أنا<br>الصح',      // 5 (كذاب لأن الباب 6 يشير إليه)
+                            'الباب 5<br>هو الصح', // 6 
+                            'أنا<br>الصح',      // 7 (هو الحل الصحيح الوحيد)
+                            'الباب 1<br>هو الصح', // 8
+                            'الباب 4<br>هو الصح', // 9
+                            'الباب 9<br>هو الصح'  // 10
+                        ];
 
                         for(let i = 0; i < 10; i++) {
-                            let isCorrect = (i === 6); // الباب السابع (الأخضر) هو الحل
+                            let isCorrect = (i === 6); // الباب السابع (الاندكس 6) هو الحل
                             
-                            let d = createDoor(`باب ${i+1}`, bgColors[i], textColors[i], () => {
+                            // جميع الأبواب خضراء
+                            let d = createDoor(doorTexts[i], '#155724', '#00ff66', () => {
                                 if(isCorrect) advance();
                                 else this.failRoom();
                             });
                             
-                            // تصغير حجم الأبواب عشان تتناسق الـ 10 أبواب مع الشاشة
+                            // تعديل الحجم والخط ليتناسب مع النصوص الجديدة
                             d.style.width = '100px';
                             d.style.height = '130px';
-                            d.style.fontSize = '1.3rem';
+                            d.style.fontSize = '1.2rem'; 
                             
                             doorsGrid.appendChild(d);
                         }
