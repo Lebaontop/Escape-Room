@@ -173,7 +173,7 @@ class SolarGamesEngine {
             else if(i===13) { m.uiType = 'CRYPTEX'; m.desc="شفرة الكلمات (3 جولات): رتب الحروف المبعثرة عمودياً لاكتشاف الكلمة المخفية."; }
             else if(i===14) { m.uiType = 'SHARDS'; m.desc="من أنا (3 جولات): اكشف الشظايا لتعرف اسم الشخصية ."; }
             else if(i===15) { m.uiType = 'IMAGE_CHALLENGE'; m.desc="تحدي الصور (3 جولات): تفحص الصورة واستنتج الجواب الصحيح للراوند."; }
-            else if(i===16) { m.uiType = 'VIRTUAL_PIANO'; m.desc="البيانو الكلاسيكي: اعزف النوتات الأربعة السرية بالترتيب لفتح القفل."; m.ans=[0, 2, 4, 0]; }
+           else if(i===16) { m.uiType = 'ILLUSION_DOORS'; m.desc="متاهة الوهم: لا تثق بما تراه عيناك.. أمامك 5 مستويات تلاعب نفسي وبصري، حللها بذكاء واختر مخرجك بحذر!"; }
             else if(i===17) { m.uiType = 'ARROW_LOCK'; m.desc="توازن الأسهم: ادفع الكتل يميناً ويساراً وراقب نسبة التطابق لـ 100%."; }
             else if(i===18) { m.uiType = 'CONNECT4'; m.desc="لعبة وصل (5x5): تنافس بين فريق Dexter (أزرق) و Brian (أحمر). 4 كوينز متصلة للفوز."; }
             else if(i===19) { m.uiType = 'KEYPAD'; m.desc="اللوحة الرقمية: أدخل الرمز السري المتناثر في الغرفة."; m.ans='1957'; }
@@ -720,26 +720,133 @@ class SolarGamesEngine {
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(imgWrap, innerStage.children[1]); loadRound(); break;
             }
 
-            case 'VIRTUAL_PIANO': {
-                let pWrap = document.createElement('div'); pWrap.style.cssText = 'display:flex; position:relative; background:#111; padding:20px; border-radius:12px; border:4px solid #222; box-shadow:0 20px 40px rgba(0,0,0,0.8); height:250px; transition:0.3s;';
-                let whiteKeys = []; let seq = [];
-                for(let i=0; i<7; i++) {
-                    let wk = document.createElement('div'); wk.className = 'interactive-element'; wk.style.cssText = 'width:60px; height:100%; background:linear-gradient(to bottom, #fff, #eee); border:1px solid #ccc; border-radius:0 0 6px 6px; cursor:pointer; box-shadow:inset 0 -5px 5px rgba(0,0,0,0.2); transition:0.1s; display:flex; align-items:flex-end; justify-content:center; padding-bottom:10px; font-weight:bold; color:#555;'; wk.innerText = ['C','D','E','F','G','A','B'][i];
-                    wk.onmousedown = () => { 
-                        wk.style.background = '#ddd'; wk.style.transform = 'translateY(2px)'; seq.push(i); 
-                        if(seq.length === p.ans.length) { 
-                            if(JSON.stringify(seq) === JSON.stringify(p.ans)) { pWrap.style.borderColor = '#00ff66'; pWrap.style.boxShadow = '0 0 40px #00ff66'; setTimeout(()=>this.winInteractive(), 1000); } 
-                            else { this.failRoom(); seq = []; } 
-                        } 
-                    }; wk.onmouseup = wk.onmouseleave = () => { wk.style.background = 'linear-gradient(to bottom, #fff, #eee)'; wk.style.transform = 'translateY(0)'; };
-                    pWrap.appendChild(wk); whiteKeys.push(wk);
-                }
-                [1, 2, 4, 5, 6].forEach((pos) => { 
-                    let bk = document.createElement('div'); bk.className = 'interactive-element'; bk.style.cssText = `position:absolute; width:40px; height:60%; background:linear-gradient(to bottom, #222, #000); border:1px solid #111; border-radius:0 0 4px 4px; left:${20 + pos*60 - 20}px; top:20px; z-index:2; cursor:pointer; box-shadow:2px 2px 5px rgba(0,0,0,0.5);`;
-                    bk.onmousedown = () => { bk.style.background = '#333'; this.failRoom(); seq = []; }; bk.onmouseup = bk.onmouseleave = () => { bk.style.background = 'linear-gradient(to bottom, #222, #000)'; };
-                    pWrap.appendChild(bk);
-                }); innerStage.appendChild(pWrap); break;
-            }
+          case 'VIRTUAL_PIANO': { 
+                this.stageState.round = 1;
+                
+                let wrap = document.createElement('div');
+                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:650px; padding:20px;';
+                
+                let rDisp = document.createElement('h3');
+                rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px;';
+                
+                let stageArea = document.createElement('div');
+                stageArea.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap:30px; position:relative; min-height:280px;';
+
+                // دالة مساعدة لرسم الأبواب بشكل جمالي
+                const createDoor = (text, bgColor, textColor, onClick) => {
+                    let d = document.createElement('div');
+                    d.className = 'interactive-element';
+                    d.innerHTML = `<span style="pointer-events:none;">${text}</span>`;
+                    d.style.cssText = `width:110px; height:160px; background:${bgColor}; color:${textColor}; border:4px solid #333; border-radius:10px 10px 0 0; display:flex; justify-content:center; align-items:center; font-size:1.6rem; font-weight:bold; cursor:pointer; box-shadow:inset 0 0 20px rgba(0,0,0,0.7), 0 10px 15px rgba(0,0,0,0.5); text-align:center; transition:0.2s; position:relative; overflow:hidden; line-height:1.3;`;
+                    
+                    // مقبض الباب
+                    let knob = document.createElement('div');
+                    knob.style.cssText = 'position:absolute; width:12px; height:12px; background:gold; border-radius:50%; right:10px; top:50%; box-shadow:1px 1px 3px #000; pointer-events:none;';
+                    d.appendChild(knob);
+                    
+                    d.onmousedown = () => { d.style.transform = 'scale(0.95)'; };
+                    d.onmouseup = () => { d.style.transform = 'scale(1)'; };
+                    d.onmouseleave = () => { d.style.transform = 'scale(1)'; };
+                    d.onclick = onClick;
+                    return d;
+                };
+
+                const loadRound = () => {
+                    stageArea.innerHTML = '';
+                    rDisp.innerText = `الجولة ${this.stageState.round} من 5 (متاهة الأبواب الوهمية)`;
+                    
+                    let doorsWrap = document.createElement('div');
+                    doorsWrap.style.cssText = 'display:flex; gap:20px; justify-content:center; width:100%; align-items:flex-end; border-bottom:4px solid #222; padding-bottom:10px; direction:ltr;';
+
+                    // Level 1: تأثير ستروب (الألوان)
+                    if(this.stageState.round === 1) {
+                        let text = document.createElement('div');
+                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
+                        text.innerHTML = `ادخل من الباب الصحيح للعبور`;
+                        
+                        let d1 = createDoor('خـطـأ', '#155724', '#00ff66', () => this.failRoom()); 
+                        let d2 = createDoor('صـح', '#721c24', '#ff3333', () => advance()); 
+                        
+                        doorsWrap.append(d1, d2);
+                        stageArea.append(text, doorsWrap);
+                    }
+                    // Level 2: تناقض الاتجاهات
+                    else if(this.stageState.round === 2) {
+                        let text = document.createElement('div');
+                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
+                        text.innerHTML = `اختر الباب الموجود في (اليمين) فعلياً`;
+                        
+                        // الأبواب تترتب من اليسار لليمين (بسبب direction:ltr)
+                        let d1 = createDoor('اليمين', '#222', '#aaa', () => this.failRoom()); // باب يسار
+                        let d2 = createDoor('اليسار', '#222', '#aaa', () => this.failRoom()); // باب وسط
+                        let d3 = createDoor('الوسط', '#222', '#aaa', () => advance()); // باب يمين
+                        
+                        doorsWrap.append(d1, d2, d3);
+                        stageArea.append(text, doorsWrap);
+                    }
+                    // Level 3: خدعة النص
+                    else if(this.stageState.round === 3) {
+                        let text = document.createElement('div');
+                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
+                        text.innerHTML = `كلها مفخخة، ابحث عن <span id="r3-target" style="cursor:default;">الباب</span> الآمن بنفسك`;
+                        
+                        let d1 = createDoor('مفخخ', '#440000', '#ff0000', () => this.failRoom());
+                        let d2 = createDoor('ملغم', '#440000', '#ff0000', () => this.failRoom());
+                        let d3 = createDoor('خطر', '#440000', '#ff0000', () => this.failRoom());
+                        
+                        doorsWrap.append(d1, d2, d3);
+                        stageArea.append(text, doorsWrap);
+                        
+                        document.getElementById('r3-target').onclick = () => { advance(); };
+                    }
+                    // Level 4: مفارقة الكذاب
+                    else if(this.stageState.round === 4) {
+                        let text = document.createElement('div');
+                        text.style.cssText = 'font-size:1.6rem; color:#fff; text-align:center; user-select:none;';
+                        text.innerHTML = `ملاحظة: كل هذه الأبواب <b>تكذب</b>. أين المخرج؟`;
+                        
+                        let d1 = createDoor('أنا هو\nالمخرج', '#111', '#fff', () => this.failRoom());
+                        let d2 = createDoor('الباب 1\nهو المخرج', '#111', '#fff', () => this.failRoom());
+                        let d3 = createDoor('لا تضغطني!', '#111', '#fff', () => advance());
+                        
+                        doorsWrap.append(d1, d2, d3);
+                        stageArea.append(text, doorsWrap);
+                    }
+                    // Level 5: المخرج السري (برا الصندوق)
+                    else if(this.stageState.round === 5) {
+                        let text = document.createElement('div');
+                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
+                        text.innerHTML = `لا يوجد مخرج هنا. استسلم.`;
+                        
+                        let d1 = createDoor('💀', '#000', '#ff3333', () => this.failRoom()); d1.style.borderColor = '#ff3333';
+                        let d2 = createDoor('💀', '#000', '#ff3333', () => this.failRoom()); d2.style.borderColor = '#ff3333';
+                        let d3 = createDoor('💀', '#000', '#ff3333', () => this.failRoom()); d3.style.borderColor = '#ff3333';
+                        
+                        let hiddenExit = document.createElement('div');
+                        hiddenExit.innerText = '•';
+                        hiddenExit.style.cssText = 'position:absolute; bottom:-10px; right:10px; color:#222; font-size:1.5rem; cursor:default; user-select:none; padding:10px;';
+                        
+                        doorsWrap.append(d1, d2, d3);
+                        stageArea.append(text, doorsWrap, hiddenExit);
+                        
+                        hiddenExit.onclick = () => { advance(); };
+                    }
+                };
+
+                const advance = () => {
+                    this.stageState.round++;
+                    if(this.stageState.round > 5) {
+                        setTimeout(() => this.winInteractive(), 400);
+                    } else {
+                        loadRound();
+                    }
+                };
+
+                wrap.append(rDisp, stageArea);
+                innerStage.appendChild(wrap);
+                loadRound();
+                break;
+            }
 
             case 'ARROW_LOCK': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px; align-items:center;';
