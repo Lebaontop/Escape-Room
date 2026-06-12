@@ -814,28 +814,21 @@ class SolarGamesEngine {
                     }
                     // Level 5: المخرج السري (برا الصندوق)
                   // Level 5: صانع المتاهة (اسم الهوست)
+                   // Level 5: لغز الانتباه المعرفي (Stroop Logic)
                     else if(this.stageState.round === 5) {
                         let text = document.createElement('div');
-                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none; line-height:1.6;';
-                        text.innerHTML = `الأبواب جميعها كذبة.<br>المخرج الوحيد هو <span style="color:var(--apple); font-weight:bold;">صانع المتاهة</span>.`;
+                        text.style.cssText = 'font-size:1.5rem; color:#fff; text-align:center; user-select:none; line-height:1.6; padding:0 10px;';
+                        text.innerHTML = `اقرأ بتركيز: المخرج هو الباب ذو الخلفية التي تطابق <span style="color:var(--apple); font-weight:bold;">لون النص</span> للكلمة التي تعني "عكس اليمين".`;
                         
-                        let inp = document.createElement('input');
-                        inp.type = 'text';
-                        inp.className = 'cyber-input interactive-element';
-                        inp.placeholder = 'أدخل هوية الصانع...';
-                        inp.style.cssText = 'margin-top:20px; text-align:center; width:250px; font-size:1.5rem;';
+                        // الباب الأول: خلفية حمراء، نص "يمين"، لونه أخضر
+                        let d1 = createDoor('يمـين', '#4a0000', '#00ff66', () => this.failRoom()); 
+                        // الباب الثاني: خلفية خضراء، نص "يسار"، لونه أزرق
+                        let d2 = createDoor('يسـار', '#003300', '#00ccff', () => this.failRoom()); 
+                        // الباب الثالث: خلفية زرقاء، نص "وسط"، لونه أحمر (هذا هو الحل لأن خلفيته زرقاء تطابق لون نص كلمة يسار)
+                        let d3 = createDoor('وسـط', '#001a4d', '#ff3333', () => advance()); 
                         
-                        let btn = generateSubmitButton(() => {
-                            let val = inp.value.trim();
-                            // يقبل الاسم بالعربي أو الإنجليزي
-                            if(val === 'ليبا' || val === 'ليبا' || val.toLowerCase() === 'Leba') {
-                                advance();
-                            } else {
-                                this.failRoom();
-                            }
-                        }, 'تأكيد الهوية');
-                        
-                        stageArea.append(text, inp, btn);
+                        doorsWrap.append(d1, d2, d3);
+                        stageArea.append(text, doorsWrap);
                     }
                 };
 
