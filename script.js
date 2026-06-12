@@ -1040,13 +1040,15 @@ class SolarGamesEngine {
                             btnWrap.appendChild(btn);
                         }); inputContainer.appendChild(btnWrap);
                     }
-                    else if(this.stageState.detectiveRound === 5) {
-                        storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (قانون هاري)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية مخبأً بدقة داخل نظام التكييف. القفل الجنائي يتطلب إدخال كلمة السر النهائية للنظام لفك تشفير جزار ميامي بالكامل وإغلاق ملف القضية بنجاح.`;
-                        qTitle.innerText = "اللاعبين: ما هي الكلمة المفتاحية لنظام الحماية النهائي ؟";
-                        let inp = createInputBlock('أدخل كلمة السر النهائية...', 'KILLER');
-                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'KILLER') { setTimeout(()=>this.winInteractive(), 500); } };
-                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
-                    }
+                  else if(this.stageState.detectiveRound === 5) {
+                        storyCard.innerHTML = `<strong>الراوند 5: صندوق الشرائح المقفل (الاعتراف الأخير)</strong><br>وصلتم للمخبأ السري النهائي وعثرتم على صندوق الشرائح الزجاجية. لفك التشفير وإغلاق القضية، وجدتم ملاحظة أخيرة مكتوبة بخط دكستر تحتوي على قواعده الستة باللغة الإنجليزية:<br><br><div style="text-align:left; direction:ltr; font-family:monospace; color:var(--apple); font-size:1.6rem; margin-left:30px; line-height:1.8;">1. Keep your eyes open<br>2. Isolate the target<br>3. Leave no trace<br>4. Look for the guilt<br>5. Execute the code<br>6. Remove the evidence</div>`;
+                        
+                        qTitle.innerText = "اللاعبين: ما هي حقيقة دكستر؟ استنتجوا الكلمة السرية (6 أحرف) المخفية بذكاء داخل ترتيب هذه القواعد!";
+                        
+                        let inp = createInputBlock('أدخل كلمة السر النهائية...', 'KILLER');
+                        inp.oninput = () => { if(inp.value.trim().toUpperCase() === 'KILLER') { setTimeout(()=>this.winInteractive(), 500); } };
+                        innerStage.lastChild.lastChild.style.display = 'none'; inputContainer.appendChild(innerStage.lastChild);
+                    }
                 };
                 
                 innerStage.append(qTitle, storyCard, inputContainer);
