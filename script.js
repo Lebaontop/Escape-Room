@@ -813,23 +813,29 @@ class SolarGamesEngine {
                         stageArea.append(text, doorsWrap);
                     }
                     // Level 5: المخرج السري (برا الصندوق)
+                  // Level 5: صانع المتاهة (اسم الهوست)
                     else if(this.stageState.round === 5) {
                         let text = document.createElement('div');
-                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
-                        text.innerHTML = `لا يوجد مخرج هنا. استسلم.`;
+                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none; line-height:1.6;';
+                        text.innerHTML = `الأبواب جميعها كذبة.<br>المخرج الوحيد هو <span style="color:var(--apple); font-weight:bold;">صانع المتاهة</span>.`;
                         
-                        let d1 = createDoor('💀', '#000', '#ff3333', () => this.failRoom()); d1.style.borderColor = '#ff3333';
-                        let d2 = createDoor('💀', '#000', '#ff3333', () => this.failRoom()); d2.style.borderColor = '#ff3333';
-                        let d3 = createDoor('💀', '#000', '#ff3333', () => this.failRoom()); d3.style.borderColor = '#ff3333';
+                        let inp = document.createElement('input');
+                        inp.type = 'text';
+                        inp.className = 'cyber-input interactive-element';
+                        inp.placeholder = 'أدخل هوية الصانع...';
+                        inp.style.cssText = 'margin-top:20px; text-align:center; width:250px; font-size:1.5rem;';
                         
-                        let hiddenExit = document.createElement('div');
-                        hiddenExit.innerText = '•';
-                        hiddenExit.style.cssText = 'position:absolute; bottom:-10px; right:10px; color:#222; font-size:1.5rem; cursor:default; user-select:none; padding:10px;';
+                        let btn = generateSubmitButton(() => {
+                            let val = inp.value.trim();
+                            // يقبل الاسم بالعربي أو الإنجليزي
+                            if(val === 'ليبا' || val === 'ليبا' || val.toLowerCase() === 'Leba') {
+                                advance();
+                            } else {
+                                this.failRoom();
+                            }
+                        }, 'تأكيد الهوية');
                         
-                        doorsWrap.append(d1, d2, d3);
-                        stageArea.append(text, doorsWrap, hiddenExit);
-                        
-                        hiddenExit.onclick = () => { advance(); };
+                        stageArea.append(text, inp, btn);
                     }
                 };
 
