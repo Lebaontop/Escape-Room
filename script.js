@@ -812,23 +812,38 @@ class SolarGamesEngine {
                         doorsWrap.append(d1, d2, d3);
                         stageArea.append(text, doorsWrap);
                     }
-                    // Level 5: المخرج السري (برا الصندوق)
-                  // Level 5: صانع المتاهة (اسم الهوست)
-                   // Level 5: لغز الانتباه المعرفي (Stroop Logic)
+                  // Level 5: الربط بذاكرة الجولة الأولى (10 أبواب)
                     else if(this.stageState.round === 5) {
                         let text = document.createElement('div');
-                        text.style.cssText = 'font-size:1.5rem; color:#fff; text-align:center; user-select:none; line-height:1.6; padding:0 10px;';
-                        text.innerHTML = `اقرأ بتركيز: المخرج هو الباب ذو الخلفية التي تطابق <span style="color:var(--apple); font-weight:bold;">لون النص</span> للكلمة التي تعني "عكس اليمين".`;
+                        text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none; line-height:1.6; margin-bottom:20px; font-family:"Changa", sans-serif;';
+                        text.innerHTML = `المخرج هو نفس لون النص الذي بالباب الاول`;
                         
-                        // الباب الأول: خلفية حمراء، نص "يمين"، لونه أخضر
-                        let d1 = createDoor('يمـين', '#4a0000', '#00ff66', () => this.failRoom()); 
-                        // الباب الثاني: خلفية خضراء، نص "يسار"، لونه أزرق
-                        let d2 = createDoor('يسـار', '#003300', '#00ccff', () => this.failRoom()); 
-                        // الباب الثالث: خلفية زرقاء، نص "وسط"، لونه أحمر (هذا هو الحل لأن خلفيته زرقاء تطابق لون نص كلمة يسار)
-                        let d3 = createDoor('وسـط', '#001a4d', '#ff3333', () => advance()); 
-                        
-                        doorsWrap.append(d1, d2, d3);
-                        stageArea.append(text, doorsWrap);
+                        let doorsGrid = document.createElement('div');
+                        // شبكة من صفين، كل صف فيه 5 أبواب
+                        doorsGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 100px); gap:12px; justify-content:center; width:100%; direction:ltr;';
+
+                        // إعداد الأبواب: في الجولة الأولى كان نص الباب الأول لونه "أخضر"
+                        // إذن الباب الصحيح هنا هو اللي خلفيته خضراء (الباب رقم 7 بالاندكس 6)
+                        let bgColors = ['#111', '#111', '#111', '#111', '#111', '#111', '#155724', '#111', '#111', '#111']; 
+                        let textColors = ['#555', '#555', '#555', '#555', '#555', '#555', '#00ff66', '#555', '#555', '#555'];
+
+                        for(let i = 0; i < 10; i++) {
+                            let isCorrect = (i === 6); // الباب السابع هو الحل
+                            
+                            let d = createDoor(`باب ${i+1}`, bgColors[i], textColors[i], () => {
+                                if(isCorrect) advance();
+                                else this.failRoom();
+                            });
+                            
+                            // تصغير حجم الأبواب شوي عشان تتناسق الـ 10 أبواب مع الشاشة
+                            d.style.width = '100px';
+                            d.style.height = '130px';
+                            d.style.fontSize = '1.3rem';
+                            
+                            doorsGrid.appendChild(d);
+                        }
+
+                        stageArea.append(text, doorsGrid);
                     }
                 };
 
