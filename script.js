@@ -870,8 +870,7 @@ class SolarGamesEngine {
                         doorsWrap.append(d1, d2, d3);
                         stageArea.append(text, doorsWrap);
                     }
-                // Level 5: الربط بذاكرة الجولة الأولى (10 أبواب ملونة بالكامل)
-                 // Level 5: لغز المنطق (الصادق والكاذب) بـ 10 أبواب خضراء
+              // Level 5: لغز المنطق (الصادق والكاذب) بـ 10 أبواب خضراء مع الترقيم
                     else if(this.stageState.round === 5) {
                         let text = document.createElement('div');
                         text.style.cssText = 'font-size:1.6rem; color:#fff; text-align:center; user-select:none; line-height:1.6; margin-bottom:15px; font-family:"Changa", sans-serif;';
@@ -898,38 +897,25 @@ class SolarGamesEngine {
                         for(let i = 0; i < 10; i++) {
                             let isCorrect = (i === 6); // الباب السابع (الاندكس 6) هو الحل
                             
+                            // دمج الترقيم مع النص داخل الباب
+                            let numberedText = `<div style="font-size:1rem; color:#ccc; margin-bottom:8px; font-family:monospace;">[ ${i+1} ]</div><div style="line-height:1.3;">${doorTexts[i]}</div>`;
+
                             // جميع الأبواب خضراء
-                            let d = createDoor(doorTexts[i], '#155724', '#00ff66', () => {
+                            let d = createDoor(numberedText, '#155724', '#00ff66', () => {
                                 if(isCorrect) advance();
                                 else this.failRoom();
                             });
                             
-                            // تعديل الحجم والخط ليتناسب مع النصوص الجديدة
+                            // تعديل الحجم والخط ليتناسب مع الترقيم الجديد
                             d.style.width = '100px';
-                            d.style.height = '130px';
-                            d.style.fontSize = '1.2rem'; 
+                            d.style.height = '145px'; // زيادة الارتفاع شوي عشان الترقيم
+                            d.style.fontSize = '1.1rem'; 
                             
                             doorsGrid.appendChild(d);
                         }
 
                         stageArea.append(text, doorsGrid);
                     }
-                };
-
-                const advance = () => {
-                    this.stageState.round++;
-                    if(this.stageState.round > 5) {
-                        setTimeout(() => this.winInteractive(), 400);
-                    } else {
-                        loadRound();
-                    }
-                };
-
-                wrap.append(rDisp, stageArea);
-                innerStage.appendChild(wrap);
-                loadRound();
-                break;
-            }
 
             case 'ARROW_LOCK': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px; align-items:center;';
