@@ -293,41 +293,99 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
-            case 'SIMON': {
-                let smGrid = document.createElement('div'); smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(3, 100px); gap:15px; justify-content:center;';
-                let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800'];
-                let boxes = [];
-                for(let i=0; i<6; i++) {
-                    let b = document.createElement('div'); b.className = 'interactive-element';
-                    b.style.cssText = `width:100px; height:100px; background:${colors[i]}; border:4px solid #fff; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:0 0 15px ${colors[i]};`;
-                    b.onclick = () => {
-                        if(!this.stageState.playing) return;
-                        if(this.stageState.sequence[this.stageState.clicks] === i) {
-                            b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000';
-                            setTimeout(()=>{ b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 15px ${colors[i]}`; }, 200);
-                            this.stageState.clicks++;
-                            if(this.stageState.clicks === this.stageState.sequence.length) {
-                                this.stageState.round++;
-                                if(this.stageState.round > 2) setTimeout(() => this.winInteractive(), 200); else setTimeout(()=>playRound(), 2000);
-                            }
-                        } else { this.failRoom(); setTimeout(() => this.setupStage(), 800); }
-                    }; smGrid.appendChild(b); boxes.push(b);
-                } innerStage.appendChild(smGrid); this.stageState.round = 1;
-                const playRound = () => {
-                    this.stageState.playing = false; this.stageState.clicks = 0;
-                    let count = this.stageState.round === 1 ? 4 : 6;
-                    this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 6));
-                    let step = 0;
-                    this.stageState.timer = setInterval(() => {
-                        if(step < count) {
-                            let idx = this.stageState.sequence[step];
-                            boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000';
-                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 200);
-                            step++;
-                        } else { clearInterval(this.stageState.timer); this.stageState.playing = true; }
-                    }, 700);
-                }; setTimeout(()=>playRound(), 1000); break;
-            }
+          case 'SIMON': {
+                this.stageState.round = 1;
+                
+                // حاوية لترتيب العناصر وشاشة البدء
+                let wrap = document.createElement('div');
+                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px;';
+                
+                // نص الجولة
+                let rDisp = document.createElement('h3');
+                rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
+                rDisp.innerText = `الجولة 1 من 2`;
+
+                let smGrid = document.createElement('div'); 
+                smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(3, 100px); gap:15px; justify-content:center;';
+                let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800'];
+                let boxes = [];
+                
+                for(let i=0; i<6; i++) {
+                    let b = document.createElement('div'); b.className = 'interactive-element';
+                    b.style.cssText = `width:100px; height:100px; background:${colors[i]}; border:4px solid #fff; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:0 0 15px ${colors[i]};`;
+                    
+                    b.onclick = () => {
+                        if(!this.stageState.playing) return; // قفل الأزرار وقت العرض
+                        
+                        if(this.stageState.sequence[this.stageState.clicks] === i) {
+                            b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000';
+                            setTimeout(()=>{ b.style.background = colors[i]; b.style.borderColor = '#fff'; b.style.boxShadow = `0 0 15px ${colors[i]}`; }, 200);
+                            
+                            this.stageState.clicks++;
+                            if(this.stageState.clicks === this.stageState.sequence.length) {
+                                this.stageState.round++;
+                                if(this.stageState.round > 2) {
+                                    setTimeout(() => this.winInteractive(), 200); 
+                                } else {
+                                    rDisp.innerText = `الجولة 2 من 2`;
+                                    setTimeout(()=>playRound(), 2000);
+                                }
+                            }
+                        } else { 
+                            this.failRoom(); 
+                            setTimeout(() => this.setupStage(), 800); 
+                        }
+                    }; 
+                    smGrid.appendChild(b); 
+                    boxes.push(b);
+                } 
+                
+                wrap.append(rDisp, smGrid);
+                innerStage.appendChild(wrap);
+                
+                const playRound = () => {
+                    this.stageState.playing = false; 
+                    this.stageState.clicks = 0;
+                    let count = this.stageState.round === 1 ? 4 : 6;
+                    this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 6));
+                    let step = 0;
+                    
+                    this.stageState.timer = setInterval(() => {
+                        if(step < count) {
+                            let idx = this.stageState.sequence[step];
+                            boxes[idx].style.background = '#111'; boxes[idx].style.borderColor = '#333'; boxes[idx].style.boxShadow = 'inset 0 0 15px #000';
+                            setTimeout(()=> { boxes[idx].style.background = colors[idx]; boxes[idx].style.borderColor = '#fff'; boxes[idx].style.boxShadow = `0 0 15px ${colors[idx]}`; }, 200);
+                            step++;
+                        } else { 
+                            clearInterval(this.stageState.timer); 
+                            this.stageState.playing = true; // فك القفل بعد انتهاء العرض
+                        }
+                    }, 700);
+                }; 
+
+                // --- إضافة شاشة الانتظار (زر البدء) ---
+                let startScreen = document.createElement('div');
+                startScreen.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(10, 10, 10, 0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; gap:20px; border-radius:10px;';
+                
+                let infoText = document.createElement('div');
+                infoText.style.cssText = 'color:#fff; font-size:1.8rem; text-align:center; font-family:"Changa", sans-serif; line-height:1.6;';
+                infoText.innerHTML = `لعبة الذاكرة البصرية<br><span style="color:#aaa; font-size:1.2rem;">اشرح القواعد لفريقك، ثم اضغط بدء.</span>`;
+                
+                let startBtn = generateSubmitButton(() => {
+                    startScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        startScreen.remove();
+                        playRound(); // تبدأ اللعبة بعد ضغط الزر
+                    }, 300);
+                }, 'بدء اللعبة');
+                
+                startScreen.style.transition = 'opacity 0.3s ease';
+                startScreen.append(infoText, startBtn);
+                wrap.appendChild(startScreen);
+                // ----------------------------------------
+
+                break;
+            }
 
             case 'MASTERMIND': {
                 let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:500px;';
