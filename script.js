@@ -778,7 +778,7 @@ class SolarGamesEngine {
                 innerStage.lastChild.lastChild.style.display = 'none'; innerStage.insertBefore(roundDisp, innerStage.firstChild); innerStage.insertBefore(imgWrap, innerStage.children[1]); loadRound(); break;
             }
 
-          case 'ILLUSION_DOORS': { 
+      case 'ILLUSION_DOORS': { 
                 this.stageState.round = 1;
                 
                 let wrap = document.createElement('div');
@@ -790,14 +790,12 @@ class SolarGamesEngine {
                 let stageArea = document.createElement('div');
                 stageArea.style.cssText = 'width:100%; display:flex; flex-direction:column; align-items:center; gap:30px; position:relative; min-height:280px;';
 
-                // دالة مساعدة لرسم الأبواب بشكل جمالي
                 const createDoor = (text, bgColor, textColor, onClick) => {
                     let d = document.createElement('div');
                     d.className = 'interactive-element';
                     d.innerHTML = `<span style="pointer-events:none;">${text}</span>`;
                     d.style.cssText = `width:110px; height:160px; background:${bgColor}; color:${textColor}; border:4px solid #333; border-radius:10px 10px 0 0; display:flex; justify-content:center; align-items:center; font-size:1.6rem; font-weight:bold; cursor:pointer; box-shadow:inset 0 0 20px rgba(0,0,0,0.7), 0 10px 15px rgba(0,0,0,0.5); text-align:center; transition:0.2s; position:relative; overflow:hidden; line-height:1.3;`;
                     
-                    // مقبض الباب
                     let knob = document.createElement('div');
                     knob.style.cssText = 'position:absolute; width:12px; height:12px; background:gold; border-radius:50%; right:10px; top:50%; box-shadow:1px 1px 3px #000; pointer-events:none;';
                     d.appendChild(knob);
@@ -816,7 +814,6 @@ class SolarGamesEngine {
                     let doorsWrap = document.createElement('div');
                     doorsWrap.style.cssText = 'display:flex; gap:20px; justify-content:center; width:100%; align-items:flex-end; border-bottom:4px solid #222; padding-bottom:10px; direction:ltr;';
 
-                    // Level 1: تأثير ستروب (الألوان)
                     if(this.stageState.round === 1) {
                         let text = document.createElement('div');
                         text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
@@ -828,21 +825,18 @@ class SolarGamesEngine {
                         doorsWrap.append(d1, d2);
                         stageArea.append(text, doorsWrap);
                     }
-                    // Level 2: تناقض الاتجاهات
                     else if(this.stageState.round === 2) {
                         let text = document.createElement('div');
                         text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
                         text.innerHTML = `اختر الباب الموجود في (اليمين) فعلياً`;
                         
-                        // الأبواب تترتب من اليسار لليمين (بسبب direction:ltr)
-                        let d1 = createDoor('اليمين', '#222', '#aaa', () => this.failRoom()); // باب يسار
-                        let d2 = createDoor('اليسار', '#222', '#aaa', () => this.failRoom()); // باب وسط
-                        let d3 = createDoor('الوسط', '#222', '#aaa', () => advance()); // باب يمين
+                        let d1 = createDoor('اليمين', '#222', '#aaa', () => this.failRoom()); 
+                        let d2 = createDoor('اليسار', '#222', '#aaa', () => this.failRoom()); 
+                        let d3 = createDoor('الوسط', '#222', '#aaa', () => advance()); 
                         
                         doorsWrap.append(d1, d2, d3);
                         stageArea.append(text, doorsWrap);
                     }
-                    // Level 3: خدعة النص
                     else if(this.stageState.round === 3) {
                         let text = document.createElement('div');
                         text.style.cssText = 'font-size:1.8rem; color:#fff; text-align:center; user-select:none;';
@@ -857,7 +851,6 @@ class SolarGamesEngine {
                         
                         document.getElementById('r3-target').onclick = () => { advance(); };
                     }
-                    // Level 4: مفارقة الكذاب
                     else if(this.stageState.round === 4) {
                         let text = document.createElement('div');
                         text.style.cssText = 'font-size:1.6rem; color:#fff; text-align:center; user-select:none;';
@@ -870,45 +863,39 @@ class SolarGamesEngine {
                         doorsWrap.append(d1, d2, d3);
                         stageArea.append(text, doorsWrap);
                     }
-              // Level 5: لغز المنطق (الصادق والكاذب) بـ 10 أبواب خضراء مع الترقيم
                     else if(this.stageState.round === 5) {
                         let text = document.createElement('div');
                         text.style.cssText = 'font-size:1.6rem; color:#fff; text-align:center; user-select:none; line-height:1.6; margin-bottom:15px; font-family:"Changa", sans-serif;';
                         text.innerHTML = `بما أن اللون الصحيح أخضر، جميع الأبواب خضراء!<br><span style="color:var(--apple); font-size:1.4rem;">ملاحظة: الباب الصحيح فقط هو من يقول الصدق، والبقية كاذبون.</span>`;
                         
                         let doorsGrid = document.createElement('div');
-                        // شبكة من صفين، كل صف فيه 5 أبواب
                         doorsGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 100px); gap:12px; justify-content:center; width:100%; direction:ltr;';
 
-                        // نصوص الأبواب (الباب 7 في الاندكس 6 هو الحل الوحيد المنطقي)
                         let doorTexts = [
-                            'الباب 8<br>هو الصح', // 1
-                            'أنا<br>الصح',      // 2 (كذاب لأن الباب 3 يشير إليه)
-                            'الباب 2<br>هو الصح', // 3 
-                            'الباب 10<br>هو الصح',// 4
-                            'أنا<br>الصح',      // 5 (كذاب لأن الباب 6 يشير إليه)
-                            'الباب 5<br>هو الصح', // 6 
-                            'أنا<br>الصح',      // 7 (هو الحل الصحيح الوحيد)
-                            'الباب 1<br>هو الصح', // 8
-                            'الباب 4<br>هو الصح', // 9
-                            'الباب 9<br>هو الصح'  // 10
+                            'الباب 8<br>هو الصح', 
+                            'أنا<br>الصح',      
+                            'الباب 2<br>هو الصح', 
+                            'الباب 10<br>هو الصح',
+                            'أنا<br>الصح',      
+                            'الباب 5<br>هو الصح', 
+                            'أنا<br>الصح',      
+                            'الباب 1<br>هو الصح', 
+                            'الباب 4<br>هو الصح', 
+                            'الباب 9<br>هو الصح'  
                         ];
 
                         for(let i = 0; i < 10; i++) {
-                            let isCorrect = (i === 6); // الباب السابع (الاندكس 6) هو الحل
+                            let isCorrect = (i === 6); 
                             
-                            // دمج الترقيم مع النص داخل الباب
                             let numberedText = `<div style="font-size:1rem; color:#ccc; margin-bottom:8px; font-family:monospace;">[ ${i+1} ]</div><div style="line-height:1.3;">${doorTexts[i]}</div>`;
 
-                            // جميع الأبواب خضراء
                             let d = createDoor(numberedText, '#155724', '#00ff66', () => {
                                 if(isCorrect) advance();
                                 else this.failRoom();
                             });
                             
-                            // تعديل الحجم والخط ليتناسب مع الترقيم الجديد
                             d.style.width = '100px';
-                            d.style.height = '145px'; // زيادة الارتفاع شوي عشان الترقيم
+                            d.style.height = '145px'; 
                             d.style.fontSize = '1.1rem'; 
                             
                             doorsGrid.appendChild(d);
@@ -916,6 +903,22 @@ class SolarGamesEngine {
 
                         stageArea.append(text, doorsGrid);
                     }
+                };
+
+                const advance = () => {
+                    this.stageState.round++;
+                    if(this.stageState.round > 5) {
+                        setTimeout(() => this.winInteractive(), 400);
+                    } else {
+                        loadRound();
+                    }
+                };
+
+                wrap.append(rDisp, stageArea);
+                innerStage.appendChild(wrap);
+                loadRound();
+                break;
+            }
 
             case 'ARROW_LOCK': {
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; flex-direction:column; gap:15px; width:100%; max-width:400px; align-items:center;';
