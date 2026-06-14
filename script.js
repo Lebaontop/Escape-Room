@@ -293,12 +293,14 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
-    case 'SIMON': {
+case 'SIMON': {
                 this.stageState.round = 1;
                 
+                // حاوية لترتيب العناصر وشاشة البدء (أضفنا مساحة بالأسفل للزر)
                 let wrap = document.createElement('div');
-                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px;';
+                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px 10px 40px 10px;';
                 
+                // نص الجولة
                 let rDisp = document.createElement('h3');
                 rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
                 rDisp.innerText = `الجولة 1 من 4 (دور الفريق الأول)`;
@@ -349,9 +351,8 @@ class SolarGamesEngine {
                                     rDisp.innerText = `الجولة 3 من 4 (دور الفريق الثاني)`;
                                     setTimeout(() => {
                                         showOverlay(`انتهى دور الفريق الأول!<br><span style="color:#aaa; font-size:1.2rem;">استعد يا الفريق الثاني، اضغط بدء إذا جاهزين.</span>`, 'بدء دور الفريق الثاني', playRound);
-                                    }, 600); // تأخير بسيط عشان يخلص أنيميشن الضغطة الأخيرة
+                                    }, 600); 
                                 } else {
-                                    // الانتقال العادي بين جولات نفس الفريق (1 إلى 2) أو (3 إلى 4)
                                     let teamName = this.stageState.round <= 2 ? "دور الفريق الأول" : "دور الفريق الثاني";
                                     rDisp.innerText = `الجولة ${this.stageState.round} من 4 (${teamName})`;
                                     setTimeout(()=>playRound(), 2000);
@@ -367,13 +368,25 @@ class SolarGamesEngine {
                 } 
                 
                 wrap.append(rDisp, smGrid);
+                
+                // --- إضافة زر التخطي في أسفل يسار الشاشة ---
+                let skipBtn = generateSubmitButton(() => {
+                    clearInterval(this.stageState.timer); // إيقاف التايمر تماماً لمنع أي تعليق
+                    this.winInteractive(); // الانتقال الفوري للسؤال الكتابي
+                }, 'تخطي اللعبة ⏭️');
+                // تنسيق ليظهر تحت يسار وبشفافية بسيطة عشان ما يخرب الشكل ويصير واضح لك كـ هوست
+                skipBtn.style.cssText += 'position:absolute; bottom:10px; left:10px; font-size:1rem; padding:6px 12px; min-width:auto; width:auto; height:auto; background:#1a1a1a; border-color:#444; opacity:0.6; z-index:101; font-family:"Changa", sans-serif;';
+                skipBtn.onmouseenter = () => skipBtn.style.opacity = '1';
+                skipBtn.onmouseleave = () => skipBtn.style.opacity = '0.6';
+                wrap.appendChild(skipBtn);
+                // ------------------------------------------
+
                 innerStage.appendChild(wrap);
                 
                 const playRound = () => {
                     this.stageState.playing = false; 
                     this.stageState.clicks = 0;
                     
-                    // الجولة 1 و 3 تكون 4 خطوات.. الجولة 2 و 4 تكون 6 خطوات
                     let count = (this.stageState.round === 1 || this.stageState.round === 3) ? 4 : 6;
                     this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 6));
                     let step = 0;
@@ -386,12 +399,11 @@ class SolarGamesEngine {
                             step++;
                         } else { 
                             clearInterval(this.stageState.timer); 
-                            this.stageState.playing = true; // فك القفل
+                            this.stageState.playing = true; 
                         }
                     }, 700);
                 }; 
 
-                // استدعاء شاشة البداية الأساسية أول ما تفتح الغرفة
                 showOverlay(`لعبة الذاكرة البصرية (4 جولات)<br><span style="color:#aaa; font-size:1.2rem;">اشرح القواعد للفرق، ثم اضغط بدء.</span>`, 'بدء اللعبة', playRound);
 
                 break;
