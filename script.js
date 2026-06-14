@@ -293,17 +293,17 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
-          case 'SIMON': {
+        case 'SIMON': {
                 this.stageState.round = 1;
                 
                 // حاوية لترتيب العناصر وشاشة البدء
                 let wrap = document.createElement('div');
                 wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px;';
                 
-                // نص الجولة
+                // نص الجولة مع تحديد الفريق
                 let rDisp = document.createElement('h3');
                 rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
-                rDisp.innerText = `الجولة 1 من 2`;
+                rDisp.innerText = `الجولة 1 من 4 (دور الفريق الأول)`;
 
                 let smGrid = document.createElement('div'); 
                 smGrid.style.cssText = 'display:grid; grid-template-columns:repeat(3, 100px); gap:15px; justify-content:center;';
@@ -324,10 +324,12 @@ class SolarGamesEngine {
                             this.stageState.clicks++;
                             if(this.stageState.clicks === this.stageState.sequence.length) {
                                 this.stageState.round++;
-                                if(this.stageState.round > 2) {
+                                if(this.stageState.round > 4) {
                                     setTimeout(() => this.winInteractive(), 200); 
                                 } else {
-                                    rDisp.innerText = `الجولة 2 من 2`;
+                                    // تحديد اسم الفريق بناءً على رقم الجولة
+                                    let teamName = this.stageState.round <= 2 ? "دور الفريق الأول" : "دور الفريق الثاني";
+                                    rDisp.innerText = `الجولة ${this.stageState.round} من 4 (${teamName})`;
                                     setTimeout(()=>playRound(), 2000);
                                 }
                             }
@@ -346,7 +348,9 @@ class SolarGamesEngine {
                 const playRound = () => {
                     this.stageState.playing = false; 
                     this.stageState.clicks = 0;
-                    let count = this.stageState.round === 1 ? 4 : 6;
+                    
+                    // الجولة 1 و 3 تكون 4 خطوات.. الجولة 2 و 4 تكون 6 خطوات
+                    let count = (this.stageState.round === 1 || this.stageState.round === 3) ? 4 : 6;
                     this.stageState.sequence = Array.from({length: count}, () => Math.floor(Math.random() * 6));
                     let step = 0;
                     
@@ -369,7 +373,7 @@ class SolarGamesEngine {
                 
                 let infoText = document.createElement('div');
                 infoText.style.cssText = 'color:#fff; font-size:1.8rem; text-align:center; font-family:"Changa", sans-serif; line-height:1.6;';
-                infoText.innerHTML = `لعبة الذاكرة البصرية<br><span style="color:#aaa; font-size:1.2rem;">اشرح القواعد لفريقك، ثم اضغط بدء.</span>`;
+                infoText.innerHTML = `لعبة الذاكرة البصرية (4 جولات)<br><span style="color:#aaa; font-size:1.2rem;">اشرح القواعد للفرق، ثم اضغط بدء.</span>`;
                 
                 let startBtn = generateSubmitButton(() => {
                     startScreen.style.opacity = '0';
@@ -386,7 +390,6 @@ class SolarGamesEngine {
 
                 break;
             }
-
             case 'MASTERMIND': {
                 let container = document.createElement('div'); container.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap: 15px; width:100%; max-width:500px;';
                 let inputs = document.createElement('div'); inputs.style.cssText = 'display:flex; gap:15px; justify-content:center; margin-bottom:10px; direction:ltr;';
@@ -609,25 +612,97 @@ class SolarGamesEngine {
                 } eWrap.append(eDisplay, btnGrid); innerStage.appendChild(eWrap); break;
             }
 
-            case 'JUGS': {
-                let jugWrap = document.createElement('div'); jugWrap.style.cssText = 'display:flex; gap:30px; align-items:flex-end; height:180px; padding-bottom:20px; border-bottom:4px solid #333;';
-                let caps = [8, 5, 3]; let vols = [8, 0, 0]; let selected = -1;
-                const renderJugs = () => {
-                    jugWrap.innerHTML = '';
-                    caps.forEach((cap, i) => {
-                        let j = document.createElement('div'); j.className = 'interactive-element'; j.style.cssText = 'width:70px; background:rgba(255,255,255,0.1); border:3px solid #666; border-radius:0 0 10px 10px; position:relative; overflow:hidden; cursor:pointer; transition:0.2s;'; j.style.height = (cap * 15 + 50) + 'px'; 
-                        if(i === selected) { j.style.borderColor = 'var(--apple)'; j.style.transform = 'translateY(-10px)'; j.style.boxShadow = '0 10px 20px rgba(140, 198, 63, 0.3)'; }
-                        let w = document.createElement('div'); w.style.cssText = 'position:absolute; bottom:0; width:100%; background:linear-gradient(to bottom, rgba(0,200,255,0.8), rgba(0,100,255,0.9)); transition:height 0.4s cubic-bezier(0.4, 0, 0.2, 1);'; w.style.height = (vols[i] / cap * 100) + '%';
-                        let lbl = document.createElement('div'); lbl.style.cssText = 'position:absolute; width:100%; text-align:center; color:#fff; font-weight:bold; top:10px; z-index:2; font-family:monospace; font-size:1.2rem; text-shadow:0 0 5px #000;'; lbl.innerText = `${vols[i]}/${cap}`;
-                        j.append(w, lbl);
-                        j.onclick = () => {
-                            if(selected === -1) { if(vols[i] > 0) { selected = i; renderJugs(); } } 
-                            else { if(selected !== i) { let transfer = Math.min(vols[selected], caps[i] - vols[i]); vols[selected] -= transfer; vols[i] += transfer; } selected = -1; renderJugs(); if(vols.includes(4)) setTimeout(()=>this.winInteractive(), 500); }
-                        }; jugWrap.appendChild(j);
-                    });
-                }; renderJugs(); innerStage.appendChild(jugWrap); break;
-            }
+           case 'JUGS': {
+                this.stageState.round = 1;
+                
+                let wrap = document.createElement('div');
+                wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px;';
+                
+                let rDisp = document.createElement('h3');
+                rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
 
+                let jugWrap = document.createElement('div');
+                jugWrap.style.cssText = 'display:flex; gap:30px; align-items:flex-end; min-height:220px; padding-bottom:20px; border-bottom:4px solid #333;';
+
+                let caps = []; let vols = []; let selected = -1; let target = 4; let roundWon = false;
+
+                const loadRound = () => {
+                    selected = -1;
+                    roundWon = false;
+                    
+                    if(this.stageState.round === 1) {
+                        // الفريق الأول
+                        caps = [8, 5, 3]; vols = [8, 0, 0];
+                        rDisp.innerText = `الجولة 1 من 2 (دور الفريق الأول - الهدف: 4 لتر)`;
+                    } else {
+                        // الفريق الثاني (سعات مختلفة عشان ما ينسخون الحل)
+                        caps = [7, 5, 3]; vols = [7, 0, 0];
+                        rDisp.innerText = `الجولة 2 من 2 (دور الفريق الثاني - الهدف: 4 لتر)`;
+                    }
+                    renderJugs();
+                };
+
+                const renderJugs = () => {
+                    jugWrap.innerHTML = '';
+                    caps.forEach((cap, i) => {
+                        let j = document.createElement('div'); 
+                        j.className = 'interactive-element'; 
+                        
+                        j.style.cssText = 'width:70px; background:rgba(255,255,255,0.1); border:3px solid #666; border-radius:0 0 10px 10px; position:relative; overflow:hidden; cursor:pointer; transition:0.2s;'; 
+                        j.style.height = (cap * 15 + 50) + 'px'; 
+                        
+                        if(i === selected) { 
+                            j.style.borderColor = 'var(--apple)'; 
+                            j.style.transform = 'translateY(-10px)'; 
+                            j.style.boxShadow = '0 10px 20px rgba(140, 198, 63, 0.3)'; 
+                        }
+                        
+                        let w = document.createElement('div'); 
+                        w.style.cssText = 'position:absolute; bottom:0; width:100%; background:linear-gradient(to bottom, rgba(0,200,255,0.8), rgba(0,100,255,0.9)); transition:height 0.4s cubic-bezier(0.4, 0, 0.2, 1);'; 
+                        w.style.height = (vols[i] / cap * 100) + '%';
+                        
+                        let lbl = document.createElement('div'); 
+                        lbl.style.cssText = 'position:absolute; width:100%; text-align:center; color:#fff; font-weight:bold; top:10px; z-index:2; font-family:monospace; font-size:1.2rem; text-shadow:0 0 5px #000;'; 
+                        lbl.innerText = `${vols[i]}/${cap}`;
+                        
+                        j.append(w, lbl);
+                        
+                        j.onclick = () => {
+                            if(roundWon) return; 
+                            
+                            if(selected === -1) { 
+                                if(vols[i] > 0) { selected = i; renderJugs(); } 
+                            } else { 
+                                if(selected !== i) { 
+                                    let transfer = Math.min(vols[selected], caps[i] - vols[i]); 
+                                    vols[selected] -= transfer; 
+                                    vols[i] += transfer; 
+                                } 
+                                selected = -1; 
+                                renderJugs(); 
+                                
+                                if(vols.includes(target)) {
+                                    roundWon = true; 
+                                    setTimeout(() => {
+                                        this.stageState.round++;
+                                        if(this.stageState.round > 2) {
+                                            this.winInteractive(); 
+                                        } else {
+                                            loadRound(); 
+                                        }
+                                    }, 800);
+                                } 
+                            }
+                        }; 
+                        jugWrap.appendChild(j);
+                    });
+                }; 
+                
+                wrap.append(rDisp, jugWrap);
+                innerStage.appendChild(wrap);
+                loadRound(); 
+                break;
+            }
             case 'BLIND_MAZE': {
                 let bmWrap = document.createElement('div'); bmWrap.style.cssText = 'display:grid; grid-template-columns:repeat(6, 50px); gap:2px; background:#111; padding:5px; border:4px solid #333; border-radius:8px; box-shadow:inset 0 0 20px #000;';
                 for(let i=0; i<36; i++) {
