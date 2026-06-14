@@ -293,14 +293,12 @@ class SolarGamesEngine {
                 }); innerStage.appendChild(wWrap); break;
             }
 
-        case 'SIMON': {
+    case 'SIMON': {
                 this.stageState.round = 1;
                 
-                // حاوية لترتيب العناصر وشاشة البدء
                 let wrap = document.createElement('div');
                 wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px;';
                 
-                // نص الجولة مع تحديد الفريق
                 let rDisp = document.createElement('h3');
                 rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
                 rDisp.innerText = `الجولة 1 من 4 (دور الفريق الأول)`;
@@ -310,6 +308,25 @@ class SolarGamesEngine {
                 let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800'];
                 let boxes = [];
                 
+                // دالة مساعدة لإنشاء شاشات التوقف (زر البدء)
+                const showOverlay = (msg, btnTxt, callback) => {
+                    let screen = document.createElement('div');
+                    screen.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(10, 10, 10, 0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; gap:20px; border-radius:10px;';
+                    
+                    let info = document.createElement('div');
+                    info.style.cssText = 'color:#fff; font-size:1.8rem; text-align:center; font-family:"Changa", sans-serif; line-height:1.6;';
+                    info.innerHTML = msg;
+                    
+                    let btn = generateSubmitButton(() => {
+                        screen.style.opacity = '0';
+                        setTimeout(() => { screen.remove(); callback(); }, 300);
+                    }, btnTxt);
+                    
+                    screen.style.transition = 'opacity 0.3s ease';
+                    screen.append(info, btn);
+                    wrap.appendChild(screen);
+                };
+
                 for(let i=0; i<6; i++) {
                     let b = document.createElement('div'); b.className = 'interactive-element';
                     b.style.cssText = `width:100px; height:100px; background:${colors[i]}; border:4px solid #fff; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:0 0 15px ${colors[i]};`;
@@ -324,10 +341,17 @@ class SolarGamesEngine {
                             this.stageState.clicks++;
                             if(this.stageState.clicks === this.stageState.sequence.length) {
                                 this.stageState.round++;
+                                
                                 if(this.stageState.round > 4) {
                                     setTimeout(() => this.winInteractive(), 200); 
+                                } else if(this.stageState.round === 3) {
+                                    // هنا الفاصل بين الفريق الأول والثاني
+                                    rDisp.innerText = `الجولة 3 من 4 (دور الفريق الثاني)`;
+                                    setTimeout(() => {
+                                        showOverlay(`انتهى دور الفريق الأول!<br><span style="color:#aaa; font-size:1.2rem;">استعد يا الفريق الثاني، اضغط بدء إذا جاهزين.</span>`, 'بدء دور الفريق الثاني', playRound);
+                                    }, 600); // تأخير بسيط عشان يخلص أنيميشن الضغطة الأخيرة
                                 } else {
-                                    // تحديد اسم الفريق بناءً على رقم الجولة
+                                    // الانتقال العادي بين جولات نفس الفريق (1 إلى 2) أو (3 إلى 4)
                                     let teamName = this.stageState.round <= 2 ? "دور الفريق الأول" : "دور الفريق الثاني";
                                     rDisp.innerText = `الجولة ${this.stageState.round} من 4 (${teamName})`;
                                     setTimeout(()=>playRound(), 2000);
@@ -362,31 +386,13 @@ class SolarGamesEngine {
                             step++;
                         } else { 
                             clearInterval(this.stageState.timer); 
-                            this.stageState.playing = true; // فك القفل بعد انتهاء العرض
+                            this.stageState.playing = true; // فك القفل
                         }
                     }, 700);
                 }; 
 
-                // --- إضافة شاشة الانتظار (زر البدء) ---
-                let startScreen = document.createElement('div');
-                startScreen.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(10, 10, 10, 0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; gap:20px; border-radius:10px;';
-                
-                let infoText = document.createElement('div');
-                infoText.style.cssText = 'color:#fff; font-size:1.8rem; text-align:center; font-family:"Changa", sans-serif; line-height:1.6;';
-                infoText.innerHTML = `لعبة الذاكرة البصرية (4 جولات)<br><span style="color:#aaa; font-size:1.2rem;">اشرح القواعد للفرق، ثم اضغط بدء.</span>`;
-                
-                let startBtn = generateSubmitButton(() => {
-                    startScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        startScreen.remove();
-                        playRound(); // تبدأ اللعبة بعد ضغط الزر
-                    }, 300);
-                }, 'بدء اللعبة');
-                
-                startScreen.style.transition = 'opacity 0.3s ease';
-                startScreen.append(infoText, startBtn);
-                wrap.appendChild(startScreen);
-                // ----------------------------------------
+                // استدعاء شاشة البداية الأساسية أول ما تفتح الغرفة
+                showOverlay(`لعبة الذاكرة البصرية (4 جولات)<br><span style="color:#aaa; font-size:1.2rem;">اشرح القواعد للفرق، ثم اضغط بدء.</span>`, 'بدء اللعبة', playRound);
 
                 break;
             }
