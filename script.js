@@ -618,7 +618,7 @@ class SolarGamesEngine {
                 } eWrap.append(eDisplay, btnGrid); innerStage.appendChild(eWrap); break;
             }
 
-           case 'JUGS': {
+        case 'JUGS': {
                 this.stageState.round = 1;
                 
                 let wrap = document.createElement('div');
@@ -628,22 +628,40 @@ class SolarGamesEngine {
                 rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
 
                 let jugWrap = document.createElement('div');
-                jugWrap.style.cssText = 'display:flex; gap:30px; align-items:flex-end; min-height:220px; padding-bottom:20px; border-bottom:4px solid #333;';
+                jugWrap.style.cssText = 'display:flex; gap:30px; align-items:flex-end; min-height:230px; padding-bottom:20px; border-bottom:4px solid #333;';
 
-                let caps = []; let vols = []; let selected = -1; let target = 4; let roundWon = false;
+                let caps = []; let vols = []; let selected = -1; let target = 0; let roundWon = false;
 
-                const loadRound = () => {
+                // دالة شاشة التوقف والبدء
+                const showOverlay = (msg, btnTxt, callback) => {
+                    let screen = document.createElement('div');
+                    screen.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(10, 10, 10, 0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; gap:20px; border-radius:10px;';
+                    
+                    let info = document.createElement('div');
+                    info.style.cssText = 'color:#fff; font-size:1.6rem; text-align:center; font-family:"Changa", sans-serif; line-height:1.6;';
+                    info.innerHTML = msg;
+                    
+                    let btn = generateSubmitButton(() => {
+                        screen.style.opacity = '0';
+                        setTimeout(() => { screen.remove(); callback(); }, 300);
+                    }, btnTxt);
+                    
+                    screen.style.transition = 'opacity 0.3s ease';
+                    screen.append(info, btn);
+                    wrap.appendChild(screen);
+                };
+
+                const initRound = () => {
                     selected = -1;
                     roundWon = false;
                     
                     if(this.stageState.round === 1) {
-                        // الفريق الأول
-                        caps = [8, 5, 3]; vols = [8, 0, 0];
+                        caps = [8, 5, 3]; vols = [8, 0, 0]; target = 4;
                         rDisp.innerText = `الجولة 1 من 2 (دور الفريق الأول - الهدف: 4 لتر)`;
                     } else {
-                        // الفريق الثاني (سعات مختلفة عشان ما ينسخون الحل)
-                        caps = [7, 5, 3]; vols = [7, 0, 0];
-                        rDisp.innerText = `الجولة 2 من 2 (دور الفريق الثاني - الهدف: 4 لتر)`;
+                        // لغز جديد ومستوى صعوبة عالي للفريق الثاني
+                        caps = [10, 7, 3]; vols = [10, 0, 0]; target = 5;
+                        rDisp.innerText = `الجولة 2 من 2 (دور الفريق الثاني - الهدف: 5 لتر)`;
                     }
                     renderJugs();
                 };
@@ -655,7 +673,7 @@ class SolarGamesEngine {
                         j.className = 'interactive-element'; 
                         
                         j.style.cssText = 'width:70px; background:rgba(255,255,255,0.1); border:3px solid #666; border-radius:0 0 10px 10px; position:relative; overflow:hidden; cursor:pointer; transition:0.2s;'; 
-                        j.style.height = (cap * 15 + 50) + 'px'; 
+                        j.style.height = (cap * 13 + 60) + 'px'; // تضبيط الطول عشان يناسب حجم الـ 10
                         
                         if(i === selected) { 
                             j.style.borderColor = 'var(--apple)'; 
@@ -694,9 +712,10 @@ class SolarGamesEngine {
                                         if(this.stageState.round > 2) {
                                             this.winInteractive(); 
                                         } else {
-                                            loadRound(); 
+                                            // الفاصل بين الفريق الأول والثاني
+                                            showOverlay(`كفو يا الفريق الأول!<br><span style="color:#aaa; font-size:1.2rem;">استعد يا الفريق الثاني.. لغزكم مختلف والهدف 5 لتر!</span>`, 'بدء دور الفريق الثاني', initRound);
                                         }
-                                    }, 800);
+                                    }, 1000);
                                 } 
                             }
                         }; 
@@ -706,7 +725,10 @@ class SolarGamesEngine {
                 
                 wrap.append(rDisp, jugWrap);
                 innerStage.appendChild(wrap);
-                loadRound(); 
+                
+                // تشغيل الشاشة الافتتاحية أول ما يفتحون اللعبة
+                showOverlay(`لغز الدوارق (جولتين)<br><span style="color:#aaa; font-size:1.2rem;">الفريق الأول: استخراج 4 لتر.<br>الفريق الثاني: استخراج 5 لتر.</span>`, 'بدء دور الفريق الأول', initRound);
+
                 break;
             }
             case 'BLIND_MAZE': {
