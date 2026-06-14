@@ -75,8 +75,8 @@ class SolarGamesEngine {
             return row;
         };
 
-        sb.appendChild(makeTeamRow('dexter', 'Dexter', '#00ccff')); // أزرق
-        sb.appendChild(makeTeamRow('brian', 'Brian', '#ff3333'));  // أحمر
+        sb.appendChild(makeTeamRow('dexter', 'Dexter', '#ff3333')); // أزرق
+        sb.appendChild(makeTeamRow('brian', 'Brian', '#00ccff'));  // أحمر
 
         document.body.appendChild(sb);
     }
