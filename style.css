@@ -109,7 +109,6 @@ body { background: var(--dark); color: #ccc; overflow: hidden; height: 100vh; us
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 .error-glitch { animation: glitchShake 0.15s infinite; border-color: var(--red) !important; }
 @keyframes glitchShake { 0% { transform: translate(0); } 50% { transform: translate(-4px, 2px); } 100% { transform: translate(4px, -2px); } }
-/* الألوان الأساسية الخاصة بالتفاحي */
 :root { 
     --dark: #000000; --mid: #0a0a0a; --light: #111111;
     --accent: #ffffff; --green: #00ff66; --red: #ff3333;
