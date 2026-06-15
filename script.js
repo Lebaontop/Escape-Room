@@ -12,7 +12,6 @@ class SolarGamesEngine {
         this.activeGate = null;
         this.solvedGates = new Set();
         
-        // المؤقت الخارجي
         this.externalTimerSeconds = 60; 
         this.isTimerRunning = false;
         
@@ -30,12 +29,11 @@ class SolarGamesEngine {
     init() { 
         this.renderLobby(); 
         this.updateTimerDisplay();
-        this.createScoreboard(); // تشغيل لوحة النقاط العائمة
+        this.createScoreboard(); 
     }
 
-    // بناء لوحة النقاط العائمة (تظهر في اللوبي وداخل الغرف)
     createScoreboard() {
-        if(document.getElementById('scoreboard-ui')) return; // عشان ما تتكرر
+        if(document.getElementById('scoreboard-ui')) return; 
         
         let sb = document.createElement('div');
         sb.id = 'scoreboard-ui';
@@ -296,11 +294,9 @@ class SolarGamesEngine {
 case 'SIMON': {
                 this.stageState.round = 1;
                 
-                // حاوية لترتيب العناصر وشاشة البدء (أضفنا مساحة بالأسفل للزر)
                 let wrap = document.createElement('div');
                 wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; padding:10px 10px 40px 10px;';
                 
-                // نص الجولة
                 let rDisp = document.createElement('h3');
                 rDisp.style.cssText = 'color:var(--apple); font-size:1.5rem; margin-bottom:5px; font-family:"Changa", sans-serif;';
                 rDisp.innerText = `الجولة 1 من 4 (دور الفريق الأول)`;
@@ -310,7 +306,6 @@ case 'SIMON': {
                 let colors = ['#ff3333', '#00ff66', '#00ccff', '#ffff00', '#ff00ff', '#ff8800'];
                 let boxes = [];
                 
-                // دالة مساعدة لإنشاء شاشات التوقف (زر البدء)
                 const showOverlay = (msg, btnTxt, callback) => {
                     let screen = document.createElement('div');
                     screen.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(10, 10, 10, 0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; gap:20px; border-radius:10px;';
@@ -334,7 +329,7 @@ case 'SIMON': {
                     b.style.cssText = `width:100px; height:100px; background:${colors[i]}; border:4px solid #fff; border-radius:12px; cursor:pointer; transition:0.1s; box-shadow:0 0 15px ${colors[i]};`;
                     
                     b.onclick = () => {
-                        if(!this.stageState.playing) return; // قفل الأزرار وقت العرض
+                        if(!this.stageState.playing) return; 
                         
                         if(this.stageState.sequence[this.stageState.clicks] === i) {
                             b.style.background = '#111'; b.style.borderColor = '#333'; b.style.boxShadow = 'inset 0 0 15px #000';
@@ -347,7 +342,6 @@ case 'SIMON': {
                                 if(this.stageState.round > 4) {
                                     setTimeout(() => this.winInteractive(), 200); 
                                 } else if(this.stageState.round === 3) {
-                                    // هنا الفاصل بين الفريق الأول والثاني
                                     rDisp.innerText = `الجولة 3 من 4 (دور الفريق الثاني)`;
                                     setTimeout(() => {
                                         showOverlay(`انتهى دور الفريق الأول!<br><span style="color:#aaa; font-size:1.2rem;">استعد يا الفريق الثاني، اضغط بدء إذا جاهزين.</span>`, 'بدء دور الفريق الثاني', playRound);
@@ -369,17 +363,14 @@ case 'SIMON': {
                 
                 wrap.append(rDisp, smGrid);
                 
-                // --- إضافة زر التخطي في أسفل يسار الشاشة ---
                 let skipBtn = generateSubmitButton(() => {
-                    clearInterval(this.stageState.timer); // إيقاف التايمر تماماً لمنع أي تعليق
-                    this.winInteractive(); // الانتقال الفوري للسؤال الكتابي
+                    clearInterval(this.stageState.timer); 
+                    this.winInteractive(); 
                 }, 'تخطي اللعبة ⏭️');
-                // تنسيق ليظهر تحت يسار وبشفافية بسيطة عشان ما يخرب الشكل ويصير واضح لك كـ هوست
                 skipBtn.style.cssText += 'position:absolute; bottom:10px; left:10px; font-size:1rem; padding:6px 12px; min-width:auto; width:auto; height:auto; background:#1a1a1a; border-color:#444; opacity:0.6; z-index:101; font-family:"Changa", sans-serif;';
                 skipBtn.onmouseenter = () => skipBtn.style.opacity = '1';
                 skipBtn.onmouseleave = () => skipBtn.style.opacity = '0.6';
                 wrap.appendChild(skipBtn);
-                // ------------------------------------------
 
                 innerStage.appendChild(wrap);
                 
@@ -446,7 +437,6 @@ case 'SIMON': {
        case 'MATCH': {
                 this.stageState.round = 1;
                 
-                // نص يوضح رقم الجولة
                 let rDisp = document.createElement('h3');
                 rDisp.style.cssText = 'color:var(--apple); margin-bottom:15px; font-size:1.5rem;';
                 
@@ -455,7 +445,7 @@ case 'SIMON': {
                 
                 const loadRound = () => {
                     crdGrid.innerHTML = '';
-                    this.stageState.clicks = 0; // تصفير العداد لكل جولة
+                    this.stageState.clicks = 0; 
                     rDisp.innerText = `الجولة ${this.stageState.round} من 2`;
                     
                     let symbols = [...p.data, ...p.data].sort(() => Math.random() - 0.5); 
@@ -476,14 +466,11 @@ case 'SIMON': {
                                 setTimeout(() => {
                                     if(flipped[0].s === flipped[1].s) { 
                                         this.stageState.clicks += 2; 
-                                        // إذا اكتملت الجولة (20 بطاقة)
                                         if(this.stageState.clicks === 20) { 
                                             this.stageState.round++;
                                             if(this.stageState.round > 2) {
-                                                // إذا خلصوا الجولتين يفوزون
-                                                setTimeout(() => this.winInteractive(), 500);
+\                                                setTimeout(() => this.winInteractive(), 500);
                                             } else {
-                                                // الانتقال للجولة الثانية بعد ثانية وحدة
                                                 setTimeout(() => loadRound(), 1000);
                                             }
                                         } 
@@ -504,7 +491,6 @@ case 'SIMON': {
                 loadRound();
                 break;
             }
-            // تعديل الباب 5: زر تأكيد للإحداثيات بدون ريستارت
             case 'COMPASS': { 
                 let wrap = document.createElement('div'); wrap.style.cssText = 'display:flex; gap:30px;'; let angles = [0, 0, 0];
                 for(let i=0; i<3; i++) {
@@ -520,13 +506,12 @@ case 'SIMON': {
                         setTimeout(()=>this.winInteractive(), 500);
                     } else {
                         this.showToast('الإحداثيات غير متطابقة!', '#ff3333');
-                        this.triggerVisualGlitch(); // فقط اهتزاز بسيط بدون ريستارت للزوايا
+                        this.triggerVisualGlitch(); 
                     }
                 }, 'تأكيد الإحداثيات');
                 innerStage.append(wrap, checkBtn); break;
             }
 
-            // تعديل الباب 6: الميزان المعقد بحل واحد فقط
             case 'SCALES': {
                 let sclWrap = document.createElement('div'); sclWrap.style.cssText = 'display:flex; gap:20px; align-items:flex-end; height:150px; border-bottom: 4px solid var(--apple); padding-bottom:10px; width: 100%; max-width: 500px; justify-content:center; margin-top:50px; position:relative;';
                 let balanceNeedle = document.createElement('div'); balanceNeedle.style.cssText = 'position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:15px solid #ff3333; transition:transform 0.3s;';
@@ -644,7 +629,6 @@ case 'SIMON': {
 
                 let caps = []; let vols = []; let selected = -1; let target = 0; let roundWon = false;
 
-                // دالة شاشة التوقف والبدء
                 const showOverlay = (msg, btnTxt, callback) => {
                     let screen = document.createElement('div');
                     screen.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(10, 10, 10, 0.95); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:100; gap:20px; border-radius:10px;';
@@ -671,7 +655,6 @@ case 'SIMON': {
                         caps = [8, 5, 3]; vols = [8, 0, 0]; target = 4;
                         rDisp.innerText = `الجولة 1 من 2 (دور الفريق الأول - الهدف: 4 لتر)`;
                     } else {
-                        // لغز جديد ومستوى صعوبة عالي للفريق الثاني
                         caps = [10, 7, 3]; vols = [10, 0, 0]; target = 5;
                         rDisp.innerText = `الجولة 2 من 2 (دور الفريق الثاني - الهدف: 5 لتر)`;
                     }
@@ -685,7 +668,7 @@ case 'SIMON': {
                         j.className = 'interactive-element'; 
                         
                         j.style.cssText = 'width:70px; background:rgba(255,255,255,0.1); border:3px solid #666; border-radius:0 0 10px 10px; position:relative; overflow:hidden; cursor:pointer; transition:0.2s;'; 
-                        j.style.height = (cap * 13 + 60) + 'px'; // تضبيط الطول عشان يناسب حجم الـ 10
+                        j.style.height = (cap * 13 + 60) + 'px'; 
                         
                         if(i === selected) { 
                             j.style.borderColor = 'var(--apple)'; 
@@ -724,7 +707,6 @@ case 'SIMON': {
                                         if(this.stageState.round > 2) {
                                             this.winInteractive(); 
                                         } else {
-                                            // الفاصل بين الفريق الأول والثاني
                                             showOverlay(`كفو يا الفريق الأول!<br><span style="color:#aaa; font-size:1.2rem;">استعد يا الفريق الثاني.. لغزكم مختلف والهدف 5 لتر!</span>`, 'بدء دور الفريق الثاني', initRound);
                                         }
                                     }, 1000);
@@ -738,7 +720,6 @@ case 'SIMON': {
                 wrap.append(rDisp, jugWrap);
                 innerStage.appendChild(wrap);
                 
-                // تشغيل الشاشة الافتتاحية أول ما يفتحون اللعبة
                 showOverlay(`لغز الدوارق (جولتين)<br><span style="color:#aaa; font-size:1.2rem;">الفريق الأول: استخراج 4 لتر.<br>الفريق الثاني: استخراج 5 لتر.</span>`, 'بدء دور الفريق الأول', initRound);
 
                 break;
@@ -760,8 +741,7 @@ case 'SIMON': {
           case 'CRYPTEX': {
                 this.stageState.round = 1;
                 let targets = ['ROOM', 'RITA', 'LEBA'];
-                let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // الأبجدية لاختيار حروف التمويه
-
+                let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
                 let wrap = document.createElement('div');
                 wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; max-width:500px; padding:20px;';
 
@@ -788,7 +768,6 @@ case 'SIMON': {
                     rDisp.innerText = `الجولة ${this.stageState.round} من 3`;
                     let word = targets[this.stageState.round - 1];
                     
-                    // إنشاء المربعات الفارغة على قد عدد حروف الكلمة الصح
                     for(let i = 0; i < word.length; i++) {
                         let slot = document.createElement('div');
                         slot.id = `slot-${i}`;
@@ -796,14 +775,12 @@ case 'SIMON': {
                         slotsWrap.appendChild(slot);
                     }
                     
-                    // إضافة حرفين عشوائيين للتمويه
                     let lettersToShuffle = word.split('');
                     for (let i = 0; i < 2; i++) {
                         let randomChar = alph[Math.floor(Math.random() * alph.length)];
                         lettersToShuffle.push(randomChar);
                     }
 
-                    // بعثرة الحروف الأصلية + حروف التمويه
                     let shuffled = lettersToShuffle.sort(() => Math.random() - 0.5);
                     
                     shuffled.forEach((char) => {
@@ -816,21 +793,17 @@ case 'SIMON': {
                             if (lBtn.disabled) return;
                             let currentLen = this.stageState.currentAttempt.length;
                             
-                            // التأكد إنهم ما يضغطون أزرار أكثر من المربعات المتاحة
                             if (currentLen < word.length) {
-                                // إضافة الحرف للمربع
                                 this.stageState.currentAttempt += char;
                                 let activeSlot = document.getElementById(`slot-${currentLen}`);
                                 activeSlot.innerText = char;
                                 activeSlot.style.borderColor = 'var(--apple)';
                                 activeSlot.style.boxShadow = '0 0 15px rgba(140, 198, 63, 0.4)';
                                 
-                                // إخفاء الزر اللي انضغط
                                 lBtn.style.opacity = '0.2';
                                 lBtn.disabled = true;
                                 lBtn.style.cursor = 'default';
                                 
-                                // فحص الكلمة إذا تعبت كل المربعات
                                 if (this.stageState.currentAttempt.length === word.length) {
                                     setTimeout(() => {
                                         if (this.stageState.currentAttempt === word) {
@@ -1059,7 +1032,6 @@ case 'SIMON': {
                 wrap.appendChild(check); innerStage.appendChild(wrap); break;
             }
 
-            // تعديل الباب 18: لعبة وصل (Connect 4)
             case 'CONNECT4': {
                 let boardWrap = document.createElement('div');
                 boardWrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;';
@@ -1175,7 +1147,6 @@ case 'SIMON': {
                         storyCard.innerHTML = `<strong>الراوند 2: خريطة الهروب وقارب دكستر</strong><br>هرب القاتل عبر الميناء البحري. أمامكم خريطة الرادار البحري الافتراضية مقسمة لشبكة مربعات. للتجاوز بنجاح، يجب فك الشفرة وإدخال الرمز السري لخريطة العبور الآمنة التي تتجنب المنارات الصفراء.`;
                         
                         let mapGrid = document.createElement('div');
-                        // تم التعديل هنا: استخدام fit-content و ltr لضبط الخريطة داخل الإطار 100%
                         mapGrid.style.cssText = 'display:grid; grid-template-columns:repeat(5, 50px); gap:5px; background:#000; padding:15px; border:2px solid var(--apple); border-radius:8px; margin:20px auto; width:fit-content; box-shadow:0 0 20px rgba(140,198,63,0.2); font-family:monospace; direction:ltr;';
                         
                         for(let g=1; g<=25; g++) {
