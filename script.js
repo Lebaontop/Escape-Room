@@ -469,7 +469,7 @@ case 'SIMON': {
                                         if(this.stageState.clicks === 20) { 
                                             this.stageState.round++;
                                             if(this.stageState.round > 2) {
-\                                                setTimeout(() => this.winInteractive(), 500);
+                                                setTimeout(() => this.winInteractive(), 500);
                                             } else {
                                                 setTimeout(() => loadRound(), 1000);
                                             }
